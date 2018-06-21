@@ -10,6 +10,7 @@ endif()
 # Various / Dependencies
 # ------------------------------------------------------------------------------
 set(DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/bin/")
+set(GIT_SUBMODULE_DIR "${CMAKE_SOURCE_DIR}/gitmodules/")
 
 include("CMake/ExternalProjects/AddClientInterface.cmake")
 
