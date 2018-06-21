@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 include(ExternalProject)
 ExternalProject_Add(collab-client-interface
-    SOURCE_DIR          "${GIT_SUBMODULE_DIR}/collab-client-interface/"
+    SOURCE_DIR          "${git_submodule_dir}/collab-client-interface/"
     BINARY_DIR          "${CMAKE_BINARY_DIR}/collab-client-interface-build"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""

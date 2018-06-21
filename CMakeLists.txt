@@ -9,8 +9,8 @@ endif()
 # ------------------------------------------------------------------------------
 # Various / Dependencies
 # ------------------------------------------------------------------------------
-set(DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/bin/")
-set(GIT_SUBMODULE_DIR "${CMAKE_SOURCE_DIR}/gitmodules/")
+set(dependency_dir "${CMAKE_SOURCE_DIR}/bin/")
+set(git_submodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
 
 include("CMake/ExternalProjects/AddClientInterface.cmake")
 
@@ -19,10 +19,10 @@ include("CMake/ExternalProjects/AddClientInterface.cmake")
 # Executable
 # ------------------------------------------------------------------------------
 include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}/gitmodules/collab-data-crdts/include")
-include_directories("${CMAKE_SOURCE_DIR}/gitmodules/collab-client-interface/include")
+include_directories("${git_submodule_dir}/collab-data-crdts/include")
+include_directories("${git_submodule_dir}/collab-client-interface/include")
 
-file(GLOB_RECURSE srcDebug "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 add_executable(client_poc ${srcFilesPOC})
 add_dependencies(client_poc collab-client-interface)
