@@ -14,6 +14,7 @@
 
 # Install with CMake on GNU/Linux
 - [CMake](https://cmake.org/)
+> Be sure to check the dependency requirements first.
 
 ```
 git clone --recursive https://github.com/CollabServer/collab-example-poc.git
@@ -27,12 +28,12 @@ make runClientPOC
 
 
 # Dependencies and requirements
-> Dependencies marked with (auto) are automatically downloaded by CMake script.
+> Dependencies marked with (CMake) are automatically downloaded by CMake script.
 > Others must be installed manually (Generally system-wide install).
 
-- Build with C++11
+- Build with C++11 (tested with gcc 4.8.4 and higher and clang 5.0.0)
 - Requires pragma support (pragma once)
-- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (auto)
+- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake)
 - [ZeroMQ](http://zeromq.org/) (Must be installed system-wide)
 
 
