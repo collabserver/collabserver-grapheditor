@@ -12,6 +12,10 @@
 > Work in progress.
 
 
+# Feature
+- client: example of client implementation
+
+
 # Install with CMake on GNU/Linux
 - [CMake](https://cmake.org/)
 > Be sure to check the dependency requirements first.
