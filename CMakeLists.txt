@@ -12,8 +12,7 @@ endif()
 set(collab_dependency_dir "${CMAKE_SOURCE_DIR}/bin/")
 set(collab_gitmodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
+include("CMake/AddCompilerFlags.cmake")
 include("CMake/ExternalProjects/AddCollabClient.cmake")
 
 
