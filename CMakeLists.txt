@@ -17,7 +17,7 @@ include("CMake/ExternalProjects/AddCollabClient.cmake")
 
 
 # ------------------------------------------------------------------------------
-# Executable client
+# Executable GraphEditor (Client)
 # ------------------------------------------------------------------------------
 message(STATUS "Building poc client executable")
 
@@ -25,7 +25,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
-file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/client/src/*.cpp")
+file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
 
 add_executable(client_poc ${srcFilesPOC})
 add_dependencies(client_poc collab-client-interface)
@@ -43,7 +43,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
-file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/database/src/*.cpp")
+file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/mvk/src/*.cpp")
 
 add_executable(database_poc ${srcFilesPOC})
 add_dependencies(database_poc collab-client-interface)
