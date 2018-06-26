@@ -25,13 +25,13 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
-file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
+file(GLOB_RECURSE srcGrapheditor "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
 
-add_executable(client_poc ${srcFilesPOC})
-add_dependencies(client_poc collab-client-interface)
-add_custom_target(runClientPOC client_poc)
+add_executable(grapheditor_poc ${srcGrapheditor})
+add_dependencies(grapheditor_poc collab-client-interface)
+add_custom_target(runGrapheditor grapheditor_poc)
 
-target_link_libraries(client_poc "zmq" collab_client)
+target_link_libraries(grapheditor_poc "zmq" collab_client)
 
 
 # ------------------------------------------------------------------------------
@@ -43,12 +43,12 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
-file(GLOB_RECURSE srcFilesPOC "${CMAKE_SOURCE_DIR}/mvk/src/*.cpp")
+file(GLOB_RECURSE srcMvk "${CMAKE_SOURCE_DIR}/mvk/src/*.cpp")
 
-add_executable(database_poc ${srcFilesPOC})
-add_dependencies(database_poc collab-client-interface)
-add_custom_target(runDatabase database_poc)
+add_executable(mvk_poc ${srcMvk})
+add_dependencies(mvk_poc collab-client-interface)
+add_custom_target(runMvk mvk_poc)
 
-target_link_libraries(database_poc "zmq" collab_client)
+target_link_libraries(mvk_poc "zmq" collab_client)
 
 

@@ -45,14 +45,14 @@ mkdir build
 cd build
 cmake ..
 make -j4
-make runClientPOC
-# or runDatabasePOC for db server
+make runGrapheditor
+# or runMvk for db server
 
 # With build script
 ./build.sh
 cd build
-make runClientPOC
-# or runDatabasePOC for db server
+make runGrapheditor
+# or runMvk for db server
 ```
 
 
