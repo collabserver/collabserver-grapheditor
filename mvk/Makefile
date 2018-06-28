@@ -3,11 +3,11 @@ LD 					= g++
 LDFLAGS  			= -lcurl
 CPPFLAGS 			= -Wall -ggdb  -std=c++11
 OBJ_DIR 			= obj
-CPP_DIR				= src/cpp
+CPP_DIR				= src
 BIN_DIR 			= bin
-INCLUDE_DIR			= -Isrc/include
+INCLUDE_DIR			= -I./include
 CORE 				= main.cpp MVKWrapper.cpp Prompt.cpp
-FINAL_TARGET	 		= main.exe
+FINAL_TARGET	 	= main.exe
 
 
 default: $(BIN_DIR)/$(FINAL_TARGET)
