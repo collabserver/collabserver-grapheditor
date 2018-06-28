@@ -10,7 +10,8 @@ CORE 				= main.cpp MVKWrapper.cpp Prompt.cpp
 FINAL_TARGET	 	= main.exe
 
 
-default: $(BIN_DIR)/$(FINAL_TARGET)
+default: creadirs $(BIN_DIR)/$(FINAL_TARGET)
+
 
 # Création de votre .exe
 $(BIN_DIR)/$(FINAL_TARGET): $(CORE:%.cpp=$(OBJ_DIR)/%.o)
@@ -21,9 +22,18 @@ $(OBJ_DIR)/%.o: $(CPP_DIR)/%.cpp
 	$(CC) -c $(CPPFLAGS) $(INCLUDE_DIR) $< -o $@
 
 
+.PHONY: clean
 clean:
 ifeq ($(OS),Windows_NT)
-	del /f $(OBJ_DIR)\*.o $(BIN_DIR)\*.exe
+	del /f $(OBJ_DIR)
+	del /f $(BIN_DIR)
 else
-	rm -rf $(OBJ_DIR)/*.o $(BIN_DIR)/*.exe
+	-rm -rf $(OBJ_DIR)
+	-rm -rf $(BIN_DIR)
 endif
+
+.PHONY: creadirs
+creadirs:
+	-mkdir $(OBJ_DIR)
+	-mkdir $(BIN_DIR)
+
