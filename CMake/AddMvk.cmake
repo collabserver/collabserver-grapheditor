@@ -10,6 +10,6 @@ add_executable(mvk_poc ${srcMvk})
 add_dependencies(mvk_poc collab-client-interface)
 add_custom_target(runMvk mvk_poc)
 
-target_link_libraries(mvk_poc collab_client curlpp)
+target_link_libraries(mvk_poc collab_client curl)
 
 
