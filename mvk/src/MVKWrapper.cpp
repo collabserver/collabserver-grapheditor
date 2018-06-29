@@ -5,22 +5,22 @@
 #include "MVKWrapper.h"
 
 MVKWrapper::MVKWrapper() {
-    uuid = uuidGenerator();
+    uuid = UuidGenerator::basicGenerator();
     connectionAdress = LOCALCONNECTIONADRESS;
     DebugMode = false;
     initCurl();
 }
 
 MVKWrapper::MVKWrapper(const char *connectionAdress) {
-    uuid = uuidGenerator();
+    uuid = UuidGenerator::basicGenerator();
     this->connectionAdress = connectionAdress;
     DebugMode = false;
     initCurl();
 }
 
 MVKWrapper::MVKWrapper(const char *connectionAdress,
-                           const bool isDebugMode) {
-    uuid = uuidGenerator();
+                       const bool isDebugMode) {
+    uuid = UuidGenerator::basicGenerator();
     this->connectionAdress = connectionAdress;
     this->DebugMode = isDebugMode;
     initCurl();
@@ -130,7 +130,7 @@ int MVKWrapper::voidSending() {
 }
 
 int MVKWrapper::connect(const std::string username,
-                          const std::string password) {
+                        const std::string password) {
     std::string request =
             "op=set_input&value=\"" + uuid + "\"&taskname=task_manager";
     send(request.c_str());
@@ -173,8 +173,8 @@ int MVKWrapper::modelList(const std::string path) {
 }
 
 int MVKWrapper::modelAdd(const std::string savePathName,
-                           const std::string modelType,
-                           const std::string textualRepresentation) {
+                         const std::string modelType,
+                         const std::string textualRepresentation) {
     std::string request =
             "data=[\"model_add\",\"" + modelType + "\",\"" + savePathName +
             "\",\"" + textualRepresentation + "\"]" + baseSendRequest;
@@ -203,7 +203,7 @@ int MVKWrapper::modelDelete(const std::string savePathName) {
 }
 
 int MVKWrapper::modelModify(const std::string workingModel,
-                              const std::string modelType) {
+                            const std::string modelType) {
     std::string request =
             "data=[\"model_modify\",\"" + workingModel + "\",\"" + modelType +
             "\"]" + baseSendRequest;
@@ -245,7 +245,7 @@ int MVKWrapper::JSON() {
 }
 
 int MVKWrapper::instantiateNode(const std::string elementType,
-                                  const std::string name) {
+                                const std::string name) {
     std::string request =
             "data=[\"instantiate_node\",\"" + elementType + "\",\"" + name +
             "\"]" + baseSendRequest;
@@ -259,9 +259,9 @@ int MVKWrapper::instantiateNode(const std::string elementType,
 }
 
 int MVKWrapper::instantiateEdge(const std::string elementType,
-                                  const std::string name,
-                                  const std::string source,
-                                  const std::string target) {
+                                const std::string name,
+                                const std::string source,
+                                const std::string target) {
     std::string request =
             "data=[\"instantiate_edge\",\"" + elementType + "\",\"" + name +
             "\",\"" + source + "\",\"" + target + "\"]" + baseSendRequest;
@@ -310,14 +310,14 @@ void MVKWrapper::initCurl() {
 }
 
 size_t MVKWrapper::WriteCallback(void *contents, size_t size, size_t nmemb,
-                                   void *userp) {
+                                 void *userp) {
     ((std::string *) userp)->clear();
     ((std::string *) userp)->append((char *) contents, size * nmemb);
     return size * nmemb;
 }
 
 void MVKWrapper::MVKDebugDump(const char *text, FILE *stream,
-                                unsigned char *ptr, size_t size, char nohex) {
+                              unsigned char *ptr, size_t size, char nohex) {
     size_t i;
     size_t c;
 
@@ -366,7 +366,7 @@ void MVKWrapper::MVKDebugDump(const char *text, FILE *stream,
 }
 
 int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
-                                size_t size, void *userp) {
+                              size_t size, void *userp) {
     struct MVKDebugData *config = (struct MVKDebugData *) userp;
     const char *text;
     (void) handle; /* prevent compiler warning */
@@ -403,10 +403,6 @@ int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
     return 0;
 }
 
-std::string MVKWrapper::uuidGenerator() {
-    boost::uuids::random_generator generator;
-    boost::uuids::uuid uuid = generator();
-    return boost::lexical_cast<std::string>(uuid);
-}
+
 
 

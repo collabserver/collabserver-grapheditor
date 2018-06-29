@@ -1,36 +1,31 @@
 /**
- * @file MVKConnector.h
+ * @file MVKWrapper.h
  * @author Robin Donnay
  * @date 28/05/18
  * @brief Class allowing communication with Modelverse Database in C++
  *
  * This is a basic wrapper with small error detection.
  * The communication is done using HTTP Requests with the curl librairie.
- * Boost librairie is also use to generate unique identifier.
  */
 
 #ifndef MVKWRAPPER_H
 #define MVKWRAPPER_H
 
 #include <iostream>
-#include <cstring>
 #include <fstream>
 #include <regex>
-#include <random>
-#include <climits>
 #include <curl/curl.h>
-#include <boost/uuid/uuid.hpp> // uuid class
-#include <boost/uuid/uuid_generators.hpp> // generators
-#include <boost/uuid/uuid_io.hpp> // streaming operators (cout) etc.
-#include <boost/lexical_cast.hpp> // easy cast for boost datatype
-
+#include <UuidGenerator.h>
 
 // TODO Best Error Checking/Action
 // TODO Fonction qui envois des écoute tant qu'il n'a pas finis de parler
-// TODO Fonction qui affiche l'aide (juste au cas où)
+// TODO Fonction qui affiche l'aide
 
 class MVKWrapper {
 
+    /**
+     * @brief the local adress used by Modelverse
+     */
 #define LOCALCONNECTIONADRESS "http://127.0.0.1:8001"
 
 private:
@@ -40,7 +35,7 @@ private:
     std::string uuid;
     /** @brief the adresse/port where request are sent */
     std::string connectionAdress;
-    /** @bief a general part of the sending request */
+    /** @brief a general part of the sending request */
     std::string baseSendRequest;
     /** @brief the receving request */
     std::string receiveRequest;
@@ -75,7 +70,6 @@ private:
 public:
 
     /**
-     * @fn MVKConnector();
      * @brief basic constructor for local Modelverse
      */
     MVKWrapper();
@@ -143,7 +137,9 @@ public:
     int voidSending();
 
     /**
-     * @brief send a connection request to Modelverse
+     * @brief send a connection request to Modelverse,
+     *      at the end you are in megamodeling mode
+     * @post you are in megamodeling mode
      * @param username username for connection
      * @param password password for connection
      * @return -1 if there is a detected error
@@ -151,34 +147,93 @@ public:
     int connect(const std::string username, const std::string password);
 
     /**
-     * @brief 
-     * @param path
-     * @return
+     * @brief show all models/files in path
+     * @pre being in megamodeling mode
+     * @param path the place we want to see
+     * @return -1 if there is a detected error
      */
     int modelList(const std::string path);
 
+    /**
+     * @brief add a new model to Modelverse
+     * @pre being in megamodeling mode
+     * @param savePathName the place and the name of the new model
+     * @param modelType the metamodel of the new model
+     * @param textualRepresentation the base model used to create you new model
+     *      (send a void string for an empty model)
+     * @return -1 if there is a detected error
+     */
     int modelAdd(const std::string savePathName, const std::string modelType,
                  const std::string textualRepresentation);
 
+    /**
+     * @brief delete the model in parameter
+     * @pre being in megamodeling mode
+     * @param savePathName the model you want to delete
+     * @return -1 if there is a detected error
+     */
     int modelDelete(const std::string savePathName);
 
+    /**
+     * @brief start the modeling mode in the model in parameter
+     * @pre being in megamodeling mode
+     * @post you are in modeling mode
+     * @param workingModel the model you want to modify
+     * @param modelType the metamodel of the model
+     * @return
+     */
     int
     modelModify(const std::string workingModel, const std::string modelType);
 
+    /**
+     * @brief exit the modeling mode and return to the megamodelling mode
+     * @pre being in modeling mode
+     * @post you are in megamodeling mode
+     * @return -1 if there is a detected error
+     */
     int modelExit();
 
+    /**
+     * @brief shows all the element of the model
+     * @pre being in modeling mode
+     * @return -1 if there is a detected error
+     */
     int listFull();
 
+    /**
+     * @brief show all the elements of the model in a JSON
+     * @pre beign in modeling mode
+     * @return -1 if there is a detected error
+     */
     int JSON();
 
+    /**
+     * @brief create a new element in the model
+     * @pre being in modeling mode
+     * @param elementType the type of the new element
+     * @param name the name of the new element
+     * @return -1 if there is a detected error
+     */
     int instantiateNode(const std::string elementType, const std::string name);
 
+    /**
+     * @brief create a link between two elements in the model
+     * @pre being in modeling mode
+     * @param elementType the type of the new link
+     * @param name the name of the new link
+     * @param source the first element linked
+     * @param target the second element linked
+     * @return -1 if there is a detected error
+     */
     int instantiateEdge(const std::string elementType, const std::string name,
                         const std::string source, const std::string target);
 
+    /**
+     * @brief delete the element in paramter (and the edge linked to him)
+     * @param name the path of the element to delete
+     * @return -1 if there is a detected error
+     */
     int deleteElement(const std::string name);
-
-    static std::string uuidGenerator();
 };
 
 
