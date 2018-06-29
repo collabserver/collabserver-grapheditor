@@ -1,5 +1,6 @@
 # Personal ignore
 build/
+dependencies/
 bin/
 doc/
 .syntastic_cpp_config

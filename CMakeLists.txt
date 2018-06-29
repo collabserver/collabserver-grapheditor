@@ -9,11 +9,12 @@ endif()
 # ------------------------------------------------------------------------------
 # Various / Dependencies
 # ------------------------------------------------------------------------------
-set(collab_dependency_dir "${CMAKE_SOURCE_DIR}/bin/")
+set(collab_dependency_dir "${CMAKE_SOURCE_DIR}/dependencies/")
 set(collab_gitmodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
 
 include("CMake/AddCompilerFlags.cmake")
-include("CMake/ExternalProjects/AddCollabClient.cmake")
+include("CMake/ExternalProjects/AddCollabclient.cmake")
+include("CMake/ExternalProjects/AddCollabdata.cmake")
 
 
 # ------------------------------------------------------------------------------
