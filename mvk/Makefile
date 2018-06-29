@@ -1,14 +1,14 @@
 CC				= g++
-LD 				= g++
-LDFLAGS  			= -lcurl
-CPPFLAGS 			= -Wall -ggdb  -std=c++11
-OBJ_DIR 			= obj
-CPP_DIR				= src
-BIN_DIR 			= bin
-INCLUDE_DIR			= include
-CORE 				= main.cpp MVKWrapper.cpp Prompt.cpp UuidGenerator.cpp
-HEADER				= include/MVKWrapper.h include/Prompt.h include/UuidGenerator.h
-FINAL_TARGET	 		= main.exe
+LD				= g++
+LDFLAGS			= -lcurl
+CPPFLAGS		= -Wall -ggdb  -std=c++11
+OBJ_DIR			= obj
+CPP_DIR			= src
+BIN_DIR			= bin
+INCLUDE_DIR		= include
+CORE			= main.cpp MVKWrapper.cpp Prompt.cpp UuidGenerator.cpp
+HEADER			= include/MVKWrapper.h include/Prompt.h include/UuidGenerator.h
+FINAL_TARGET	= main.exe
 
 
 default: creadirs $(BIN_DIR)/$(FINAL_TARGET)
