@@ -27,7 +27,7 @@
 > Others must be installed manually (Generally system-wide install).
 - [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake)
 - [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake)
-- [ZeroMQ](http://zeromq.org/) (Must be installed system-wide)
+- [ZeroMQ](http://zeromq.org/) (**Must be installed system-wide**)
 
 
 ## Build instructions
@@ -39,22 +39,26 @@ cd collab-poc
 ```
 
 ### Build and run with CMake
+#### Manual build instructions
 ```bash
-# Manual instructions
 mkdir build
 cd build
 cmake ..
 make -j4
-make runGrapheditor
-# or runMvk for db server
+make runGrapheditor # To run grapheditor client
+make runMvk         # To run mvk database
+```
 
-# With build script
+#### With build script
+```bash
 ./build.sh
 cd build
-make runGrapheditor
-# or runMvk for db server
+make runGrapheditor # To run grapheditor client
+make runMvk         # To run mvk database
 ```
 
 
 ## Author
-Constantin Masson ([constantinmasson.com](http://constantinmasson.com/))
+- Constantin Masson ([constantinmasson.com](http://constantinmasson.com/))
+- Robin
+- Thierry

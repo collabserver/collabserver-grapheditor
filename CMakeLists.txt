@@ -21,7 +21,7 @@ include("CMake/ExternalProjects/AddCollabdata.cmake")
 # GraphEditor
 # ------------------------------------------------------------------------------
 option(collab_graphiceditor "Build GraphicEditor poc executable" ON)
-if(collab_mvk)
+if(collab_graphiceditor)
     message(STATUS "Build GraphicEditor poc")
     include("CMake/AddGraphiceditor.cmake")
 endif()
