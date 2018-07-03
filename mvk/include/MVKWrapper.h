@@ -8,14 +8,14 @@
  * The communication is done using HTTP Requests with the curl librairie.
  */
 
-#ifndef MVKWRAPPER_H
-#define MVKWRAPPER_H
+#ifndef MVK_MVKWRAPPER_H
+#define MVK_MVKWRAPPER_H
 
 #include <iostream>
 #include <fstream>
 #include <regex>
 #include <curl/curl.h>
-#include <UuidGenerator.h>
+#include "../include/UuidGenerator.h"
 
 // TODO Best Error Checking/Action
 // TODO Fonction qui envois des écoute tant qu'il n'a pas finis de parler
@@ -234,7 +234,29 @@ public:
      * @return -1 if there is a detected error
      */
     int deleteElement(const std::string name);
+
+    /**
+     * @brief add an attribute to the element in parameter or modify an already
+     *      created element
+     * @param element the element in wich we want to add an element
+     * @param attributeType the type of the element we add
+     * @param attributeValue the value of the new attribute
+     * @return
+     */
+    int attributeAddModify(const std::string element,
+                           const std::string attributeType,
+                           const std::string attributeValue);
+
+    /**
+     * @brief delete the attribute of the element in parameters
+     * @param element the element in wich we want to delete
+     * @param attributeType the attribute to delete
+     * @return -1 if there is a detected error
+     */
+    int
+    attributeDelete(const std::string element, const std::string attributeType);
+
 };
 
 
-#endif //MVKWRAPPER_H
+#endif //MVK_MVKWRAPPER_H

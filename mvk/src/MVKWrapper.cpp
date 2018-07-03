@@ -2,7 +2,7 @@
 // Created by robin on 28/05/18.
 //
 
-#include "MVKWrapper.h"
+#include "../include/MVKWrapper.h"
 
 MVKWrapper::MVKWrapper() {
     uuid = UuidGenerator::basicGenerator();
@@ -282,6 +282,38 @@ int MVKWrapper::deleteElement(const std::string name) {
     send(request.c_str());
     if (!receive()) { return -1; }
     if (isDebugMode()) {
+        if (!receive()) { return -1; }
+    }
+
+    return 0;
+}
+
+int MVKWrapper::attributeAddModify(const std::string element,
+                                   const std::string attributeType,
+                                   const std::string attributeValue) {
+    std::string request =
+            "data=[\"attr_add\",\"" + element + "\",\"" + attributeType +
+            "\",\"" + attributeValue + "\"]" + baseSendRequest;
+    send(request.c_str());
+    if (!receive()) { return -1; }
+    if (isDebugMode()) {
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+    }
+
+    return 0;
+}
+
+int MVKWrapper::attributeDelete(const std::string element,
+                                const std::string attributeType) {
+    std::string request =
+            "data=[\"attr_delete\",\"" + element + "\",\"" + attributeType +
+            +"\"]" + baseSendRequest;
+    send(request.c_str());
+    if (!receive()) { return -1; }
+    if (isDebugMode()) {
+        if (!receive()) { return -1; }
         if (!receive()) { return -1; }
     }
 

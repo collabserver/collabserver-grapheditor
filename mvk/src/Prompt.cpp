@@ -2,7 +2,7 @@
 // Created by robin on 20/06/18.
 //
 
-#include "Prompt.h"
+#include "../include/Prompt.h"
 
 void Prompt::runPrompt() {
     std::cout << "Welcome to local shell for Modelverse C++ !\n";
@@ -125,6 +125,20 @@ void Prompt::modelling() {
             userAnswer = getUserAnswer();
             database.deleteElement(userAnswer);
             cout << database.getDatabaseAnswer() << "\n";
+        } else if (userAnswer == "attr_add") {
+            cout << "Element to modify ?\n";
+            string element = getUserAnswer();
+            cout << "Type of the new attribute ?\n";
+            string attributeType = getUserAnswer();
+            cout << "Value of the attribute ?\n";
+            userAnswer = getUserAnswer();
+            database.attributeAddModify(element,attributeType, userAnswer);
+        } else if (userAnswer == "attr_del") {
+            cout<<"Element to modify ?\n";
+            string element = getUserAnswer();
+            cout<<"Attribute to delete ?\n";
+            userAnswer = getUserAnswer();
+            database.attributeDelete(element, userAnswer);
         } else {
             cout << "Unknown Command !\n";
         }

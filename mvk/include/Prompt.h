@@ -5,11 +5,11 @@
  * @brief Class test for MVK Wrapper with user interaction
  */
 
-#ifndef FIRSTWRAPPER_PROMPT_H
-#define FIRSTWRAPPER_PROMPT_H
+#ifndef MVK_PROMPT_H
+#define MVK_PROMPT_H
 
 
-#include <MVKWrapper.h>
+#include "../include/MVKWrapper.h"
 
 
 class Prompt {
@@ -40,4 +40,4 @@ public:
 };
 
 
-#endif //FIRSTWRAPPER_PROMPT_H
+#endif //MVK_PROMPT_H

@@ -2,7 +2,7 @@
 // Created by robin on 28/06/18.
 //
 
-#include "UuidGenerator.h"
+#include "../include/UuidGenerator.h"
 
 std::string UuidGenerator::basicGenerator() {
     std::srand(std::time(nullptr));

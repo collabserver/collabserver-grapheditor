@@ -5,8 +5,8 @@
  * @brief Class for uuid generation
  */
 
-#ifndef FIRSTWRAPPER_UUIDGENERATOR_H
-#define FIRSTWRAPPER_UUIDGENERATOR_H
+#ifndef MVK_UUIDGENERATOR_H
+#define MVK_UUIDGENERATOR_H
 
 #include <iostream>
 #include <ctime>
@@ -22,4 +22,4 @@ public:
 };
 
 
-#endif //FIRSTWRAPPER_UUIDGENERATOR_H
+#endif //MVK_UUIDGENERATOR_H
