@@ -1,6 +1,6 @@
 message(STATUS "Building GraphicEditor executable")
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
+include_directories("${CMAKE_SOURCE_DIR}/grapheditor/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
