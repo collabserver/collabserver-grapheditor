@@ -1,12 +1,12 @@
 # CollabServer - Proof of Concept
 
 [![release-version](https://img.shields.io/badge/release-no--release-red.svg)]()
-[![Build Status](https://travis-ci.org/CollabServer/collab-example-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-example-poc)
-[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-example-poc/blob/dev/LICENSE.txt)
+[![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-poc)
+[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-poc/blob/dev/LICENSE.txt)
 
 | master | dev |
 | :-----: | :----: |
-| [![Build Status](https://travis-ci.org/CollabServer/collab-example-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-example-poc) | [![Build Status](https://travis-ci.org/CollabServer/collab-example-poc.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-example-poc) |
+| [![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-poc) | [![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-poc) |
 
 
 ## Overview
@@ -28,6 +28,7 @@
 - [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake)
 - [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake)
 - [ZeroMQ](http://zeromq.org/) (**Must be installed system-wide**)
+- Curl (**System-wide**)
 
 
 ## Build instructions

@@ -18,7 +18,7 @@ matrix:
           env: BUILD_TYPE=Release VERBOSE=1
 
 install:
-    - sudo apt-get install libzmq-dev
+    - sudo apt-get install libzmq3-dev libzmq3
     - sudo apt-get install curl
 
 script: ./build.sh
