@@ -5,9 +5,7 @@ SimpleGraphOperationObserver::SimpleGraphOperationObserver(){};
 
 void SimpleGraphOperationObserver::onOperation(const collab::Operation &op)
 {
-
-    std::cout << "Operation received" << std::endl;
-   /* int type = op.getType();
+    int type = op.getType();
     switch (type)
     {
     case static_cast<int>(collab::SimpleGraph::OPERATION_VERTEX_ADD):
@@ -15,32 +13,32 @@ void SimpleGraphOperationObserver::onOperation(const collab::Operation &op)
         applyOperation(dynamic_cast<const collab::SimpleGraph::VertexAddOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::VERTEX_REMOVE):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_VERTEX_REMOVE):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::VertexRemoveOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::EDGE_ADD):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_EDGE_ADD):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::EdgeAddOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::OPERATION_VERTEX_ADD ):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_EDGE_REMOVE ):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::EdgeRemoveOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::ATTRIBUTE_ADD):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_ATTRIBUTE_ADD):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::AttributeAddOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::ATTRIBUTE_REMOVE):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_ATTRIBUTE_REMOVE):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::AttributeRemoveOperation &>(op));
     }
     break;
-    case static_cast<int>(collab::SimpleGraph::ATTRIBUTE_SET):
+    case static_cast<int>(collab::SimpleGraph::OPERATION_ATTRIBUTE_SET):
     {
         applyOperation(dynamic_cast<const collab::SimpleGraph::AttributeSetOperation &>(op));
     }
@@ -49,10 +47,10 @@ void SimpleGraphOperationObserver::onOperation(const collab::Operation &op)
         std::cout << "Error : Unknown operation received " << std::endl;
     }
 
-    }*/
+    }
 }
 
-/*
+
 void SimpleGraphOperationObserver::applyOperation(const collab::SimpleGraph::AttributeAddOperation op)
 {
     std::cout << "Attribute " << op.attributeName() << " added to vertex " << op.vertexID() << " with value " << op.attributeValue() << std::endl;
@@ -80,4 +78,4 @@ void SimpleGraphOperationObserver::applyOperation(const collab::SimpleGraph::Ver
 void SimpleGraphOperationObserver::applyOperation(const collab::SimpleGraph::VertexRemoveOperation op)
 {
     std::cout << "Vertex " << op.vertexID() << " removed" << std::endl;
-}*/
+}

@@ -56,12 +56,6 @@ Editor::Editor()
     ///////////////////  Editor commands loading end ///////////////////
 }
 
-/**
- * @brief Start the graph editing
- *        Loop while Editor::stopRunning isn't called
- * 
- * @return int 
- */
 int Editor::startRunning()
 {
     if (commands.empty())
@@ -74,7 +68,6 @@ int Editor::startRunning()
     collab::SimpleGraph dataStructure = collab::SimpleGraph();
     SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver();
     dataStructure.addOperationObserver(opObserver);
-    dataStructure.addVertex("test42");
 
     std::cout << "***********************************************************************" << std::endl
               << "***********  Welcome in the collaborative CLI graph editor  ***********" << std::endl
@@ -120,11 +113,7 @@ int Editor::stopRunning()
     return 0;
 }
 
-/**
- * @brief Destroy the Editor::Editor object
- *        Destroy all the commands object when the editor is destroyed
- * 
- */
+
 Editor::~Editor()
 {
     for (auto const &command : this->commands)

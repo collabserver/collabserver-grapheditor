@@ -13,7 +13,6 @@ int VertexAddCommand::exec(utils::config config, std::vector<std::string> argume
         std::cout << "Usage : vertexAdd \"vertex\"" << std::endl;
         return -1;
     }
-    std::cout << "arg " << arguments[0] << std::endl;
     config.getDataStructure().addVertex(arguments[0]);
     //cout << "Vertex added" << std::endl;
     return 0;

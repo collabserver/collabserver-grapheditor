@@ -12,7 +12,6 @@
 #include <string>
 #include "Commands/Command.h"
 
-
 class Editor
 {
   private:
@@ -25,9 +24,25 @@ class Editor
 
   public:
     Editor();
+    /**
+     * @brief Start the graph editing
+     *        Loop while Editor::stopRunning isn't called
+     * 
+     * @return int 
+     */
     int startRunning();
+    /**
+     * @brief Destroy the Editor::Editor object
+     *        Destroy all the commands object when the editor is destroyed
+     * 
+     */
     int stopRunning();
 
+    /**
+     * @brief Destroy the Editor::Editor object
+     *        Destroy all the commands object when the editor is destroyed
+     * 
+     */
     ~Editor();
 };
 
