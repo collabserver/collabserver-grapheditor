@@ -15,12 +15,12 @@ void utils::config::flipLoaded()
     this->loaded = !this->loaded;
 }
 
-void utils::config::setDataStructure(std::vector<std::tuple<int, int>> dataStructure)
+void utils::config::setDataStructure(collab::SimpleGraph& dataStructure)
 {
     this->dataStructure = dataStructure;
 }
 
-std::vector<std::tuple<int, int>> utils::config::getDataStructure()
+collab::SimpleGraph& utils::config::getDataStructure()
 {
     return this->dataStructure;
 }

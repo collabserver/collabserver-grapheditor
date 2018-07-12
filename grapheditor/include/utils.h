@@ -14,21 +14,23 @@
 #include <tuple>
 #include <iostream>
 
+#include "collabdata/custom/SimpleGraph.h"
+
 namespace utils
 {
 
 class config
 {
   private:
-    std::vector<std::tuple<int, int>> dataStructure;
+    collab::SimpleGraph dataStructure;
     bool loaded;
 
   public:
     config();
     bool isLoaded();
     void flipLoaded();
-    void setDataStructure(std::vector<std::tuple<int, int>> dataStructure);
-    std::vector<std::tuple<int, int>> getDataStructure();
+    void setDataStructure(collab::SimpleGraph& dataStructure);
+    collab::SimpleGraph& getDataStructure();
 
 };
 

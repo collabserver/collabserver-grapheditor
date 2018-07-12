@@ -1,7 +1,7 @@
 /**
  * @brief 
  * 
- * @file GraphDisplay.h
+ * @file GraphDisplayCommand.h
  * @author (The Intern)
  * @date 2018-07-09
  */

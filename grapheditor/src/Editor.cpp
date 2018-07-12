@@ -13,17 +13,22 @@
 #include "Commands/QuitCommand.h"
 #include "Commands/EdgeAddCommand.h"
 #include "Commands/EdgeRemoveCommand.h"
-#include "Commands/GraphCloseCommand.h"
+/*#include "Commands/GraphCloseCommand.h"
 #include "Commands/GraphDeleteCommand.h"
+#include "Commands/GraphDisplayCommand.h"
 #include "Commands/GraphListCommand.h"
 #include "Commands/GraphNewCommand.h"
-#include "Commands/GraphOpenCommand.h"
+#include "Commands/GraphOpenCommand.h"*/
 #include "Commands/VertexAddCommand.h"
 #include "Commands/VertexEditCommand.h"
-#include "Commands/VertexInfoCommand.h"
+//#include "Commands/VertexInfoCommand.h"
 #include "Commands/VertexRemoveCommand.h"
+#include "Commands/AttributeAdd.h"
+#include "Commands/AttributeRemove.h"
+#include "Commands/AttributeSet.h"
 
 #include "collabdata/custom/SimpleGraph.h"
+#include "SimpleGraphOperationObserver.h"
 
 Editor::Editor()
 {
@@ -38,16 +43,16 @@ Editor::Editor()
     this->commands[command_->getName()] = command_;
     command_ = new EdgeRemoveCommand();
     this->commands[command_->getName()] = command_;
-    command_ = new GraphCloseCommand();
+    command_ = new AttributeAdd();
     this->commands[command_->getName()] = command_;
-    command_ = new GraphDeleteCommand();
+    command_ = new AttributeRemove();
     this->commands[command_->getName()] = command_;
-    command_ = new GraphListCommand();
+    command_ = new AttributeSet();
+    this->commands[command_->getName()] = command_; 
+    command_ = new VertexAddCommand();
     this->commands[command_->getName()] = command_;
-    command_ = new GraphNewCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new GraphOpenCommand();
-    this->commands[command_->getName()] = command_;
+    command_ = new VertexRemoveCommand();
+    this->commands[command_->getName()] = command_;    
     ///////////////////  Editor commands loading end ///////////////////
 }
 
@@ -66,8 +71,10 @@ int Editor::startRunning()
     }
 
     this->running = true;
-    //FAKE datastructure :
-    std::vector<std::tuple<int, int>> datastructure;
+    collab::SimpleGraph dataStructure = collab::SimpleGraph();
+    SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver();
+    dataStructure.addOperationObserver(opObserver);
+    dataStructure.addVertex("test42");
 
     std::cout << "***********************************************************************" << std::endl
               << "***********  Welcome in the collaborative CLI graph editor  ***********" << std::endl
@@ -84,7 +91,7 @@ int Editor::startRunning()
     std::string arguments;
     std::vector<std::string> argumentsList;
     utils::config conf = utils::config();
-    conf.setDataStructure(datastructure);
+    conf.setDataStructure(dataStructure);
     conf.flipLoaded();
     while (this->running)
     {
