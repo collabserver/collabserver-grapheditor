@@ -29,6 +29,7 @@
 
 #include "collabdata/custom/SimpleGraph.h"
 #include "SimpleGraphOperationObserver.h"
+#include "SimpleGraphOperationHandler.h"
 
 Editor::Editor()
 {
@@ -66,7 +67,8 @@ int Editor::startRunning()
 
     this->running = true;
     collab::SimpleGraph dataStructure = collab::SimpleGraph();
-    SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver();
+    SimpleGraphOperationHandler opHandler = SimpleGraphOperationHandler();
+    SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver(opHandler);
     dataStructure.addOperationObserver(opObserver);
 
     std::cout << "***********************************************************************" << std::endl

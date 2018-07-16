@@ -6,20 +6,19 @@
  * @date 2018-07-10
  */
 
+#ifndef SIMPLEGRAPHOPERATIONOBSERVER_H
+#define SIMPLEGRAPHOPERATIONOBSERVER_H
+
 #include "collabdata/custom/SimpleGraph.h"
+#include "SimpleGraphOperationHandler.h"
 
 class SimpleGraphOperationObserver : public collab::OperationObserver
 {
-  public:
-    SimpleGraphOperationObserver();
-    void onOperation(const collab::Operation &op) override;
-
   private:
-    void applyOperation(const collab::SimpleGraph::AttributeAddOperation op);
-    void applyOperation(const collab::SimpleGraph::AttributeRemoveOperation op);
-    void applyOperation(const collab::SimpleGraph::AttributeSetOperation op);
-    void applyOperation(const collab::SimpleGraph::EdgeAddOperation op);
-    void applyOperation(const collab::SimpleGraph::EdgeRemoveOperation op);
-    void applyOperation(const collab::SimpleGraph::VertexAddOperation op);
-    void applyOperation(const collab::SimpleGraph::VertexRemoveOperation op);
+    SimpleGraphOperationHandler opHandler;
+  public:
+    SimpleGraphOperationObserver(SimpleGraphOperationHandler opHandler);
+    void onOperation(const collab::Operation &op) override;
 };
+
+#endif

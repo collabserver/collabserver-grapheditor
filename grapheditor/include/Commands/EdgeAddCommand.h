@@ -13,5 +13,5 @@ class EdgeAddCommand : public Command
   private:
   public:
     EdgeAddCommand();
-    int exec(utils::config config, std::vector<std::string> arguments);
+    int exec(utils::config config, const std::vector<std::string> &arguments);
 };

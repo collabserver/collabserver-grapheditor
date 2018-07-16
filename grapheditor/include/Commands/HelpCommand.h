@@ -18,6 +18,5 @@ class HelpCommand : public Command {
 
     public:
     HelpCommand(const std::map<std::string, Command*> *commandList);
-    int exec(utils::config config, std::vector<std::string> parameters);
-
+    int exec(utils::config config, const std::vector<std::string> &arguments);
 };

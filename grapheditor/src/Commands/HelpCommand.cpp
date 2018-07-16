@@ -1,7 +1,7 @@
 #include "Commands/HelpCommand.h"
 
 HelpCommand::HelpCommand(const std::map<std::string, Command *> *commandList)
-    : Command("help", "This is the help command", "Non qui ut exercitation dolore consectetur nisi occaecat minim aliqua nulla sint est labore consectetur. Voluptate labore sit nulla Lorem eu officia do ad eiusmod qui cupidatat. Dolore sint deserunt sunt duis magna nulla ad aute deserunt officia sunt sint voluptate occaecat. Minim esse irure incididunt reprehenderit aute enim id ut adipisicing anim pariatur veniam irure. Adipisicing elit nostrud non exercitation in dolore. Consequat officia aliquip ex consectetur reprehenderit labore consectetur ullamco dolor aliqua reprehenderit. Deserunt nulla cupidatat deserunt ex non qui.")
+    : Command("help", "Display this help or the help of a specified command", "Name :\n\t help - Display the list of available commands or the help of a specified command.\nUsage :\n\thelp\n\thelp [command name]")
 {
     if (commandList->size() > 0)
     {
@@ -13,7 +13,7 @@ HelpCommand::HelpCommand(const std::map<std::string, Command *> *commandList)
     }
 }
 
-int HelpCommand::exec(utils::config config, std::vector<std::string> arguments)
+int HelpCommand::exec(utils::config config, const std::vector<std::string> &arguments)
 {
     if (arguments.size() == 0)
     {
@@ -28,6 +28,8 @@ int HelpCommand::exec(utils::config config, std::vector<std::string> arguments)
         if (this->commandList->count(arguments[0]) == 1)
         {
             std::cout << this->commandList->find(arguments[0])->second->getResume() << std::endl;
+        }else{
+            std::cout << arguments[0] << " is not a function" << std::endl;
         }
     }
     else{

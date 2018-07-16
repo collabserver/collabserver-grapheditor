@@ -2,10 +2,10 @@
 #include "collabdata/custom/SimpleGraph.h"
 
 EdgeRemoveCommand::EdgeRemoveCommand()
-    : Command("edgeRemove", "this is the edge remove command", "Est labore deserunt ea in quis est duis adipisicing sint aute aute commodo Lorem est. Consectetur anim esse ullamco velit magna veniam ad. Reprehenderit ad ullamco exercitation consequat sunt eu exercitation aliquip est enim."){}; 
+    : Command("edgeRemove", "Remove the edge between two vertexes", "Name :\n\tedgeRemove - Remove the edge between a source vertex and a destination vertex.\nUsage :\n\tedgeRemove [vertex source id] [vertex destination id]"){}; 
 
 
-int EdgeRemoveCommand::exec(utils::config config, std::vector<std::string> arguments){
+int EdgeRemoveCommand::exec(utils::config config, const std::vector<std::string> &arguments){
     
     if(arguments.size()!=2){
         std::cout << "Error : missing or too many arguments" << std::endl;

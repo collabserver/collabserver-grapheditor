@@ -42,7 +42,7 @@ class Command
     std::string getResume() { return this->resume; }
     bool cmp(Command *cmd) { return this->name == cmd->getName(); }
 
-    virtual int exec(utils::config config, std::vector<std::string> arguments)=0;
+    virtual int exec(utils::config config, const std::vector<std::string> &arguments)=0;
 };
 
 #endif
