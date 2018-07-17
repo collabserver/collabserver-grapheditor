@@ -13,6 +13,6 @@ int VertexRemoveCommand::exec(utils::config config, const std::vector<std::strin
         std::cout << "Usage : vertexRemove \"vertex\"" << std::endl;
         return -1;
     }
-    config.getDataStructure().removeVertex(arguments[0]);
+    config.getDataStructure()->removeVertex(arguments[0]);
     return 0;
 }

@@ -22,15 +22,15 @@ namespace utils
 class config
 {
   private:
-    collab::SimpleGraph dataStructure;
+    collab::SimpleGraph *dataStructure;
     bool loaded;
 
   public:
     config();
     bool isLoaded();
     void flipLoaded();
-    void setDataStructure(collab::SimpleGraph& dataStructure);
-    collab::SimpleGraph& getDataStructure();
+    void setDataStructure(collab::SimpleGraph* dataStructure);
+    collab::SimpleGraph* getDataStructure();
 
 };
 

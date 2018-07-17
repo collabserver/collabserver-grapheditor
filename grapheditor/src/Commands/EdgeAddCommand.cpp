@@ -12,6 +12,6 @@ int EdgeAddCommand::exec(utils::config config, const std::vector<std::string> &a
         std::cout << "Usage : edgeAdd \"from\" \"to\"" << std::endl;
         return -1;
     }
-    config.getDataStructure().addEdge(arguments[0], arguments[1]);
+    config.getDataStructure()->addEdge(arguments[0], arguments[1]);
     return 0;
 }

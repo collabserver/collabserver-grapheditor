@@ -86,7 +86,7 @@ int Editor::startRunning()
     std::string arguments;
     std::vector<std::string> argumentsList;
     utils::config conf = utils::config();
-    conf.setDataStructure(dataStructure);
+    conf.setDataStructure(&dataStructure);
     conf.flipLoaded();
     while (this->running)
     {

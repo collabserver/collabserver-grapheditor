@@ -12,7 +12,7 @@ int EdgeRemoveCommand::exec(utils::config config, const std::vector<std::string>
         std::cout << "Usage : edgeRemove \"from\" \"to\"" << std::endl;
         return -1;
     }
-    config.getDataStructure().removeEdge(arguments[0], arguments[1]);
+    config.getDataStructure()->removeEdge(arguments[0], arguments[1]);
     //std::cout << "Edge removed" << std::endl;
     return 0;
 }

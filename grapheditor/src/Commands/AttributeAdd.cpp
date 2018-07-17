@@ -12,6 +12,6 @@ int AttributeAdd::exec(utils::config config, const std::vector<std::string> &arg
         std::cout << "Usage : attributeAdd \"vertex\" \"name\" \"value\"" << std::endl;
         return -1;
     }
-    config.getDataStructure().addAttribute(arguments[0], arguments[1], arguments[2]);
+    config.getDataStructure()->addAttribute(arguments[0], arguments[1], arguments[2]);
     return 0;
 }

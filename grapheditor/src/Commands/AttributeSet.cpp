@@ -12,6 +12,6 @@ int AttributeSet::exec(utils::config config, const std::vector<std::string> &arg
         std::cout << "Usage : attributeRemove \"vertex\" \"name\" \"value\"" << std::endl;
         return -1;
     }
-    config.getDataStructure().setAttribute(arguments[0], arguments[1], arguments[2]);
+    config.getDataStructure()->setAttribute(arguments[0], arguments[1], arguments[2]);
     return 0;
 }

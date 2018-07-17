@@ -15,12 +15,12 @@ void utils::config::flipLoaded()
     this->loaded = !this->loaded;
 }
 
-void utils::config::setDataStructure(collab::SimpleGraph& dataStructure)
+void utils::config::setDataStructure(collab::SimpleGraph* dataStructure)
 {
     this->dataStructure = dataStructure;
 }
 
-collab::SimpleGraph& utils::config::getDataStructure()
+collab::SimpleGraph* utils::config::getDataStructure()
 {
     return this->dataStructure;
 }
