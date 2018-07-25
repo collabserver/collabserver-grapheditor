@@ -1,7 +1,5 @@
 /**
  * @file MVKWrapper.h
- * @author Robin Donnay
- * @date 28/05/18
  * @brief Class allowing communication with Modelverse Database in C++
  *
  * This is a basic wrapper with small error detection.
@@ -104,6 +102,15 @@ public:
 
     const std::string &getDatabaseAnswer() const;
 
+    /**
+     * @brief Return the last database answer without uselsess information
+     * @warning There is no verification in the content of databaseAnswer so
+     *      use with caution
+     * @return The last database answer (without "\"Success :" at the begining
+     *      and "\"" at the end) or an empty string if the answer is to short
+     */
+    const std::string getCleanDatabaseAnswer() const;
+
     void setDatabaseAnswer(const std::string &databaseAnswer);
 
     /**
@@ -175,12 +182,23 @@ public:
     int modelDelete(const std::string savePathName);
 
     /**
+     * @brief check if the model respect the metamodel
+     *      if it's good databaseAnswer should be : "Success : OK"
+     * @pre being in megamodeling mode
+     * @param savePathName the model you want to verify
+     * @param modelType the metamodel you want to use
+     * @return -1 if there is a detected error
+     */
+    int
+    modelVerify(const std::string savePathName, const std::string modelType);
+
+    /**
      * @brief start the modeling mode in the model in parameter
      * @pre being in megamodeling mode
      * @post you are in modeling mode
      * @param workingModel the model you want to modify
      * @param modelType the metamodel of the model
-     * @return
+     * @return -1 if there is a detected error
      */
     int
     modelModify(const std::string workingModel, const std::string modelType);
@@ -230,6 +248,7 @@ public:
 
     /**
      * @brief delete the element in paramter (and the edge linked to him)
+     * @pre being in modeling mode
      * @param name the path of the element to delete
      * @return -1 if there is a detected error
      */
@@ -238,6 +257,7 @@ public:
     /**
      * @brief add an attribute to the element in parameter or modify an already
      *      created element
+     * @pre being in modeling mode
      * @param element the element in wich we want to add an element
      * @param attributeType the type of the element we add
      * @param attributeValue the value of the new attribute
@@ -249,13 +269,36 @@ public:
 
     /**
      * @brief delete the attribute of the element in parameters
-     * @param element the element in wich we want to delete
+     * @pre being in modeling mode
+     * @param element the element in which we want to delete
      * @param attributeType the attribute to delete
      * @return -1 if there is a detected error
      */
     int
     attributeDelete(const std::string element, const std::string attributeType);
 
+    /**
+     * @brief
+     * @param element
+     * @param attributeType
+     * @param attributeValue
+     * @return
+     */
+    int attributeAddModifyCode(const std::string element,
+                               const std::string attributeType,
+                               const std::string attributeValue);
+
+    /**
+     * @brief define another attribute for the element in parameters
+     * @warning Metamodeling Function
+     * @param element the element in which we define the new attribute
+     * @param attributeName the name of the new attribute
+     * @param attributeType the type of the new attribute
+     * @return
+     */
+    int
+    defineAttribute(const std::string element, const std::string attributeName,
+                    const std::string attributeType);
 };
 
 

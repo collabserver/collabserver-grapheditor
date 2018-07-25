@@ -1,7 +1,5 @@
 /**
  * @file UuidGenerator.h
- * @author Robin Donnay
- * @date 28/06/18
  * @brief Class for uuid generation
  */
 
