@@ -21,7 +21,8 @@
 #include "Commands/GraphOpenCommand.h"*/
 #include "Commands/VertexAddCommand.h"
 #include "Commands/VertexEditCommand.h"
-//#include "Commands/VertexInfoCommand.h"
+#include "Commands/VertexInfoCommand.h"
+#include "Commands/VertexListCommand.h"
 #include "Commands/VertexRemoveCommand.h"
 #include "Commands/AttributeAdd.h"
 #include "Commands/AttributeRemove.h"
@@ -53,7 +54,11 @@ Editor::Editor()
     command_ = new VertexAddCommand();
     this->commands[command_->getName()] = command_;
     command_ = new VertexRemoveCommand();
-    this->commands[command_->getName()] = command_;    
+    this->commands[command_->getName()] = command_;
+    command_ = new VertexListCommand();
+    this->commands[command_->getName()] = command_;
+    command_ = new VertexInfoCommand();
+    this->commands[command_->getName()] = command_;
     ///////////////////  Editor commands loading end ///////////////////
 }
 
