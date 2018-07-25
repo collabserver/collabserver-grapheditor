@@ -27,9 +27,11 @@ MVKWrapper::MVKWrapper(const char *connectionAdress,
 }
 
 MVKWrapper::~MVKWrapper() {
-    log->close();
-    delete log;
-    log = nullptr;
+    if (isDebugMode()) {
+        log->close();
+        delete log;
+        log = nullptr;
+    }
     curl_easy_cleanup(curl);
     curl_global_cleanup(); // Cleaning of curl
 }
@@ -63,6 +65,14 @@ const std::string &MVKWrapper::getDatabaseAnswer() const {
     return databaseAnswer;
 }
 
+const std::string MVKWrapper::getCleanDatabaseAnswer() const {
+    std::string res = "";
+    if (databaseAnswer.length() > 11) {
+        res = databaseAnswer.substr(10, databaseAnswer.length() - 11);
+    }
+    return res;
+}
+
 void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
     MVKWrapper::databaseAnswer = databaseAnswer;
 }
@@ -73,8 +83,10 @@ void MVKWrapper::send(const char *data) {
 
     // TODO Juste mettre la data (sans le uid) dans les infos du log
     CURLcode curlAnswer = curl_easy_perform(curl);
-    *log << "Sending : " << data << "\n   Answer : "
-         << databaseAnswer << "\n";
+    if (isDebugMode()) {
+        *log << "Sending : " << data << "\n   Answer : "
+             << databaseAnswer << "\n";
+    }
     curlError(curlAnswer);
 }
 
@@ -83,9 +95,11 @@ bool MVKWrapper::receive() {
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
 
     CURLcode curLAnswer = curl_easy_perform(curl);
-    *log << "Sending : " << receiveRequest << "\n   Answer :"
-         << databaseAnswer << "\n";
-    if (isDebugMode()) { std::cout << databaseAnswer << "\n"; }
+    if (isDebugMode()) {
+        *log << "Sending : " << receiveRequest << "\n   Answer :"
+             << databaseAnswer << "\n";
+        std::cout << databaseAnswer << "\n";
+    }
     curlError(curLAnswer);
     if (functionError()) {
         return false;
@@ -202,6 +216,20 @@ int MVKWrapper::modelDelete(const std::string savePathName) {
     return 0;
 }
 
+int MVKWrapper::modelVerify(const std::string savePathName,
+                            const std::string modelType) {
+    std::string request =
+            "data=[\"verify\",\"" + savePathName + "\",\"" + modelType +
+            "\"]" + baseSendRequest;
+    send(request.c_str());
+    if (!receive()) { return -1; }
+    if (isDebugMode()) {
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+    }
+    return 0;
+}
+
 int MVKWrapper::modelModify(const std::string workingModel,
                             const std::string modelType) {
     std::string request =
@@ -213,7 +241,6 @@ int MVKWrapper::modelModify(const std::string workingModel,
         if (!receive()) { return -1; }
         if (!receive()) { return -1; }
     }
-
     return 0;
 }
 
@@ -305,14 +332,48 @@ int MVKWrapper::attributeAddModify(const std::string element,
     return 0;
 }
 
+int MVKWrapper::attributeAddModifyCode(const std::string element,
+                                       const std::string attributeType,
+                                       const std::string attributeValue) {
+    std::string request =
+            "data=[\"attr_add_code\",\"" + element + "\",\"" + attributeType +
+            "\",\"" + attributeValue + "\"]" + baseSendRequest;
+    send(request.c_str());
+    if (!receive()) { return -1; }
+    if (isDebugMode()) {
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+    }
+
+    return 0;
+}
+
 int MVKWrapper::attributeDelete(const std::string element,
                                 const std::string attributeType) {
     std::string request =
             "data=[\"attr_delete\",\"" + element + "\",\"" + attributeType +
-            +"\"]" + baseSendRequest;
+            "\"]" + baseSendRequest;
     send(request.c_str());
     if (!receive()) { return -1; }
     if (isDebugMode()) {
+        if (!receive()) { return -1; }
+        if (!receive()) { return -1; }
+    }
+
+    return 0;
+}
+
+int MVKWrapper::defineAttribute(const std::string element,
+                                const std::string attributeName,
+                                const std::string attributeType) {
+    std::string request = "data=[\"define_attribute\",\"" + element + "\",\"" +
+                          attributeName + "\",\"" + attributeType + "\"]" +
+                          baseSendRequest;
+    send(request.c_str());
+    if (!receive()) { return -1; }
+    if (isDebugMode()) {
+        if (!receive()) { return -1; }
         if (!receive()) { return -1; }
         if (!receive()) { return -1; }
     }
@@ -324,7 +385,9 @@ void MVKWrapper::initCurl() {
     curl_global_init(CURL_GLOBAL_ALL); // Init of curl
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, this->connectionAdress.c_str());
-    log = new std::ofstream("log.txt", std::ios::trunc);
+    if (isDebugMode()) {
+        log = new std::ofstream("log.txt", std::ios::trunc);
+    }
     databaseAnswer = "";
 
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &databaseAnswer);

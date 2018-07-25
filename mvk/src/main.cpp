@@ -1,7 +1,11 @@
 #include <iostream>
+#include <collabdata/custom/SimpleGraph.h>
+
 #include "../include/MVKWrapper.h"
 #include "../include/Prompt.h"
-
+#include "../include/MVKSimpleGraphOperationHandler.h"
+#include "../include/DatabaseSimpleGraphOperationHandler.h"
+#include "../include/DatabaseObserver.h"
 
 void mvkConnect() {
     MVKWrapper connector(LOCALCONNECTIONADRESS, true);
@@ -111,7 +115,7 @@ void mvkAttributeAdd() {
     connector.attributeAddModify(elementName, attributeType, "Nouvelle Valeur");
     connector.listFull();
     connector.JSON();
-    connector.attributeDelete(elementName,attributeType);
+    connector.attributeDelete(elementName, attributeType);
     connector.listFull();
     connector.JSON();
     connector.deleteElement(elementName);
@@ -120,6 +124,86 @@ void mvkAttributeAdd() {
     connector.modelDelete(workingModel);
     connector.modelList("models");
 }
+
+void testConstraint() {
+
+    const std::string workingModel = "formalisms/SimpleGraph";
+    const std::string metamodel = "formalisms/SimpleClassDiagrams";
+    const std::string vertex = "Vertex";
+    const std::string edge = "Edge";
+    const std::string attribute = "Attribute";
+    const std::string string = "String";
+
+    /*
+    const std::string constraint = "$ String function constraint(model : Element, name : String):"
+            "   if (string_gte(read_attribute(model, name, 'source'), read_attribute(model, name, 'target'))):"
+            "       return 'Auto Edge'!"
+            "   else:"
+            "       return 'Yeah Baby'! $";
+    std::cout << constraint << "\n";
+     */
+
+    MVKWrapper mvkConnector(LOCALCONNECTIONADRESS, true);
+    mvkConnector.connect("admin", "admin");
+    mvkConnector.modelAdd(workingModel, metamodel, "");
+    if (mvkConnector.getDatabaseAnswer() ==
+        "\"Model exists: formalisms/SimpleGraph\"") {
+        mvkConnector.modelDelete(workingModel);
+        mvkConnector.modelAdd(workingModel, metamodel, "");
+    }
+    mvkConnector.modelAdd("test", workingModel, "");
+    if (mvkConnector.getDatabaseAnswer() ==
+        "\"Model exists: test\"") {
+        mvkConnector.modelDelete("test");
+        mvkConnector.modelAdd("test", workingModel, "");
+    }
+
+    mvkConnector.modelModify(workingModel, metamodel);
+    // Création des 3 Element du metamodel
+    mvkConnector.instantiateNode("String", vertex);
+    mvkConnector.instantiateEdge("Association", edge, vertex, vertex);
+    mvkConnector.instantiateNode("String", attribute);
+    // Création des attributs
+    mvkConnector.instantiateNode(string, string);
+    mvkConnector.defineAttribute(attribute, vertex, string);
+    mvkConnector.defineAttribute(attribute, "Name", string);
+    mvkConnector.defineAttribute(attribute, "Value", string);
+
+    /*
+    std::cout<<"\nSTRESSS !!!\n";
+    mvkConnector.attributeAddModifyCode(edge, "constraint", constraint);
+    std::cout << "\nFUCK YEAH !\n\n";
+     */
+
+    mvkConnector.modelExit();
+
+    mvkConnector.modelModify("test", workingModel);
+    mvkConnector.instantiateNode(vertex, "v1");
+    mvkConnector.instantiateNode(vertex, "v2");
+    mvkConnector.instantiateEdge(edge, "e1", "v1", "v1");
+    mvkConnector.modelExit();
+    mvkConnector.modelVerify("test", workingModel);
+};
+
+void testSimpleGraphOperation() {
+    MVKSimpleGraphOperationHandler opHandler;
+    DatabaseObserver *observer = new DatabaseObserver(&opHandler);
+    collab::SimpleGraph graph;
+    graph.addOperationObserver(*observer);
+
+    graph.addVertex("v1");
+    graph.addVertex("v2");
+    graph.addEdge("v1", "v2");
+    graph.addAttribute("v1", "Ville", "Lyon");
+    graph.addAttribute("v1", "Quartier1", "Monplaisir");
+    graph.addAttribute("v1", "Quartier2", "GrangeBlanche");
+    graph.addAttribute("v2", "Ville", "Paris");
+    graph.removeAttribute("v1", "Quartier2");
+    graph.setAttribute("v2", "Ville", "Marseille");
+
+    std::cout<<"\nLet's Load !!\n";
+    opHandler.loadModel();
+};
 
 void allTest() {
     mvkConnect();
@@ -135,7 +219,7 @@ void allTest() {
     mvkInstantiateEdge();
     std::cout << "\n";
     mvkAttributeAdd();
-    std::cout<<"\n";
+    std::cout << "\n";
 }
 
 void launchPrompt() {
@@ -147,9 +231,14 @@ int main() {
     std::cout << "Début du Programme !" << std::endl;
     //MVKWrapper connector(LOCALCONNECTIONADRESS,true);
 
-    allTest();
+    testSimpleGraphOperation();
+
+    /*MVKSimpleGraphOperationHandler opHandler;
+    opHandler.loadModel();*/
+
+    //allTest();
     //launchPrompt();
 
-    std::cout << "Fin du Programme !" << std::endl;
+    std::cout << "Fin du Programme !\n";
     return 0;
 }

@@ -1,7 +1,5 @@
 /**
  * @file Prompt.h
- * @author Robin Donnay
- * @date 20/06/18
  * @brief Class test for MVK Wrapper with user interaction
  */
 
