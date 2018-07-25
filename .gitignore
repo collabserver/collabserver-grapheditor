@@ -5,6 +5,13 @@ bin/
 doc/
 .syntastic_cpp_config
 .ycm_extra_conf.py
+.idea/
+cmake-build-debug/
+log.txt
+mvk/.idea/
+mvk/CMakeLists.txt
+mvk/cmake-build-debug/
+
 
 
 # Created by https://www.gitignore.io/api/c,vim,c++
