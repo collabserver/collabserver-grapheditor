@@ -11,6 +11,7 @@
 #include "Commands/Command.h"
 #include "Commands/HelpCommand.h"
 #include "Commands/QuitCommand.h"
+#include "Commands/ConnectCommand.h"
 #include "Commands/EdgeAddCommand.h"
 #include "Commands/EdgeRemoveCommand.h"
 /*#include "Commands/GraphCloseCommand.h"
@@ -58,6 +59,8 @@ Editor::Editor()
     command_ = new VertexListCommand();
     this->commands[command_->getName()] = command_;
     command_ = new VertexInfoCommand();
+    this->commands[command_->getName()] = command_;
+    command_ = new ConnectCommand();
     this->commands[command_->getName()] = command_;
     ///////////////////  Editor commands loading end ///////////////////
 }
