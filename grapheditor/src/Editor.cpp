@@ -14,12 +14,6 @@
 #include "Commands/ConnectCommand.h"
 #include "Commands/EdgeAddCommand.h"
 #include "Commands/EdgeRemoveCommand.h"
-/*#include "Commands/GraphCloseCommand.h"
-#include "Commands/GraphDeleteCommand.h"
-#include "Commands/GraphDisplayCommand.h"
-#include "Commands/GraphListCommand.h"
-#include "Commands/GraphNewCommand.h"
-#include "Commands/GraphOpenCommand.h"*/
 #include "Commands/VertexAddCommand.h"
 #include "Commands/VertexEditCommand.h"
 #include "Commands/VertexInfoCommand.h"

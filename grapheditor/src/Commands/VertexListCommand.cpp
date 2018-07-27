@@ -37,20 +37,20 @@ int VertexListCommand::exec(utils::config config, const std::vector<std::string>
         {
             // Show attributes
             collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
-            std::cout << "Attribute :"<< std::endl;
+            std::cout << "\tAttribute :"<< std::endl;
             while (attributes.moveNext())
             {
                 const collab::SimpleGraph::AttributeDescriptor attribute = attributes.current();
-                std::cout << "\t" << attribute.name() << " : " << attribute.value() << std::endl;
+                std::cout << "\t\t" << attribute.name() << " : " << attribute.value() << std::endl;
             }
             std::cout << std::endl;
             // Show edges
             collab::SimpleGraph::EdgeIterator edges = vertex.edges();
-            std::cout << "Edge :"<< std::endl;
+            std::cout << "\tEdge :"<< std::endl;
             while (edges.moveNext())
             {
                 const collab::SimpleGraph::UUID &edge = edges.current();
-                std::cout <<"\t" << vertex.id() << " -> " << edge << std::endl;
+                std::cout <<"\t\t" << vertex.id() << " -> " << edge << std::endl;
             }
         }
         std::cout << std::endl;

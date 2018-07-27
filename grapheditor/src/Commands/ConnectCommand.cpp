@@ -31,6 +31,6 @@ int ConnectCommand::exec(utils::config config, const std::vector<std::string> &a
     }
 
     //TODO use the simplegraph connect
-    std::cout << "Connecting to " << arguments[0] << ":" << port << " ..." << std::endl;
+    std::cout << "Connecting to " << arguments[0] /*Adresse IP*/<< ":" << port << " ..." << std::endl;
     return 0;
 }
