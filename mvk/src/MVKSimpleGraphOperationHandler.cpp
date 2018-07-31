@@ -2,7 +2,7 @@
 // Created by robin on 04/07/18.
 //
 
-#include "MVKSimpleGraphOperationHandler.h"
+#include "../include/MVKSimpleGraphOperationHandler.h"
 
 #define NODETYPE "Vertex"
 #define EDGETYPE "Edge"
@@ -194,24 +194,32 @@ void MVKSimpleGraphOperationHandler::baseConstructor() {
     mvkConnector->connect("admin", "admin");
     generateMetamodel();
 
-    //TODO if model exist
     mvkConnector->modelAdd(workingModel, metaModel, "");
-    mvkConnector->modelModify(workingModel, metaModel);
+    if (mvkConnector->getDatabaseAnswer() ==
+        "\"Model exists: " + workingModel + "\"") {
+        //TODO if model exist load it
+        std::cout<<graph->nbVertices()<<"\n";
+        mvkConnector->modelModify(workingModel, metaModel);
+        loadModel();
+        std::cout<<graph->nbVertices()<<"\n";
+    } else {
+        mvkConnector->modelModify(workingModel, metaModel);
+    }
 }
 
 void MVKSimpleGraphOperationHandler::generateMetamodel() {
     // TODO Add constraint about Edge between same Vertex
-    const std::string workingModel = "formalisms/SimpleGraph";
-    const std::string metamodel = "formalisms/SimpleClassDiagrams";
+    const std::string workingMetaModel = "formalisms/SimpleGraph";
+    const std::string metaMetaModel = "formalisms/SimpleClassDiagrams";
     const std::string vertex = "Vertex";
     const std::string edge = "Edge";
     const std::string attribute = "Attribute";
     const std::string string = "String";
 
-    mvkConnector->modelAdd(workingModel, metamodel, "");
+    mvkConnector->modelAdd(workingMetaModel, metaMetaModel, "");
     if (mvkConnector->getDatabaseAnswer() !=
-        "\"Model exists: formalisms/SimpleGraph\"") {
-        mvkConnector->modelModify(workingModel, metamodel);
+        "\"Model exists: " + workingMetaModel + "\"") {
+        mvkConnector->modelModify(workingMetaModel, metaMetaModel);
 
         mvkConnector->instantiateNode("Class", vertex);
         mvkConnector->instantiateEdge("Association", edge, vertex, vertex);

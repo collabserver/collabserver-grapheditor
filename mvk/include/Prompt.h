@@ -1,5 +1,4 @@
 /**
- * @file Prompt.h
  * @brief Class test for MVK Wrapper with user interaction
  */
 

@@ -1,5 +1,4 @@
 /**
- * @file DatabaseOperationHandler.h
  * @brief Basic Interface for any Database and any Metamodel
  *
  * You must instantiate one OperationHandler per Model

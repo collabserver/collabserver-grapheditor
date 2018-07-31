@@ -1,6 +1,5 @@
 /**
- * @file DatabaseSimpleGraphOperationHandler.h
- * @brief Abastract class handling operation for any database for the
+ * @brief Abstract class handling operation for any database for the
  *      SimpleGraph Metamodel
  */
 

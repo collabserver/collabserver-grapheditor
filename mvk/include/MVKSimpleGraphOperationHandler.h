@@ -1,5 +1,7 @@
-//
-//
+/**
+ * @brief class handling all the operation between the MVK and a simple graph
+ *      instance
+ */
 
 #ifndef COLLAB_POC_MVKSIMPLEGRAPHOPERATION_H
 #define COLLAB_POC_MVKSIMPLEGRAPHOPERATION_H
@@ -36,15 +38,15 @@ private:
     void generateMetamodel();
 
     /**
-     *
-     * @return
+     * @brief get all the model in a cJson pointer
+     * @return a cJson pointer with all the model in it
      */
     cJSON * getJSON();
 
     /**
-     *
-     * @param attributeId
-     * @return
+     * @brief get the value of the attribute in parameter
+     * @param attributeId the id of the value's attribute
+     * @return the value of the attribute
      */
     std::string getAttributeValue(std::string attributeId);
 
@@ -89,6 +91,10 @@ public:
      */
     bool isModelCorrect();
 
+    /**
+     * @brief send all the content of the database model to the graph
+     * @post the database model and the graph should be in same state
+     */
     void loadModel();
 };
 

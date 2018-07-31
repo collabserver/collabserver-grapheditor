@@ -1,5 +1,4 @@
 /**
- * @file UuidGenerator.h
  * @brief Class for uuid generation
  */
 

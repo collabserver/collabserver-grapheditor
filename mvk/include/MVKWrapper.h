@@ -1,5 +1,4 @@
 /**
- * @file MVKWrapper.h
  * @brief Class allowing communication with Modelverse Database in C++
  *
  * This is a basic wrapper with small error detection.
@@ -16,8 +15,6 @@
 #include "../include/UuidGenerator.h"
 
 // TODO Best Error Checking/Action
-// TODO Fonction qui envois des écoute tant qu'il n'a pas finis de parler
-// TODO Fonction qui affiche l'aide
 
 class MVKWrapper {
 
@@ -299,6 +296,8 @@ public:
     int
     defineAttribute(const std::string element, const std::string attributeName,
                     const std::string attributeType);
+
+    static void unitTest();
 };
 
 

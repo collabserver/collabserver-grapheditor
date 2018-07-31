@@ -1,5 +1,4 @@
 /**
- * @file DatabaseObserver.h
  * @brief Observer for any Metamodel
  */
 
