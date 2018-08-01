@@ -1,4 +1,4 @@
-message(STATUS "Building Mvk executable")
+message(STATUS "Building Mvk client")
 
 include_directories("${CMAKE_SOURCE_DIR}/mvk/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")

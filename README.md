@@ -28,34 +28,82 @@
 - [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake)
 - [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake)
 - [ZeroMQ](http://zeromq.org/) (**Must be installed system-wide**)
-- Curl (**System-wide**)
+- Curl (**Must be installed System-wide**)
 
 
-## Build instructions
+## Submodules
+This project uses submodules to manage dependencies with the other collab
+components used internally. You may need to work on these component and
+this poc project at the same time and submodules are useful for that purpose. \\
+For further information about submodules, check the official documentation:
+https://git-scm.com/book/en/v2/Git-Tools-Submodules and
+https://git-scm.com/docs/git-submodule.
 
-### Clone project with dependencies
+### Clone with submodules
 ```bash
 git clone --recursive https://github.com/CollabServer/collab-poc.git
-cd collab-poc
+```
+### Pull new changes
+Because of submodule, you should use the recursive argument of `pull`.
+```bash
+git pull --recurse-submodules=on
+```
+### Update submodules
+```bash
+git submodule update --remote
 ```
 
+
+## Graphic Editor client
+Graph editor is a command line tool to edit graph.
+This is an example of end-user client that uses collab-data-crdts to
+handle multi-users real-time collaboration.
+Each vertex in the graph has a map of attributes: {name,value}.
+
 ### Build and run with CMake
-#### Manual build instructions
 ```bash
 mkdir build
 cd build
 cmake ..
 make -j4
-make runGrapheditor # To run grapheditor client
-make runMvk         # To run mvk database
-```
+make runGrapheditor
 
-#### With build script
-```bash
+# Or use build script
 ./build.sh
 cd build
-make runGrapheditor # To run grapheditor client
-make runMvk         # To run mvk database
+make runGrapheditor
+```
+
+
+## Mvk collab client (Modelverse)
+Mvk is a database for Model-Driven Engineering models (MDE).
+This is an example of client to a Mvk database in order to work with the
+grapheditor client project.
+
+### Setup Mvk
+The Mvk is an external database that must be run separately.
+Please refers to the official Mvk installation documentation:
+https://msdl.uantwerpen.be/documentation/modelverse/installation.html#dependencies
+
+### Run Mvk database
+Once downloaded and setup, start the Mvk database.
+```bash
+python scripts/run_local_modelverse.py
+```
+
+### Build and run with CMake
+**Mvk database must be running locally first**
+```bash
+mkdir build
+cd build
+cmake ..
+make -j4
+make runMvk
+
+# Or use build script
+./build.sh
+cd build
+make runMvk
 ```
 
 

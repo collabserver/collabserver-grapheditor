@@ -1,4 +1,4 @@
-message(STATUS "Building GraphicEditor executable")
+message(STATUS "Building GraphicEditor client")
 
 include_directories("${CMAKE_SOURCE_DIR}/grapheditor/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")

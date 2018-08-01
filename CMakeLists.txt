@@ -13,16 +13,17 @@ set(collab_dependency_dir "${CMAKE_SOURCE_DIR}/dependencies/")
 set(collab_gitmodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
 
 include("CMake/AddCompilerFlags.cmake")
-include("CMake/ExternalProjects/AddCollabclient.cmake")
-include("CMake/ExternalProjects/AddCollabdata.cmake")
+
+include("CMake/ExternalProjects/Collabclient.cmake")
+include("CMake/ExternalProjects/Collabdata.cmake")
 
 
 # ------------------------------------------------------------------------------
 # GraphEditor
 # ------------------------------------------------------------------------------
-option(collab_graphiceditor "Build GraphicEditor poc executable" ON)
+option(collab_graphiceditor "Build GraphicEditor client" ON)
 if(collab_graphiceditor)
-    message(STATUS "Build GraphicEditor poc")
+    message(STATUS "Build GraphicEditor client")
     include("CMake/AddGraphiceditor.cmake")
 endif()
 
@@ -30,9 +31,9 @@ endif()
 # ------------------------------------------------------------------------------
 # Mvk
 # ------------------------------------------------------------------------------
-option(collab_mvk "Build Mvk poc executable" ON)
+option(collab_mvk "Build Mvk database client" ON)
 if(collab_mvk)
-    message(STATUS "Build Mvk poc")
+    message(STATUS "Build Mvk db client")
     include("CMake/AddMvk.cmake")
 endif()
 
