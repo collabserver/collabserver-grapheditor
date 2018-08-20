@@ -20,10 +20,10 @@ class CommandInfo {
         }
 
     public:
-        const std::string getName() const { return _name; }
-        const std::string getShortname() const { return _shortname; }
-        const std::string getUsage() const { return _usage; }
-        const std::string getDescription() const { return _description; }
+        const std::string& getName() const { return _name; }
+        const std::string& getShortname() const { return _shortname; }
+        const std::string& getUsage() const { return _usage; }
+        const std::string& getDescription() const { return _description; }
 };
 
 

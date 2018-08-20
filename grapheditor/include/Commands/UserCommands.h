@@ -12,23 +12,20 @@
 
 class HelpCommand : public Command {
     private:
-        const std::map<std::string, Command*>* _commandList;
+        const std::map<std::string, Command*>* _commands;
 
     public:
         HelpCommand(const CommandInfo& info,
-                    const std::map<std::string, Command*> *commandList);
+                    const std::map<std::string, Command*> *commands);
         int exec(utils::config config,
-                 const std::vector<std::string> &arguments);
+                 const std::vector<std::string>& args) override;
 };
 
 class ConnectCommand : public Command {
-    private:
-        Editor* editor;
-
     public:
         ConnectCommand(const CommandInfo& info) : Command(info) {}
         int exec(utils::config config,
-                 const std::vector<std::string> &arguments) override;
+                 const std::vector<std::string>& args) override;
 };
 
 class QuitCommand : public Command {
@@ -38,7 +35,7 @@ class QuitCommand : public Command {
     public:
         QuitCommand(const CommandInfo& info, Editor* editor);
         int exec(utils::config config,
-                 const std::vector<std::string> &arguments);
+                 const std::vector<std::string>& args) override;
 };
 
 
