@@ -1,19 +1,19 @@
 #include "Commands/VertexInfoCommand.h"
 
 VertexInfoCommand::VertexInfoCommand()
-    : Command("vertexInfo", "Display information about a specified vertex", "Name :\n\tvertexInfo - Display the information about the specified vertex.\nUsage :\n\tvertexInfo [vertex id]"){};
+    : Command("vertexInfo",
+              "Display information about a specified vertex",
+              "Name :\n\tvertexInfo - Display the information about the specified vertex.\nUsage :\n\tvertexInfo [vertex id]"){
+};
 
-int VertexInfoCommand::exec(utils::config config, const std::vector<std::string> &arguments)
-{
-    //@TODO
-    if (arguments.size() != 1)
-    {
+int VertexInfoCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
+    //TODO
+    if (arguments.size() != 1) {
         std::cout << "Error : missing or too many arguments" << std::endl;
         return -1;
     }
 
-    try
-    {
+    try {
         collab::SimpleGraph::VertexDescriptor vertex = config.getDataStructure()->at(arguments[0]);
         std::cout << "- " << vertex.id() << std::endl;
         // Show attributes
@@ -34,8 +34,7 @@ int VertexInfoCommand::exec(utils::config config, const std::vector<std::string>
             std::cout << "\t" << vertex.id() << " -> " << edge << std::endl;
         }
     }
-    catch (const std::out_of_range &e)
-    {
+    catch (const std::out_of_range &e) {
         std::cout << "Error : vertex " << arguments[0] << " not found in this graph" << std::endl;
         return -2;
     }

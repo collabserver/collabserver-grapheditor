@@ -1,11 +1,14 @@
 #include "Commands/GraphListCommand.h"
 
 GraphListCommand::GraphListCommand()
-    : Command("graphList", "this is the list graph command", "Est labore deserunt ea in quis est duis adipisicing sint aute aute commodo Lorem est. Consectetur anim esse ullamco velit magna veniam ad. Reprehenderit ad ullamco exercitation consequat sunt eu exercitation aliquip est enim."){};
+    : Command("graphList",
+              "this is the list graph command",
+              "TODO"){
+};
 
 
 int GraphListCommand::exec(utils::config config, const std::vector<std::string> &arguments){
-    //@TODO
-    std::cout << "GraphList :" << std::endl;
+    //TODO To implement
+    std::cout << "GraphList: (Not implemented yet)\n";
     return 0;
 }

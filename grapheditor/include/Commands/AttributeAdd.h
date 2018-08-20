@@ -1,16 +1,10 @@
-/**
- * @brief 
- * 
- * @file AttributeAdd.h
- * @author (The Intern)
- * @date 2018-07-03
- */
+#pragma once
+
 #include "Command.h"
 
-class AttributeAdd : public Command
-{
-  private:
-  public:
-    AttributeAdd();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+
+class AttributeAdd : public Command {
+    public:
+        AttributeAdd();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

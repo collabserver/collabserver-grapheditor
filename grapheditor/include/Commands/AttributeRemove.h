@@ -1,16 +1,10 @@
-/**
- * @brief 
- * 
- * @file AttributeRemove.h
- * @author (The Intern)
- * @date 2018-07-03
- */
+#pragma once
+
 #include "Command.h"
 
-class AttributeRemove : public Command
-{
-  private:
-  public:
-    AttributeRemove();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+
+class AttributeRemove : public Command {
+    public:
+        AttributeRemove();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

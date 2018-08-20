@@ -1,11 +1,12 @@
 #include "Editor.h"
 
+#include <cassert>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <tuple>
-#include <cstdlib>
 
 #include "utils.h"
 #include "Commands/Command.h"
@@ -22,67 +23,72 @@
 #include "Commands/AttributeAdd.h"
 #include "Commands/AttributeRemove.h"
 #include "Commands/AttributeSet.h"
-
-#include "collabdata/custom/SimpleGraph.h"
 #include "SimpleGraphOperationObserver.h"
 #include "SimpleGraphOperationHandler.h"
+#include "collabdata/custom/SimpleGraph.h"
 
-Editor::Editor()
-{
-    this->running = false;
-    ///////////////////  Editor commands loading  ///////////////////
-    Command *command_;
-    command_ = new QuitCommand(this);
-    this->commands[command_->getName()] = command_;
-    command_ = new EdgeAddCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new HelpCommand(&(this->commands));
-    this->commands[command_->getName()] = command_;
-    command_ = new EdgeRemoveCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new AttributeAdd();
-    this->commands[command_->getName()] = command_;
-    command_ = new AttributeRemove();
-    this->commands[command_->getName()] = command_;
-    command_ = new AttributeSet();
-    this->commands[command_->getName()] = command_; 
-    command_ = new VertexAddCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new VertexRemoveCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new VertexListCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new VertexInfoCommand();
-    this->commands[command_->getName()] = command_;
-    command_ = new ConnectCommand();
-    this->commands[command_->getName()] = command_;
-    ///////////////////  Editor commands loading end ///////////////////
+
+#define WELCOME_MENU_TEXT     \
+"________________________________________________________________________________\n"\
+"                                                                                \n"\
+"          ___|                 |       ____|     |_) |                          \n"\
+"         |      __| _` | __ \\  __ \\    __|    _` | | __|  _ \\   __|          \n"\
+"         |   | |   (   | |   | | | |   |     (   | | |   (   | |                \n"\
+"        \\____|_|  \\__,_| .__/ _| |_|  _____|\\__,_|_|\\__|\\___/ _|           \n"\
+"                        _|                                                      \n"\
+"________________________________________________________________________________"
+
+
+Editor::Editor() {
+    Command *cmd = nullptr;
+
+    cmd = new QuitCommand(this);
+    _commands[cmd->getName()] = cmd;
+    cmd = new EdgeAddCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new EdgeRemoveCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new AttributeAdd();
+    _commands[cmd->getName()] = cmd;
+    cmd = new AttributeRemove();
+    _commands[cmd->getName()] = cmd;
+    cmd = new AttributeSet();
+    _commands[cmd->getName()] = cmd;
+    cmd = new VertexAddCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new VertexRemoveCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new VertexListCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new VertexInfoCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new ConnectCommand();
+    _commands[cmd->getName()] = cmd;
+    cmd = new HelpCommand(&_commands);
+    _commands[cmd->getName()] = cmd;
 }
 
-int Editor::startRunning()
-{
-    if (commands.empty())
-    {
-        std::cerr << "Error : No commands available in the editor." << std::endl;
-        return -1;
+Editor::~Editor() {
+    this->stop();
+    for (const auto& command : _commands) {
+        free(command.second);
     }
+}
 
-    this->running = true;
+void Editor::start() {
+    assert(!_commands.empty());
+    assert(_running == false);
+
+    if(_running == true) { return; }
+    _running = true;
+
     collab::SimpleGraph dataStructure = collab::SimpleGraph();
     SimpleGraphOperationHandler opHandler = SimpleGraphOperationHandler();
     SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver(opHandler);
     dataStructure.addOperationObserver(opObserver);
 
-    std::cout << "***********************************************************************" << std::endl
-              << "***********  Welcome in the collaborative CLI graph editor  ***********" << std::endl
-              << "***********************************************************************"
-              << std::endl;
-    std::cout << std::endl
-              << "Create and edit your graph by tipping the appropriate command" << std::endl;
-    std::cout << "To display the help, type help" << std::endl;
-    std::cout << "***********************************************************************"
-              << std::endl
-              << std::endl;
+    std::cout << WELCOME_MENU_TEXT << "\n";
+    std::cout << "To display the help, type \"help\"\n";
 
     std::string word;
     std::string arguments;
@@ -90,38 +96,25 @@ int Editor::startRunning()
     utils::config conf = utils::config();
     conf.setDataStructure(&dataStructure);
     conf.flipLoaded();
-    while (this->running)
-    {
+
+    while(_running) {
         std::cout << "=> ";
         std::cin >> word;
         argumentsList.clear();
-        if (commands.count(word) == 1)
-        {
+        if (_commands.count(word) == 1) {
             std::getline(std::cin, arguments);
             argumentsList = utils::split_no_quotes(arguments.begin(), arguments.end());
-            commands[word]->exec(conf, argumentsList);
+            _commands[word]->exec(conf, argumentsList);
         }
-        else
-        {
+        else {
             std::getline(std::cin, arguments);
-            std::cout << "Undefined command. To see all available commands, type \"help\"." << std::endl;
+            std::cout << "Unknown command. "
+                      << "To see all available commands, type \"help\".\n";
         }
     }
-
-    return 0;
 }
 
-int Editor::stopRunning()
-{
-    this->running = false;
-    return 0;
+void Editor::stop() {
+    _running = false;
 }
 
-
-Editor::~Editor()
-{
-    for (auto const &command : this->commands)
-    {
-        free(command.second);
-    }
-}

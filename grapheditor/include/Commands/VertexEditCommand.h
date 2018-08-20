@@ -1,17 +1,10 @@
-/**
- * @brief 
- * 
- * @file VertexEditCommand.h
- * @author (The Intern)
- * @date 2018-06-27
- */
+#pragma once
+
 #include "Command.h"
 
-class VertexEditCommand : public Command {  
-    private:
-    
 
-    public: 
-    VertexEditCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+class VertexEditCommand : public Command {
+    public:
+        VertexEditCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

@@ -1,12 +1,8 @@
-/**
- * @brief 
- * 
- * @file GraphCloseCommand.h
- * @author (The Intern)
- * @date 2018-06-28
- */
-#include "Command.h"
+#pragma once
+
 #include <iostream>
+
+#include "Command.h"
 
 
 class GraphCloseCommand : public Command {

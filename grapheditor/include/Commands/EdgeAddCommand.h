@@ -1,17 +1,10 @@
-/**
- * @brief 
- * 
- * @file EdgeAddCommand.h
- * @author (The Intern)
- * @date 2018-06-29
- */
+#pragma once
 
 #include "Command.h"
 
-class EdgeAddCommand : public Command
-{
-  private:
-  public:
-    EdgeAddCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+
+class EdgeAddCommand : public Command {
+    public:
+        EdgeAddCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

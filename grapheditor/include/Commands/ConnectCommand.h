@@ -1,21 +1,16 @@
-/**
- * @brief 
- * 
- * @file ConnectCommand.h
- * @author (The Intern)
- * @date 2018-07-26
- */
-#include "Command.h"
+#pragma once
+
 #include <iostream>
+
+#include "Command.h"
 #include "Editor.h"
 
 
 class ConnectCommand : public Command {
     private:
-    Editor * editor;
+        Editor* editor;
 
     public:
-    ConnectCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
-
+        ConnectCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

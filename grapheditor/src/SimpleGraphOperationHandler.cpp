@@ -1,11 +1,13 @@
 #include <iostream>
+
 #include "SimpleGraphOperationHandler.h"
 
+
 void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::VertexAddOperation &op){
-std::cout << "Vertex \"" << op.vertexID() << "\" added" << std::endl;
+    std::cout << "Vertex \"" << op.vertexID() << "\" added" << std::endl;
 }
 void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op){
-std::cout << "Vertex \"" << op.vertexID() << "\" removed" << std::endl;
+    std::cout << "Vertex \"" << op.vertexID() << "\" removed" << std::endl;
 }
 void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::EdgeAddOperation &op){
     std::cout << "Edge added bewteen \"" << op.fromID() << "\" and \"" << op.toID() << "\"" << std::endl;

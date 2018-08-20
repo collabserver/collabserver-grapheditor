@@ -1,17 +1,10 @@
-/**
- * @brief 
- * 
- * @file GraphListCommand.h
- * @author (The Intern)
- * @date 2018-06-27
- */
+#pragma once
+
 #include "Command.h"
 
-class GraphListCommand : public Command {  
-    private:
-    
 
-    public: 
-    GraphListCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+class GraphListCommand : public Command {
+    public:
+        GraphListCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

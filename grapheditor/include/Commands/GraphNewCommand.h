@@ -1,17 +1,10 @@
-/**
- * @brief 
- * 
- * @file GraphNewCommand.h
- * @author (The Intern)
- * @date 2018-06-27
- */
+#pragma once
+
 #include "Command.h"
 
-class GraphNewCommand : public Command {  
-    private:
-    
 
-    public: 
-    GraphNewCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+class GraphNewCommand : public Command {
+    public:
+        GraphNewCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

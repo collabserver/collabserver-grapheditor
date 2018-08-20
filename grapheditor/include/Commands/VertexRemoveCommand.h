@@ -1,17 +1,10 @@
-/**
- * @brief 
- * 
- * @file VertexRemoveCommand.h
- * @author (The Intern)
- * @date 2018-06-27
- */
+#pragma once
+
 #include "Command.h"
 
-class VertexRemoveCommand : public Command {  
-    private:
-    
 
-    public: 
-    VertexRemoveCommand();
-    int exec(utils::config config, const std::vector<std::string> &arguments);
+class VertexRemoveCommand : public Command {
+    public:
+        VertexRemoveCommand();
+        int exec(utils::config config, const std::vector<std::string> &arguments);
 };

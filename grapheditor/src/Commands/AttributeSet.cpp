@@ -2,12 +2,13 @@
 #include "collabdata/custom/SimpleGraph.h"
 
 AttributeSet::AttributeSet()
-    : Command("attributeSet", "Set the value of a vertex attribute", "Name :\n\tattributeSet - Set the value of a vertex attribute.\nUsage :\n\tattributeSet [vertex id] [attribute name] [attribute new value]"){};
+    : Command("attributeSet",
+              "Set the value of a vertex attribute",
+              "Name :\n\tattributeSet - Set the value of a vertex attribute.\nUsage :\n\tattributeSet [vertex id] [attribute name] [attribute new value]"){
+};
 
-int AttributeSet::exec(utils::config config, const std::vector<std::string> &arguments)
-{
-    if (arguments.size() != 3)
-    {
+int AttributeSet::exec(utils::config config, const std::vector<std::string> &arguments) {
+    if (arguments.size() != 3) {
         std::cout << "Error : missing or too many arguments" << std::endl;
         std::cout << "Usage : attributeRemove \"vertex\" \"name\" \"value\"" << std::endl;
         return -1;
