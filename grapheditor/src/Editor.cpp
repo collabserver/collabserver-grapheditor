@@ -9,22 +9,13 @@
 #include <tuple>
 
 #include "utils.h"
-#include "Commands/HelpCommand.h"
-#include "Commands/QuitCommand.h"
-#include "Commands/ConnectCommand.h"
-#include "Commands/EdgeAddCommand.h"
-#include "Commands/EdgeRemoveCommand.h"
-#include "Commands/VertexAddCommand.h"
-#include "Commands/VertexEditCommand.h"
-#include "Commands/VertexInfoCommand.h"
-#include "Commands/VertexListCommand.h"
-#include "Commands/VertexRemoveCommand.h"
-#include "Commands/AttributeAdd.h"
-#include "Commands/AttributeRemove.h"
-#include "Commands/AttributeSet.h"
+#include "CommandInfoPool.h"
+#include "Commands/UserCommands.h"
+#include "Commands/EdgeCommands.h"
+#include "Commands/VertexCommands.h"
+#include "Commands/AttributeCommands.h"
 #include "SimpleGraphOperationObserver.h"
 #include "SimpleGraphOperationHandler.h"
-#include "CommandInfoPool.h"
 #include "collabdata/custom/SimpleGraph.h"
 
 
