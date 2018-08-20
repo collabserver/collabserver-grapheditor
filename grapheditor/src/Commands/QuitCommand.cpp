@@ -3,10 +3,8 @@
 #include "utils.h"
 
 
-QuitCommand::QuitCommand(Editor* editor)
-  : Command("quit",
-            "Quit editor",
-            "Name :\n\tquit - Quit the editor.\nUsage :\n\tquit") {
+QuitCommand::QuitCommand(const CommandInfo& info, Editor* editor)
+  : Command(info) {
         this->editor = editor;
     }
 

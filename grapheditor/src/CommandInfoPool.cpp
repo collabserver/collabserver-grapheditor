@@ -16,6 +16,8 @@ int CommandInfoPool::loadFromFile(const char* path) {
     try {
         cmdFile.open(path, std::ios::in);
 
+        _pool.clear();
+
         for(int k = 0; k < _headerSize; ++k) {
             cmdFile.ignore(65535, '\n');
         }
@@ -30,7 +32,10 @@ int CommandInfoPool::loadFromFile(const char* path) {
             std::getline(cmdFile, name,        _delim);
             std::getline(cmdFile, shortname,   _delim);
             std::getline(cmdFile, usage,       _delim);
-            std::getline(cmdFile, description, _delim);
+            std::getline(cmdFile, description, '\n');
+
+            assert(!name.empty() && !shortname.empty());
+            assert(!usage.empty() && !description.empty());
 
             CommandInfo info = {name, shortname, usage, description};
             _pool.emplace(referenceID.c_str(), info);
@@ -44,8 +49,7 @@ int CommandInfoPool::loadFromFile(const char* path) {
     }
 }
 
-
-const CommandInfo& CommandInfoPool::getCommandInfo(ReferenceID id) const {
+const CommandInfo& CommandInfoPool::get(const ReferenceID id) const {
     assert(_pool.count(id) == 1);
     return _pool.at(id);
 }

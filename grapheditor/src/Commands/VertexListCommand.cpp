@@ -1,10 +1,5 @@
 #include "Commands/VertexListCommand.h"
 
-VertexListCommand::VertexListCommand()
-    : Command("vertexList",
-              "Display a list of all the vertex in the graph.",
-              "Name :\n\tvertexList - Display a list of all the vertex in the graph.\nUsage :\n\tvertexList [option: --details]") {
-};
 
 int VertexListCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
     bool detail = false;

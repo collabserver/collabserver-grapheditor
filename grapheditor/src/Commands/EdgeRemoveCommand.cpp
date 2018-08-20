@@ -1,11 +1,6 @@
 #include "Commands/EdgeRemoveCommand.h"
-#include "collabdata/custom/SimpleGraph.h"
 
-EdgeRemoveCommand::EdgeRemoveCommand()
-    : Command("edgeRemove",
-              "Remove the edge between two vertexes",
-              "Name :\n\tedgeRemove - Remove the edge between a source vertex and a destination vertex.\nUsage :\n\tedgeRemove [vertex source id] [vertex destination id]"){
-};
+#include "collabdata/custom/SimpleGraph.h"
 
 
 int EdgeRemoveCommand::exec(utils::config config, const std::vector<std::string> &arguments){

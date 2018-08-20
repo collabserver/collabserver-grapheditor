@@ -5,6 +5,6 @@
 
 class VertexListCommand : public Command {
     public:
-        VertexListCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        VertexListCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

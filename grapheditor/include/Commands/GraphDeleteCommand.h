@@ -5,6 +5,6 @@
 
 class GraphDeleteCommand : public Command {
     public:
-        GraphDeleteCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        GraphDeleteCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

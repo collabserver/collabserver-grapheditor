@@ -1,13 +1,7 @@
 #include "Commands/ConnectCommand.h"
+
 #include <regex>
 #include "utils.h"
-
-ConnectCommand::ConnectCommand()
-    : Command("connect",
-              "Connect the client to the specified server.",
-              "Name :\n\tconnect - Connect the client to the specified server\nUsage :\n\tconnect [ip] [port]") {
-    this->editor = editor;
-}
 
 int ConnectCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
     if (arguments.size() != 2) {

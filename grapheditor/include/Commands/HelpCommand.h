@@ -6,6 +6,7 @@
 #include <tuple>
 
 #include "Command.h"
+#include "CommandInfo.h"
 
 
 class HelpCommand : public Command {
@@ -13,6 +14,7 @@ class HelpCommand : public Command {
         const std::map<std::string, Command*>* _commandList;
 
     public:
-        HelpCommand(const std::map<std::string, Command*> *commandList);
+        HelpCommand(const CommandInfo& info,
+                    const std::map<std::string, Command*> *commandList);
         int exec(utils::config config, const std::vector<std::string> &arguments);
 };

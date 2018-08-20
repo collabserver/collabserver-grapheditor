@@ -1,3 +1,13 @@
 REFERENCE_ID,Name,Shortname,Usage,Description
-ATTR_ADD,attributeAdd,attradd,AttributeAdd [vertexID] [attrName] [attrValue],Add an attribute and its value to a vertex
-ATTR_REM,attributeRemove,attrrem,AttributeRemve [vertexID] [attrName],Remove attribute from a vertex
+HELP,help,h,todo,todo
+QUIT,quit,q,todo,todo
+CONNECT,connect,connect,todo,todo
+EDGE_ADD,edgeAdd,eadd,todo,todo
+EDGE_REM,edgeRemove,erem,todo,todo
+ATTR_ADD,attributeAdd,aadd,AttributeAdd [vertexID] [attrName] [attrValue],Add an attribute and its value to a vertex
+ATTR_REM,attributeRemove,arem,AttributeRemve [vertexID] [attrName],Remove attribute from a vertex
+ATTR_SET,attributeSet,aset,todo,todo
+VERTEX_ADD,vertexAdd,vadd,todo,todo
+VERTEX_REM,vertexRemove,vrem,todo,todo
+VERTEX_LIST,vertexList,vlist,todo,todo
+VERTEX_INFO,vertexInfo,vinfo,todo,todo

@@ -3,11 +3,6 @@
 #include "collabdata/custom/SimpleGraph.h"
 
 
-EdgeAddCommand::EdgeAddCommand()
-    : Command("edgeAdd",
-              "Add an oriented edge between two vertexes",
-              "Name :\n\tedgeAdd - Add an edge between a source vertex and a destination vertex.\nUsage :\n\tedgeAdd [vertex source id] [vertex destination id]"){};
-
 int EdgeAddCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
     if (arguments.size() != 2) {
         std::cout << "Error : missing or too many arguments" << std::endl;

@@ -5,6 +5,6 @@
 
 class EdgeAddCommand : public Command {
     public:
-        EdgeAddCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        EdgeAddCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

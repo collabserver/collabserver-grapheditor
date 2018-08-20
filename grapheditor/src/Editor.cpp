@@ -40,41 +40,67 @@
 
 
 Editor::Editor() {
-    Command *cmd = nullptr;
 
     CommandInfoPool pool;
     pool.loadFromFile("resources/commands.csv");
 
-    cmd = new QuitCommand(this);
+    Command* cmd = nullptr;
+
+    cmd = new QuitCommand(pool.get("QUIT"), this);
     _commands[cmd->getName()] = cmd;
-    cmd = new EdgeAddCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new ConnectCommand(pool.get("CONNECT"));
     _commands[cmd->getName()] = cmd;
-    cmd = new EdgeRemoveCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new EdgeAddCommand(pool.get("EDGE_ADD"));
     _commands[cmd->getName()] = cmd;
-    cmd = new AttributeAdd();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new EdgeRemoveCommand(pool.get("EDGE_REM"));
     _commands[cmd->getName()] = cmd;
-    cmd = new AttributeRemove();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new AttributeAdd(pool.get("ATTR_ADD"));
     _commands[cmd->getName()] = cmd;
-    cmd = new AttributeSet();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new AttributeRemove(pool.get("ATTR_REM"));
     _commands[cmd->getName()] = cmd;
-    cmd = new VertexAddCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new AttributeSet(pool.get("ATTR_SET"));
     _commands[cmd->getName()] = cmd;
-    cmd = new VertexRemoveCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new VertexAddCommand(pool.get("VERTEX_ADD"));
     _commands[cmd->getName()] = cmd;
-    cmd = new VertexListCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new VertexRemoveCommand(pool.get("VERTEX_REM"));
     _commands[cmd->getName()] = cmd;
-    cmd = new VertexInfoCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new VertexListCommand(pool.get("VERTEX_LIST"));
     _commands[cmd->getName()] = cmd;
-    cmd = new ConnectCommand();
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new VertexInfoCommand(pool.get("VERTEX_INFO"));
     _commands[cmd->getName()] = cmd;
-    cmd = new HelpCommand(&_commands);
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new HelpCommand(pool.get("HELP"), &_commands);
     _commands[cmd->getName()] = cmd;
+    _commands[cmd->getShortName()] = cmd;
 }
 
 Editor::~Editor() {
     this->stop();
-    for (const auto& command : _commands) {
-        free(command.second);
+    for (auto command : _commands) {
+        if(command.second->getName() == command.first) {
+            delete command.second;
+        }
     }
 }
 

@@ -5,6 +5,6 @@
 
 class VertexRemoveCommand : public Command {
     public:
-        VertexRemoveCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        VertexRemoveCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

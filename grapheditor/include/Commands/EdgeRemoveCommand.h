@@ -5,6 +5,6 @@
 
 class EdgeRemoveCommand : public Command {
     public:
-        EdgeRemoveCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        EdgeRemoveCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

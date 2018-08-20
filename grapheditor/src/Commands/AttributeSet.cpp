@@ -1,11 +1,7 @@
 #include "Commands/AttributeSet.h"
+
 #include "collabdata/custom/SimpleGraph.h"
 
-AttributeSet::AttributeSet()
-    : Command("attributeSet",
-              "Set the value of a vertex attribute",
-              "Name :\n\tattributeSet - Set the value of a vertex attribute.\nUsage :\n\tattributeSet [vertex id] [attribute name] [attribute new value]"){
-};
 
 int AttributeSet::exec(utils::config config, const std::vector<std::string> &arguments) {
     if (arguments.size() != 3) {

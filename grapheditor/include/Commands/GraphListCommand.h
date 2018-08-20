@@ -5,6 +5,6 @@
 
 class GraphListCommand : public Command {
     public:
-        GraphListCommand();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        GraphListCommand(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };

@@ -1,16 +1,12 @@
 #include "Commands/HelpCommand.h"
 
+#include <cassert>
 
-HelpCommand::HelpCommand(const std::map<std::string, Command*> *commandList)
-  : Command("help",
-            "Display this help or the help of a specified command",
-            "Name:\n\t help - Display the list of available commands or the help of a specified command.\nUsage:\n\thelp\n\thelp [command name]") {
-    if (commandList->size() > 0) {
-        _commandList = commandList;
-    }
-    else {
-        throw new std::invalid_argument("Error : commandList cannot be empty");
-    }
+
+HelpCommand::HelpCommand(const CommandInfo& info,
+                         const std::map<std::string, Command*> *commandList)
+  : Command(info) {
+      assert(commandList->size() > 0);
 }
 
 int HelpCommand::exec(utils::config config, const std::vector<std::string> &arguments) {

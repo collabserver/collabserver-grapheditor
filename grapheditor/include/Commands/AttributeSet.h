@@ -5,6 +5,6 @@
 
 class AttributeSet : public Command {
     public:
-        AttributeSet();
-        int exec(utils::config config, const std::vector<std::string> &arguments);
+        AttributeSet(const CommandInfo& info) : Command(info) {}
+        int exec(utils::config config, const std::vector<std::string> &arguments) override;
 };
