@@ -9,7 +9,6 @@
 #include <tuple>
 
 #include "utils.h"
-#include "Commands/Command.h"
 #include "Commands/HelpCommand.h"
 #include "Commands/QuitCommand.h"
 #include "Commands/ConnectCommand.h"

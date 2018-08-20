@@ -45,7 +45,8 @@ class config {
  * @see
  * www.physicsforums.com/threads/c-function-to-split-a-string-by-whitespace-ignoring-any-whitespace-in-quotes.778920/
  *
- * @return Collected words as a vector of strings.
+ * @return
+ * Collected words as a vector of strings.
  */
 std::vector<std::string> split_no_quotes(
     const std::string::const_iterator first, //!< Start of range.

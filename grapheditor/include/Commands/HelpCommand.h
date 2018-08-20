@@ -10,7 +10,7 @@
 
 class HelpCommand : public Command {
     private:
-        const std::map<std::string, Command*> *commandList;
+        const std::map<std::string, Command*>* _commandList;
 
     public:
         HelpCommand(const std::map<std::string, Command*> *commandList);
