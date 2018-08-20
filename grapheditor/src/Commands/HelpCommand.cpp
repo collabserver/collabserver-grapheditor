@@ -16,14 +16,14 @@ int HelpCommand::exec(utils::config config, const std::vector<std::string> &argu
             std::cout << "    "
                       << command.second->getName()
                       << ":\t\t"
-                      << command.second->getHelp()
+                      << command.second->getUsage()
                       << "\n";
         }
     }
 
     else if (arguments.size() == 1) {
         if (_commandList->count(arguments[0]) == 1) {
-            std::cout << _commandList->find(arguments[0])->second->getResume() << std::endl;
+            std::cout << _commandList->find(arguments[0])->second->getDescription() << std::endl;
         }
         else {
             std::cout << arguments[0] << " is not a function" << std::endl;

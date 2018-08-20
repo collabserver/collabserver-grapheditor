@@ -1,7 +1,6 @@
 #include "Commands/VertexInfoCommand.h"
 
 int VertexInfoCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
-    //TODO
     if (arguments.size() != 1) {
         std::cout << "Error : missing or too many arguments" << std::endl;
         return -1;

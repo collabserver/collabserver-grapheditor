@@ -17,15 +17,15 @@ class Command {
     private:
         std::string _name;
         std::string _shortname;
-        std::string _help;
-        std::string _resume;
+        std::string _usage;
+        std::string _description;
 
     protected:
         Command(const CommandInfo& info) {
-            _name       = info.getName();
-            _shortname  = info.getShortname();
-            _help       = info.getUsage();
-            _resume     = info.getDescription();
+            _name           = info.getName();
+            _shortname      = info.getShortname();
+            _usage          = info.getUsage();
+            _description    = info.getDescription();
         }
 
     public:
@@ -37,8 +37,8 @@ class Command {
     public:
         const std::string& getName() const { return _name; }
         const std::string& getShortName() const { return _shortname; }
-        const std::string& getHelp() const { return _help; }
-        const std::string& getResume() const { return _resume; }
+        const std::string& getUsage() const { return _usage; }
+        const std::string& getDescription() const { return _description; }
 };
 
 
