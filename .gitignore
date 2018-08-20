@@ -11,6 +11,7 @@ mvk/cmake-build-debug/
 .ycm_extra_conf.py
 .idea/
 .vscode
+*.~lock*
 
 
 

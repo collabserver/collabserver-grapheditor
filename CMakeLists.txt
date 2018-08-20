@@ -27,6 +27,18 @@ if(collab_graphiceditor)
     include("CMake/AddGraphiceditor.cmake")
 endif()
 
+# Copy grapheditor resources folder
+set(RESOURCES_SRC "${CMAKE_SOURCE_DIR}/grapheditor/resources/")
+set(RESOURCES_BIN "${CMAKE_BINARY_DIR}/resources/")
+add_custom_command(
+    OUTPUT "${RESOURCES_BIN}"
+    DEPENDS "${RESOURCES_SRC}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCES_SRC} ${RESOURCES_BIN}
+)
+add_custom_target(copyGrapheditorResources ALL DEPENDS "${RESOURCES_BIN}")
+add_dependencies(runGrapheditor copyGrapheditorResources)
+
+
 
 # ------------------------------------------------------------------------------
 # Mvk

@@ -1,0 +1,3 @@
+REFERENCE_ID,Name,Shortname,Usage,Description
+ATTR_ADD,attributeAdd,attradd,AttributeAdd [vertexID] [attrName] [attrValue],Add an attribute and its value to a vertex
+ATTR_REM,attributeRemove,attrrem,AttributeRemve [vertexID] [attrName],Remove attribute from a vertex

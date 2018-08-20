@@ -24,6 +24,7 @@
 #include "Commands/AttributeSet.h"
 #include "SimpleGraphOperationObserver.h"
 #include "SimpleGraphOperationHandler.h"
+#include "CommandInfoPool.h"
 #include "collabdata/custom/SimpleGraph.h"
 
 
@@ -40,6 +41,9 @@
 
 Editor::Editor() {
     Command *cmd = nullptr;
+
+    CommandInfoPool pool;
+    pool.loadFromFile("resources/commands.csv");
 
     cmd = new QuitCommand(this);
     _commands[cmd->getName()] = cmd;
