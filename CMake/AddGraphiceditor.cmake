@@ -11,4 +11,4 @@ add_dependencies(grapheditor_poc collab-data-crdts)
 add_dependencies(grapheditor_poc collab-client-interface)
 add_custom_target(runGrapheditor grapheditor_poc)
 
-target_link_libraries(grapheditor_poc collab_client collabdata)
+target_link_libraries(grapheditor_poc collabclient collabdata)

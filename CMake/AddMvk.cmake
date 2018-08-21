@@ -11,6 +11,6 @@ add_dependencies(mvk_poc collab-data-crdts)
 add_dependencies(mvk_poc collab-client-interface)
 add_custom_target(runMvk mvk_poc)
 
-target_link_libraries(mvk_poc curl collab_client collabdata)
+target_link_libraries(mvk_poc curl collabclient collabdata)
 
 

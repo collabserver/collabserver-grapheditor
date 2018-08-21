@@ -10,8 +10,8 @@ ExternalProject_Add(collab-client-interface
 )
 
 ExternalProject_Get_Property(collab-client-interface binary_dir)
-add_library(collab_client STATIC IMPORTED)
-set_property(TARGET collab_client PROPERTY IMPORTED_LOCATION
-    "${binary_dir}/libcollab_client.a")
+add_library(collabclient STATIC IMPORTED)
+set_property(TARGET collabclient PROPERTY IMPORTED_LOCATION
+    "${binary_dir}/libcollabclient.a")
 
 
