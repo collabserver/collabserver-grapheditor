@@ -1,12 +1,14 @@
 # ------------------------------------------------------------------------------
 # Project collab-client-interface (gitsubmodule)
 # ------------------------------------------------------------------------------
+
 include(ExternalProject)
 ExternalProject_Add(collab-client-interface
     SOURCE_DIR          "${collab_gitmodule_dir}/collab-client-interface/"
     BINARY_DIR          "${CMAKE_BINARY_DIR}/collab-client-interface-build"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
+    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 
 ExternalProject_Get_Property(collab-client-interface binary_dir)
