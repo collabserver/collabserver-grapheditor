@@ -2,7 +2,6 @@ message(STATUS "Building GraphicEditor client")
 
 include_directories("${CMAKE_SOURCE_DIR}/grapheditor/include")
 include_directories("${collab_gitmodule_dir}/collab-data-crdts/include")
-include_directories("${CMAKE_SOURCE_DIR}/gitmodules/collab-common/include")
 include_directories("${collab_gitmodule_dir}/collab-client-interface/include")
 
 file(GLOB_RECURSE srcGrapheditor "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
@@ -13,7 +12,7 @@ add_dependencies(grapheditor_poc collab-common)
 add_dependencies(grapheditor_poc collab-client-interface)
 add_custom_target(runGrapheditor grapheditor_poc)
 
-target_link_libraries(grapheditor_poc collabdata collabcommon collabclient zmq)
+target_link_libraries(grapheditor_poc collabdata collabclient collabcommon zmq)
 
 
 # Copy grapheditor resources folder
