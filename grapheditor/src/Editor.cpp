@@ -41,7 +41,7 @@ Editor::Editor() {
     _commands[cmd->getName()] = cmd;
     _commands[cmd->getShortName()] = cmd;
 
-    cmd = new ConnectCommand(pool.get("CONNECT"));
+    cmd = new ConnectCommand(pool.get("CONNECT"), _collabclient);
     _commands[cmd->getName()] = cmd;
     _commands[cmd->getShortName()] = cmd;
 

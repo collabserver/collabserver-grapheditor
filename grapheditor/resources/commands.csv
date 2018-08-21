@@ -1,7 +1,7 @@
 REFERENCE_ID,Name,Shortname,Usage,Description
 HELP,help,h,help [COMMAND],Display all available commands or display help for a specific command.
 QUIT,quit,q,quit,Quit the editor
-CONNECT,connect,connect,connect IP PORT,Connect this session to the given CollabServer
+CONNECT,connect,co,connect IP PORT,Connect this session to the given CollabServer
 EDGE_ADD,edgeAdd,eadd,edgeAdd VERTEX_SRC_ID VERTEX_DEST_ID,Add an edge between two vertex. Create the vertex if doesn’t exist
 EDGE_REM,edgeRemove,erem,edgeRemove VERTEX_SRC_ID VERTEX_DEST_ID,Remove an edge going from source to destination
 ATTR_ADD,attributeAdd,aadd,AttributeAdd [vertexID] [attrName] [attrValue],Add an attribute and its value to a vertex

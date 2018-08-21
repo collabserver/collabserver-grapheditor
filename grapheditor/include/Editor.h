@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Command.h"
+#include "collabclient/Client.h"
 
 
 /**
@@ -14,6 +15,7 @@ class Editor {
     private:
         bool _running = false;
         std::map<std::string, Command*> _commands;
+        collab::Client _collabclient;
 
     public:
         Editor();
