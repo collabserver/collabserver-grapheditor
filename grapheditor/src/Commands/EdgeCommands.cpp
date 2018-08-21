@@ -4,25 +4,25 @@
 
 
 int EdgeRemoveCommand::exec(utils::config config,
-                            const std::vector<std::string> &arguments){
-    if(arguments.size()!=2) {
-        std::cout << "Error : missing or too many arguments" << std::endl;
-        std::cout << "Usage : edgeRemove \"from\" \"to\"" << std::endl;
+                            const std::vector<std::string> &args){
+    if(args.size()!=2) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
 
-    config.getDataStructure()->removeEdge(arguments[0], arguments[1]);
+    config.getDataStructure()->removeEdge(args[0], args[1]);
     return 0;
 }
 
 int EdgeAddCommand::exec(utils::config config,
-                         const std::vector<std::string> &arguments) {
-    if (arguments.size() != 2) {
-        std::cout << "Error : missing or too many arguments" << std::endl;
-        std::cout << "Usage : edgeAdd \"from\" \"to\"" << std::endl;
+                         const std::vector<std::string> &args) {
+    if (args.size() != 2) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
 
-    config.getDataStructure()->addEdge(arguments[0], arguments[1]);
+    config.getDataStructure()->addEdge(args[0], args[1]);
     return 0;
 }

@@ -3,94 +3,120 @@
 #include "collabdata/custom/SimpleGraph.h"
 
 
-int VertexAddCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
-    if (arguments.size() != 1) {
-        std::cout << "Error : missing or too many arguments" << std::endl;
-        std::cout << "Usage : vertexAdd \"vertex\"" << std::endl;
+// -----------------------------------------------------------------------------
+// VertexAdd
+// -----------------------------------------------------------------------------
+
+int VertexAddCommand::exec(utils::config config,
+                           const std::vector<std::string> &args) {
+    if(args.size() != 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
-    config.getDataStructure()->addVertex(arguments[0]);
+
+    config.getDataStructure()->addVertex(args[0]);
     return 0;
 }
 
-int VertexEditCommand::exec(utils::config config, const std::vector<std::string> &arguments){
-    std::cout << "Vertex Edited" << std::endl;
+
+// -----------------------------------------------------------------------------
+// VertexEdit
+// -----------------------------------------------------------------------------
+
+int VertexEditCommand::exec(utils::config config,
+                            const std::vector<std::string> &args) {
+    // TODO
+    std::cout << "Vertex Edited (Not implemented yet)\n";
     return 0;
 }
 
-int VertexInfoCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
-    if (arguments.size() != 1) {
-        std::cout << "Error : missing or too many arguments" << std::endl;
+
+// -----------------------------------------------------------------------------
+// VertexInfo
+// -----------------------------------------------------------------------------
+
+int VertexInfoCommand::exec(utils::config config,
+                            const std::vector<std::string> &args) {
+    if (args.size() != 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
 
     try {
-        collab::SimpleGraph::VertexDescriptor vertex = config.getDataStructure()->at(arguments[0]);
-        std::cout << "- " << vertex.id() << std::endl;
+        collab::SimpleGraph::VertexDescriptor vertex = config.getDataStructure()->at(args[0]);
+        std::cout << "- " << vertex.id() << "\n";
 
         // Show attributes
         collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
-        std::cout << "Attribute :" << std::endl;
+        std::cout << "Attribute:\n";
         while (attributes.moveNext()) {
             const collab::SimpleGraph::AttributeDescriptor attribute = attributes.current();
-            std::cout << "\t" << attribute.name() << " : " << attribute.value() << std::endl;
+            std::cout << "\t" << attribute.name() << " : " << attribute.value() << "\n";
         }
-        std::cout << std::endl;
+        std::cout << "\n";
 
         // Show edges
         collab::SimpleGraph::EdgeIterator edges = vertex.edges();
-        std::cout << "Edge :" << std::endl;
+        std::cout << "Edge:\n";
         while (edges.moveNext()) {
             const collab::SimpleGraph::UUID &edge = edges.current();
-            std::cout << "\t" << vertex.id() << " -> " << edge << std::endl;
+            std::cout << "\t" << vertex.id() << " -> " << edge << "\n";
         }
     }
     catch (const std::out_of_range &e) {
-        std::cout << "Error : vertex " << arguments[0] << " not found in this graph" << std::endl;
+        std::cout << "ERROR: vertex " << args[0] << " not found in this graph\n";
         return -2;
     }
     return 0;
 }
 
-int VertexListCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
+
+// -----------------------------------------------------------------------------
+// VertexList
+// -----------------------------------------------------------------------------
+
+int VertexListCommand::exec(utils::config config, const std::vector<std::string> &args) {
     bool detail = false;
-    if (arguments.size() == 1) {
-        if (arguments[0] == "--details") {
+    if(args.size() == 1) {
+        if (args[0] == "--details") {
             detail = true;
         }
         else {
-            std::cout << "error : unknown argument" << std::endl;
+            std::cout << "ERROR: invalid arguments\n";
+            std::cout << "USAGE: " << getUsage() << "\n";
             return -2;
         }
     }
-    else if (arguments.size() > 1) {
-        std::cout << "error : too many arguments" << std::endl;
+    else if (args.size() > 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
-    std::cout << std::endl;
 
-    std::cout << "Vertex List :" << std::endl;
+    std::cout << "\nVertex List:\n";
 
     collab::SimpleGraph::VertexIterator it = config.getDataStructure()->vertices();
     while (it.moveNext()) {
         collab::SimpleGraph::VertexDescriptor vertex = it.current();
-        std::cout << "- " << vertex.id() << std::endl;
+        std::cout << "- " << vertex.id() << "\n";
 
-        if (detail) {
+        if(detail) {
             // Show attributes
             collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
-            std::cout << "\tAttribute :"<< std::endl;
+            std::cout << "\tAttribute:\n";
             while (attributes.moveNext()) {
                 const collab::SimpleGraph::AttributeDescriptor attribute = attributes.current();
-                std::cout << "\t\t" << attribute.name() << " : " << attribute.value() << std::endl;
+                std::cout << "\t\t" << attribute.name() << " : " << attribute.value() << "\n";
             }
-            std::cout << std::endl;
+            std::cout << "\n";
             // Show edges
             collab::SimpleGraph::EdgeIterator edges = vertex.edges();
-            std::cout << "\tEdge :"<< std::endl;
+            std::cout << "\tEdge:\n";
             while (edges.moveNext()) {
                 const collab::SimpleGraph::UUID &edge = edges.current();
-                std::cout <<"\t\t" << vertex.id() << " -> " << edge << std::endl;
+                std::cout <<"\t\t" << vertex.id() << " -> " << edge << "\n";
             }
         }
         std::cout << std::endl;
@@ -98,12 +124,18 @@ int VertexListCommand::exec(utils::config config, const std::vector<std::string>
     return 0;
 }
 
-int VertexRemoveCommand::exec(utils::config config, const std::vector<std::string> &arguments) {
-    if (arguments.size() != 1) {
-        std::cout << "Error : missing or too many arguments" << std::endl;
-        std::cout << "Usage : vertexRemove \"vertex\"" << std::endl;
+
+// -----------------------------------------------------------------------------
+// VertexRemove
+// -----------------------------------------------------------------------------
+
+int VertexRemoveCommand::exec(utils::config config, const std::vector<std::string> &args) {
+    if (args.size() != 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
-    config.getDataStructure()->removeVertex(arguments[0]);
+
+    config.getDataStructure()->removeVertex(args[0]);
     return 0;
 }
