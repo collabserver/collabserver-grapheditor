@@ -26,17 +26,19 @@ int ConnectCommand::exec(utils::config config,
     if (port == 0) {
         std::cout << "ERROR: invalid port number\n";
         std::cout << "USAGE: " << getUsage() << "\n";
-        return -5;
+        return -1;
     }
 
-    std::cout << "Connecting to " << args[0] << ":" << port << "...\n";
+    std::cout << "Connecting to " << args[0] << ":" << port << "... ";
     bool success = _client->connect(args[0].c_str(), port);
     if(success) {
-        std::cout << "Successfully connected!\n";
+        std::cout << "OK\n";
+        std::cout << "Successfully connected\n";
         return 0;
     }
     else {
-        std::cout << "Unable to connect...\n";
+        std::cout << "ERROR\n";
+        std::cout << "Unable to establish connect\n";
         return -1;
     }
     return 0;
