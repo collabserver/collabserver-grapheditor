@@ -2,23 +2,27 @@
 
 #include <cassert>
 
-#include "utils.h"
+#include "Global.h"
+
+
+static Editor& editor = Global::get().editor(); // Simple alias
+static collab::Client& client = Global::get().collabclient();
+static collab::SimpleGraph* graph = Global::get().graphdata();
 
 
 // -----------------------------------------------------------------------------
 // Connect
 // -----------------------------------------------------------------------------
 
-ConnectCommand::ConnectCommand(const CommandInfo& info, collab::Client& client)
-  : Command(info) {
-      _client = &client;
-}
-
-int ConnectCommand::exec(utils::config config,
-                         const std::vector<std::string> &args) {
-    if (args.size() != 2) {
+int ConnectCommand::exec(const std::vector<std::string> &args) {
+    if(args.size() != 2) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+
+    if(client.isConnected()) {
+        std::cout << "ERROR: You are already connected\n";
         return -1;
     }
 
@@ -30,8 +34,8 @@ int ConnectCommand::exec(utils::config config,
     }
 
     std::cout << "Connecting to " << args[0] << ":" << port << "... ";
-    bool success = _client->connect(args[0].c_str(), port);
-    if(success && _client->isConnected()) {
+    bool success = client.connect(args[0].c_str(), port);
+    if(success && client.isConnected()) {
         std::cout << "OK\n";
         std::cout << "Successfully connected\n";
         return 0;
@@ -46,21 +50,24 @@ int ConnectCommand::exec(utils::config config,
 
 
 // -----------------------------------------------------------------------------
+// Quit
+// -----------------------------------------------------------------------------
+
+int QuitCommand::exec(const std::vector<std::string> &args) {
+    editor.stop();
+    return 0;
+}
+
+
+// -----------------------------------------------------------------------------
 // Help
 // -----------------------------------------------------------------------------
 
-HelpCommand::HelpCommand(const CommandInfo& info,
-                         const std::map<std::string, Command*> *commands)
-  : Command(info) {
-      assert(commands != nullptr && commands->size() > 0);
-      _commands = commands;
-}
-
-int HelpCommand::exec(utils::config config,
-                      const std::vector<std::string> &args) {
+int HelpCommand::exec(const std::vector<std::string> &args) {
+    auto commands = editor.getCommands();
     if(args.size() == 0) {
         std::cout << "COMMANDS:\n";
-        for (const auto& command : *_commands) {
+        for (const auto& command : commands) {
             int spaces = 15 - command.second->getName().size();
             if(command.first == command.second->getName()) {
                 std::cout << "    "  << command.second->getName();
@@ -76,11 +83,11 @@ int HelpCommand::exec(utils::config config,
                   << "    (ex: vadd for vertexAdd)\n";
     }
     else if(args.size() == 1) {
-        if(_commands->count(args[0]) != 1) {
+        if(commands.count(args[0]) != 1) {
             std::cout << args[0] << " is not a valid command\n";
             return -1;
         }
-        Command* cmd = _commands->find(args[0])->second;
+        Command* cmd = commands.find(args[0])->second;
         std::cout << "NAME:   "  << cmd->getName() << "\n"
                   << "SHORT:  " << cmd->getShortName() << "\n"
                   << "USAGE:  " << cmd->getUsage() << "\n"
@@ -91,21 +98,5 @@ int HelpCommand::exec(utils::config config,
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
-    return 0;
-}
-
-
-// -----------------------------------------------------------------------------
-// Quit
-// -----------------------------------------------------------------------------
-
-QuitCommand::QuitCommand(const CommandInfo& info, Editor* editor)
-  : Command(info) {
-        this->editor = editor;
-    }
-
-int QuitCommand::exec(utils::config config,
-                      const std::vector<std::string> &args) {
-    this->editor->stop();
     return 0;
 }

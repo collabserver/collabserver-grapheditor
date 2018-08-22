@@ -2,10 +2,10 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "Editor.h"
+#include "Global.h"
 
 
-static Editor editor = Editor();
+static Editor& editor = Global::get().editor(); // Just an alias kind of
 
 static void handleInterrupt(int i) {
     std::cerr << "SIGINT received. Closing program...\n";

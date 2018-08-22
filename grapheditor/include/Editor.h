@@ -15,14 +15,19 @@ class Editor {
     private:
         bool _running = false;
         std::map<std::string, Command*> _commands;
-        collab::Client _collabclient;
 
     public:
         Editor();
         ~Editor();
 
+    public:
         void start();
         void stop();
+
+    public:
+        const std::map<std::string, Command*>& getCommands() const {
+            return _commands;
+        }
 };
 
 

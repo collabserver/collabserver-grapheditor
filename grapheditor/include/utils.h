@@ -1,38 +1,19 @@
 #pragma once
 
-#include <exception>
 #include <vector>
 #include <string>
-#include <tuple>
-#include <iostream>
-
-#include "collabdata/custom/SimpleGraph.h"
 
 
 namespace utils {
 
-
-class config {
-    private:
-        collab::SimpleGraph *dataStructure;
-        bool loaded;
-
-    public:
-        config();
-        bool isLoaded();
-        void flipLoaded();
-        void setDataStructure(collab::SimpleGraph* dataStructure);
-        collab::SimpleGraph* getDataStructure();
-};
-
 /**
  * @brief
- * Collect words in the range [@c first, @c last). 
+ * Collect words in the range [@c first, @c last).
  *
  * @details
- * Words are separated by one or more unquoted spaces. 
- * Spaces between double quotes are not separators. 
- * They are instead part of a word. 
+ * Words are separated by one or more unquoted spaces.
+ * Spaces between double quotes are not separators.
+ * They are instead part of a word.
  *
  * @warning
  * @c first and @c last must form a valid range.
@@ -40,7 +21,7 @@ class config {
  *
  * @warning
  * Quotes are assumed to be paired.
- * A warning is issued if the range contains an odd number of quotes. 
+ * A warning is issued if the range contains an odd number of quotes.
  *
  * @see
  * www.physicsforums.com/threads/c-function-to-split-a-string-by-whitespace-ignoring-any-whitespace-in-quotes.778920/

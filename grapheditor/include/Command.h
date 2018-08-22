@@ -30,8 +30,7 @@ class Command {
 
     public:
         virtual ~Command() = default;
-        virtual int exec(utils::config config,
-                         const std::vector<std::string> &args) = 0;
+        virtual int exec(const std::vector<std::string>& args) = 0;
 
     public:
         const std::string& getName() const { return _name; }

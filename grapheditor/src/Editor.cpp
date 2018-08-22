@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <tuple>
 
 #include "utils.h"
 #include "CommandInfoPool.h"
@@ -37,11 +36,15 @@ Editor::Editor() {
 
     Command* cmd = nullptr;
 
-    cmd = new QuitCommand(pool.get("QUIT"), this);
+    cmd = new ConnectCommand(pool.get("CONNECT"));
     _commands[cmd->getName()] = cmd;
     _commands[cmd->getShortName()] = cmd;
 
-    cmd = new ConnectCommand(pool.get("CONNECT"), _collabclient);
+    cmd = new QuitCommand(pool.get("QUIT"));
+    _commands[cmd->getName()] = cmd;
+    _commands[cmd->getShortName()] = cmd;
+
+    cmd = new HelpCommand(pool.get("HELP"));
     _commands[cmd->getName()] = cmd;
     _commands[cmd->getShortName()] = cmd;
 
@@ -80,10 +83,6 @@ Editor::Editor() {
     cmd = new VertexInfoCommand(pool.get("VERTEX_INFO"));
     _commands[cmd->getName()] = cmd;
     _commands[cmd->getShortName()] = cmd;
-
-    cmd = new HelpCommand(pool.get("HELP"), &_commands);
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
 }
 
 Editor::~Editor() {
@@ -102,10 +101,13 @@ void Editor::start() {
     if(_running == true) { return; }
     _running = true;
 
+    /*
+     * TODO To move where data is loaded
     collab::SimpleGraph dataStructure = collab::SimpleGraph();
     SimpleGraphOperationHandler opHandler = SimpleGraphOperationHandler();
     SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver(opHandler);
     dataStructure.addOperationObserver(opObserver);
+    */
 
     std::cout << WELCOME_MENU_TEXT << "\n";
     std::cout << "To display the help, type \"help\"\n";
@@ -113,9 +115,6 @@ void Editor::start() {
     std::string word;
     std::string arguments;
     std::vector<std::string> argumentsList;
-    utils::config conf = utils::config();
-    conf.setDataStructure(&dataStructure);
-    conf.flipLoaded();
 
     while(_running) {
         std::cout << "=> ";
@@ -124,7 +123,7 @@ void Editor::start() {
         if (_commands.count(word) == 1) {
             std::getline(std::cin, arguments);
             argumentsList = utils::split_no_quotes(arguments.begin(), arguments.end());
-            _commands[word]->exec(conf, argumentsList);
+            _commands[word]->exec(argumentsList);
         }
         else {
             std::getline(std::cin, arguments);

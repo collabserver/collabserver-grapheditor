@@ -1,33 +1,63 @@
 #include "Commands/VertexCommands.h"
 
-#include "collabdata/custom/SimpleGraph.h"
+#include "Global.h"
+
+
+static Editor& editor = Global::get().editor(); // Simple alias
+static collab::Client& client = Global::get().collabclient();
+static collab::SimpleGraph* graph = Global::get().graphdata();
 
 
 // -----------------------------------------------------------------------------
 // VertexAdd
 // -----------------------------------------------------------------------------
 
-int VertexAddCommand::exec(utils::config config,
-                           const std::vector<std::string> &args) {
+int VertexAddCommand::exec(const std::vector<std::string> &args) {
     if(args.size() != 1) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
 
-    config.getDataStructure()->addVertex(args[0]);
+    if(!client.isConnected()) {
+        std::cout << "ERROR: You must be connected to a server first\n";
+        std::cout << "HINT: See connect command\n";
+        return -1;
+    }
+
+    if(!client.isDataLoaded()) {
+        std::cout << "ERROR: No data loaded yet\n";
+        return -1;
+    }
+
+    graph->addVertex(args[0]);
     return 0;
 }
 
 
 // -----------------------------------------------------------------------------
-// VertexEdit
+// VertexRemove
 // -----------------------------------------------------------------------------
 
-int VertexEditCommand::exec(utils::config config,
-                            const std::vector<std::string> &args) {
-    // TODO
-    std::cout << "Vertex Edited (Not implemented yet)\n";
+int VertexRemoveCommand::exec(const std::vector<std::string> &args) {
+    if (args.size() != 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+
+    if(!client.isConnected()) {
+        std::cout << "ERROR: You must be connected to a server first\n";
+        std::cout << "HINT: See connect command\n";
+        return -1;
+    }
+
+    if(!client.isDataLoaded()) {
+        std::cout << "ERROR: No data loaded yet\n";
+        return -1;
+    }
+
+    graph->removeVertex(args[0]);
     return 0;
 }
 
@@ -36,16 +66,26 @@ int VertexEditCommand::exec(utils::config config,
 // VertexInfo
 // -----------------------------------------------------------------------------
 
-int VertexInfoCommand::exec(utils::config config,
-                            const std::vector<std::string> &args) {
+int VertexInfoCommand::exec(const std::vector<std::string> &args) {
     if (args.size() != 1) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
 
+    if(!client.isConnected()) {
+        std::cout << "ERROR: You must be connected to a server first\n";
+        std::cout << "HINT: See connect command\n";
+        return -1;
+    }
+
+    if(!client.isDataLoaded()) {
+        std::cout << "ERROR: No data loaded yet\n";
+        return -1;
+    }
+
     try {
-        collab::SimpleGraph::VertexDescriptor vertex = config.getDataStructure()->at(args[0]);
+        collab::SimpleGraph::VertexDescriptor vertex = graph->at(args[0]);
         std::cout << "- " << vertex.id() << "\n";
 
         // Show attributes
@@ -77,7 +117,7 @@ int VertexInfoCommand::exec(utils::config config,
 // VertexList
 // -----------------------------------------------------------------------------
 
-int VertexListCommand::exec(utils::config config, const std::vector<std::string> &args) {
+int VertexListCommand::exec(const std::vector<std::string> &args) {
     bool detail = false;
     if(args.size() == 1) {
         if (args[0] == "--details") {
@@ -95,9 +135,20 @@ int VertexListCommand::exec(utils::config config, const std::vector<std::string>
         return -1;
     }
 
+    if(!client.isConnected()) {
+        std::cout << "ERROR: You must be connected to a server first\n";
+        std::cout << "HINT: See connect command\n";
+        return -1;
+    }
+
+    if(!client.isDataLoaded()) {
+        std::cout << "ERROR: No data loaded yet\n";
+        return -1;
+    }
+
     std::cout << "\nVertex List:\n";
 
-    collab::SimpleGraph::VertexIterator it = config.getDataStructure()->vertices();
+    collab::SimpleGraph::VertexIterator it = graph->vertices();
     while (it.moveNext()) {
         collab::SimpleGraph::VertexDescriptor vertex = it.current();
         std::cout << "- " << vertex.id() << "\n";
@@ -125,17 +176,3 @@ int VertexListCommand::exec(utils::config config, const std::vector<std::string>
 }
 
 
-// -----------------------------------------------------------------------------
-// VertexRemove
-// -----------------------------------------------------------------------------
-
-int VertexRemoveCommand::exec(utils::config config, const std::vector<std::string> &args) {
-    if (args.size() != 1) {
-        std::cout << "ERROR: invalid arguments\n";
-        std::cout << "USAGE: " << getUsage() << "\n";
-        return -1;
-    }
-
-    config.getDataStructure()->removeVertex(args[0]);
-    return 0;
-}
