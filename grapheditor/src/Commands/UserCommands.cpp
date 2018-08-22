@@ -50,6 +50,56 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
 
 
 // -----------------------------------------------------------------------------
+// CreateDataVolatile
+// -----------------------------------------------------------------------------
+
+int CreateDataVolatileCommand::exec(const std::vector<std::string>& args) {
+    // TODO
+    std::cout << "TODO: No implemented yet\n";
+    return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+// JoinData
+// -----------------------------------------------------------------------------
+
+int JoinDataCommand::exec(const std::vector<std::string>& args) {
+    // TODO
+    std::cout << "TODO: No implemented yet\n";
+    return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+// Info
+// -----------------------------------------------------------------------------
+
+int LeaveDataCommand::exec(const std::vector<std::string>& args) {
+    // TODO
+    std::cout << "TODO: No implemented yet\n";
+    return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+// Info
+// -----------------------------------------------------------------------------
+
+int InfoCommand::exec(const std::vector<std::string>& args) {
+    int users = client.getNbCollaborators();
+    std::cout << "Status: "
+              << (client.isConnected() ? "connected" : "disconnected") << "\n"
+              << "Data:   "
+              << (client.isDataLoaded() ? "loaded" : "no data loaded") << "\n"
+              << "Users:  "
+              << ((users > 0) ? users : 0) << "\n"
+              << "DataID: "
+              << client.getDataID() << "\n";
+    return 0;
+}
+
+// -----------------------------------------------------------------------------
 // Quit
 // -----------------------------------------------------------------------------
 
@@ -74,7 +124,7 @@ int HelpCommand::exec(const std::vector<std::string> &args) {
                 for(int k = 0; k < spaces; ++k) {
                     std::cout << " ";
                 }
-                std::cout << "    "  << command.second->getUsage() << "\n";
+                std::cout << "    "  << command.second->getDescription() << "\n";
             }
         }
         std::cout << "INFORMATION:\n";

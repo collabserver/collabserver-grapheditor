@@ -13,9 +13,6 @@
 #include "Commands/EdgeCommands.h"
 #include "Commands/VertexCommands.h"
 #include "Commands/AttributeCommands.h"
-#include "SimpleGraphOperationObserver.h"
-#include "SimpleGraphOperationHandler.h"
-#include "collabdata/custom/SimpleGraph.h"
 
 
 #define WELCOME_MENU_TEXT     \
@@ -29,60 +26,38 @@
 "________________________________________________________________________________"
 
 
+static void addCmd(Command* cmd, std::map<std::string, Command*>& commands) {
+    commands[cmd->getName()] = cmd;
+    if(cmd->getName() != cmd->getShortName()) {
+        commands[cmd->getShortName()] = cmd;
+    }
+}
+
 Editor::Editor() {
 
     CommandInfoPool pool;
     pool.loadFromFile("resources/commands.csv");
 
-    Command* cmd = nullptr;
+    addCmd(new ConnectCommand(pool.get("CONNECT")), _commands);
+    addCmd(new QuitCommand(pool.get("QUIT")), _commands);
+    addCmd(new InfoCommand(pool.get("INFO")), _commands);
+    addCmd(new HelpCommand(pool.get("HELP")), _commands);
 
-    cmd = new ConnectCommand(pool.get("CONNECT"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
+    addCmd(new CreateDataVolatileCommand(pool.get("CREA_DATA_VOLATILE")), _commands);
+    addCmd(new JoinDataCommand(pool.get("JOIN_DATA")), _commands);
+    addCmd(new LeaveDataCommand(pool.get("LEAVE_DATA")), _commands);
 
-    cmd = new QuitCommand(pool.get("QUIT"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
+    addCmd(new EdgeAddCommand(pool.get("EDGE_ADD")), _commands);
+    addCmd(new EdgeRemoveCommand(pool.get("EDGE_REM")), _commands);
 
-    cmd = new HelpCommand(pool.get("HELP"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
+    addCmd(new AttributeAdd(pool.get("ATTR_ADD")), _commands);
+    addCmd(new AttributeRemove(pool.get("ATTR_REM")), _commands);
+    addCmd(new AttributeSet(pool.get("ATTR_SET")), _commands);
 
-    cmd = new EdgeAddCommand(pool.get("EDGE_ADD"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new EdgeRemoveCommand(pool.get("EDGE_REM"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new AttributeAdd(pool.get("ATTR_ADD"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new AttributeRemove(pool.get("ATTR_REM"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new AttributeSet(pool.get("ATTR_SET"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new VertexAddCommand(pool.get("VERTEX_ADD"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new VertexRemoveCommand(pool.get("VERTEX_REM"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new VertexListCommand(pool.get("VERTEX_LIST"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
-
-    cmd = new VertexInfoCommand(pool.get("VERTEX_INFO"));
-    _commands[cmd->getName()] = cmd;
-    _commands[cmd->getShortName()] = cmd;
+    addCmd(new VertexAddCommand(pool.get("VERTEX_ADD")), _commands);
+    addCmd(new VertexRemoveCommand(pool.get("VERTEX_REM")), _commands);
+    addCmd(new VertexListCommand(pool.get("VERTEX_LIST")), _commands);
+    addCmd(new VertexInfoCommand(pool.get("VERTEX_INFO")), _commands);
 }
 
 Editor::~Editor() {
@@ -101,14 +76,6 @@ void Editor::start() {
     if(_running == true) { return; }
     _running = true;
 
-    /*
-     * TODO To move where data is loaded
-    collab::SimpleGraph dataStructure = collab::SimpleGraph();
-    SimpleGraphOperationHandler opHandler = SimpleGraphOperationHandler();
-    SimpleGraphOperationObserver opObserver = SimpleGraphOperationObserver(opHandler);
-    dataStructure.addOperationObserver(opObserver);
-    */
-
     std::cout << WELCOME_MENU_TEXT << "\n";
     std::cout << "To display the help, type \"help\"\n";
 
@@ -124,8 +91,7 @@ void Editor::start() {
         }
         else if(_commands.count(word) == 1) {
             std::getline(std::cin, args);
-            std::vector<std::string> argsList;
-            argsList = utils::split_no_quotes(args.begin(), args.end());
+            auto argsList = utils::split_no_quotes(args.begin(), args.end());
             _commands[word]->exec(argsList);
         }
         else {
@@ -139,4 +105,5 @@ void Editor::start() {
 void Editor::stop() {
     _running = false;
 }
+
 

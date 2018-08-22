@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+#include "collabdata/custom/SimpleGraph.h"
+
 
 namespace utils {
 
@@ -35,5 +37,25 @@ std::vector<std::string> split_no_quotes(
 
 
 } // namespace utils
+
+
+class SimpleGraphOperationHandler : public collab::SimpleGraph::OpHandler {
+    public:
+        virtual void handleOperation(const collab::SimpleGraph::VertexAddOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::EdgeAddOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::EdgeRemoveOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::AttributeAddOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op);
+        virtual void handleOperation(const collab::SimpleGraph::AttributeSetOperation &op);
+};
+
+class SimpleGraphOperationObserver : public collab::OperationObserver {
+    private:
+        SimpleGraphOperationHandler opHandler;
+    public:
+        SimpleGraphOperationObserver(SimpleGraphOperationHandler opHandler);
+        void onOperation(const collab::Operation &op) override;
+};
 
 
