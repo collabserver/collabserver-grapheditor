@@ -3,9 +3,9 @@
 #include "Global.h"
 
 
-static Editor& editor = Global::get().editor(); // Simple alias
-static collab::Client& client = Global::get().collabclient();
-static collab::SimpleGraph* graph = Global::get().graphdata();
+static Editor&              editor  = Global::get().editor(); // Simple alias
+static collab::Client&      client  = Global::get().collabclient();
+static collab::SimpleGraph* graph   = Global::get().graphdata();
 
 
 int EdgeRemoveCommand::exec(const std::vector<std::string> &args){

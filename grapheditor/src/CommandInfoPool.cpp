@@ -1,13 +1,9 @@
 #include "CommandInfoPool.h"
 
 #include <cassert>
-#include <cstring> // strtok
 #include <string> // std::getline
 #include <fstream>
 #include <sstream>
-
-
-#define MAX_CELL_SIZE 256
 
 
 int CommandInfoPool::loadFromFile(const char* path) {
@@ -53,4 +49,5 @@ const CommandInfo& CommandInfoPool::get(const ReferenceID id) const {
     assert(_pool.count(id) == 1);
     return _pool.at(id);
 }
+
 

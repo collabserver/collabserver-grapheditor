@@ -35,9 +35,11 @@ std::vector<std::string> split_no_quotes(
 
     // Check for and report a violation of the paired quotes assumption.
     if(in_quotes) {
+        /*
         std::cerr << "Warning: In split_no_quotes():\n"
                   << "Input string contains non-terminated quote.\n"
                   << "Input string: " << std::string(first, last) << std::endl;
+        */
     }
     return result;
 }
