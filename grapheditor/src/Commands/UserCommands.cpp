@@ -31,7 +31,7 @@ int ConnectCommand::exec(utils::config config,
 
     std::cout << "Connecting to " << args[0] << ":" << port << "... ";
     bool success = _client->connect(args[0].c_str(), port);
-    if(success) {
+    if(success && _client->isConnected()) {
         std::cout << "OK\n";
         std::cout << "Successfully connected\n";
         return 0;
