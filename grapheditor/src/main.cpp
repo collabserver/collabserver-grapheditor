@@ -1,5 +1,6 @@
 #include <csignal>
 #include <iostream>
+#include <string>
 #include <stdexcept>
 
 #include "Global.h"
@@ -7,14 +8,13 @@
 
 static Editor& editor = Global::get().editor(); // Just an alias kind of
 
-static void handleInterrupt(int i) {
-    std::cerr << "SIGINT received. Closing program...\n";
-    editor.stop();
-    throw;
+static void handleInterrupt(int sig) {
+    std::cout << "SIGINT received\n";
+    std::cout << "Are you sure you want to leave? [quit/no]:\n";
 }
 
 int main(int argc, char **argv) {
-    //signal(SIGINT, &handleInterrupt); // TODO Fix core dump issue
+    signal(SIGINT, &handleInterrupt);
 
     try {
         editor.start();

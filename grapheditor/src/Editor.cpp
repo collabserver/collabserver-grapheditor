@@ -113,20 +113,23 @@ void Editor::start() {
     std::cout << "To display the help, type \"help\"\n";
 
     std::string word;
-    std::string arguments;
-    std::vector<std::string> argumentsList;
+    std::string args;
 
     while(_running) {
         std::cout << "=> ";
         std::cin >> word;
-        argumentsList.clear();
-        if (_commands.count(word) == 1) {
-            std::getline(std::cin, arguments);
-            argumentsList = utils::split_no_quotes(arguments.begin(), arguments.end());
-            _commands[word]->exec(argumentsList);
+        if(std::cin.eof()) {
+            std::cout << "Closing editor...\n";
+            this->stop();
+        }
+        else if(_commands.count(word) == 1) {
+            std::getline(std::cin, args);
+            std::vector<std::string> argsList;
+            argsList = utils::split_no_quotes(args.begin(), args.end());
+            _commands[word]->exec(argsList);
         }
         else {
-            std::getline(std::cin, arguments);
+            std::getline(std::cin, args);
             std::cout << "Unknown command. "
                       << "To see all available commands, type \"help\".\n";
         }
