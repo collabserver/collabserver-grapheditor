@@ -8,10 +8,9 @@ file(GLOB_RECURSE srcMvk "${CMAKE_SOURCE_DIR}/mvk/src/*.cpp")
 
 add_executable(mvk_poc ${srcMvk})
 add_dependencies(mvk_poc collab-data-crdts)
-add_dependencies(mvk_poc collab-common)
 add_dependencies(mvk_poc collab-client-interface)
 add_custom_target(runMvk mvk_poc)
 
-target_link_libraries(mvk_poc curl collabdata collabclient collabcommon zmq)
+target_link_libraries(mvk_poc curl collabdata collabclient zmq)
 
 
