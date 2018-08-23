@@ -8,10 +8,11 @@ file(GLOB_RECURSE srcGrapheditor "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
 
 add_executable(grapheditor_poc ${srcGrapheditor})
 add_dependencies(grapheditor_poc collab-data-crdts)
+add_dependencies(grapheditor_poc collab-common)
 add_dependencies(grapheditor_poc collab-client-interface)
 add_custom_target(runGrapheditor grapheditor_poc)
 
-target_link_libraries(grapheditor_poc collabdata collabclient zmq)
+target_link_libraries(grapheditor_poc collabclient collabcommon collabdata zmq)
 
 
 # Copy grapheditor resources folder

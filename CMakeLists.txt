@@ -15,6 +15,7 @@ set(collab_gitmodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
 include("CMake/AddCompilerFlags.cmake")
 
 include("CMake/ExternalProjects/Collabdata.cmake")
+include("CMake/ExternalProjects/Collabcommon.cmake")
 include("CMake/ExternalProjects/Collabclient.cmake")
 
 
