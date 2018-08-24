@@ -5,10 +5,6 @@
 #include "Global.h"
 
 
-static Editor&              editor = Global::get().editor(); // Simple alias
-static collab::Client&      client = Global::get().collabclient();
-
-
 // -----------------------------------------------------------------------------
 // Connect
 // -----------------------------------------------------------------------------
@@ -20,7 +16,7 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    if(client.isConnected()) {
+    if(Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You are already connected\n";
         return -1;
     }
@@ -33,8 +29,8 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
     }
 
     std::cout << "Connecting to " << args[0] << ":" << port << "... ";
-    bool success = client.connect(args[0].c_str(), port);
-    if(success && client.isConnected()) {
+    bool success = Global::get().collabclient().connect(args[0].c_str(), port);
+    if(success && Global::get().collabclient().isConnected()) {
         std::cout << "OK\n";
         std::cout << "Successfully connected\n";
         return 0;
@@ -87,11 +83,13 @@ int LeaveDataCommand::exec(const std::vector<std::string>& args) {
 
 int InfoCommand::exec(const std::vector<std::string>& args) {
     std::cout << "Status: "
-              << (client.isConnected() ? "connected" : "disconnected") << "\n"
+              << (Global::get().collabclient().isConnected()
+                      ? "connected" : "disconnected") << "\n"
               << "Data:   "
-              << (client.isDataLoaded() ? "loaded" : "no data loaded") << "\n"
+              << (Global::get().collabclient().isDataLoaded()
+                      ? "loaded" : "no data loaded") << "\n"
               << "DataID: "
-              << client.getDataID() << "\n";
+              << Global::get().collabclient().getDataID() << "\n";
     return 0;
 }
 
@@ -100,7 +98,7 @@ int InfoCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int QuitCommand::exec(const std::vector<std::string> &args) {
-    editor.stop();
+    Global::get().editor().stop();
     return 0;
 }
 
@@ -110,7 +108,7 @@ int QuitCommand::exec(const std::vector<std::string> &args) {
 // -----------------------------------------------------------------------------
 
 int HelpCommand::exec(const std::vector<std::string> &args) {
-    auto commands = editor.getCommands();
+    auto commands = Global::get().editor().getCommands();
     if(args.size() == 0) {
         std::cout << "COMMANDS:\n";
         for (const auto& command : commands) {

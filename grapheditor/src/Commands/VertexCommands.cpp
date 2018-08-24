@@ -3,10 +3,6 @@
 #include "Global.h"
 
 
-static collab::Client&      client  = Global::get().collabclient();
-static collab::SimpleGraph& graph   = Global::get().graphdata();
-
-
 // -----------------------------------------------------------------------------
 // VertexAdd
 // -----------------------------------------------------------------------------
@@ -18,18 +14,18 @@ int VertexAddCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    if(!client.isConnected()) {
+    if(!Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You must be connected to a server first\n";
         std::cout << "HINT: See connect command\n";
         return -1;
     }
 
-    if(!client.isDataLoaded()) {
+    if(!Global::get().collabclient().isDataLoaded()) {
         std::cout << "ERROR: No data loaded yet\n";
         return -1;
     }
 
-    graph.addVertex(args[0]);
+    Global::get().graphdata().addVertex(args[0]);
     return 0;
 }
 
@@ -45,18 +41,18 @@ int VertexRemoveCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    if(!client.isConnected()) {
+    if(!Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You must be connected to a server first\n";
         std::cout << "HINT: See connect command\n";
         return -1;
     }
 
-    if(!client.isDataLoaded()) {
+    if(!Global::get().collabclient().isDataLoaded()) {
         std::cout << "ERROR: No data loaded yet\n";
         return -1;
     }
 
-    graph.removeVertex(args[0]);
+    Global::get().graphdata().removeVertex(args[0]);
     return 0;
 }
 
@@ -72,19 +68,19 @@ int VertexInfoCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    if(!client.isConnected()) {
+    if(!Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You must be connected to a server first\n";
         std::cout << "HINT: See connect command\n";
         return -1;
     }
 
-    if(!client.isDataLoaded()) {
+    if(!Global::get().collabclient().isDataLoaded()) {
         std::cout << "ERROR: No data loaded yet\n";
         return -1;
     }
 
     try {
-        collab::SimpleGraph::VertexDescriptor vertex = graph.at(args[0]);
+        collab::SimpleGraph::VertexDescriptor vertex = Global::get().graphdata().at(args[0]);
         std::cout << "- " << vertex.id() << "\n";
 
         // Show attributes
@@ -134,20 +130,20 @@ int VertexListCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    if(!client.isConnected()) {
+    if(!Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You must be connected to a server first\n";
         std::cout << "HINT: See connect command\n";
         return -1;
     }
 
-    if(!client.isDataLoaded()) {
+    if(!Global::get().collabclient().isDataLoaded()) {
         std::cout << "ERROR: No data loaded yet\n";
         return -1;
     }
 
     std::cout << "\nVertex List:\n";
 
-    collab::SimpleGraph::VertexIterator it = graph.vertices();
+    collab::SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
     while (it.moveNext()) {
         collab::SimpleGraph::VertexDescriptor vertex = it.current();
         std::cout << "- " << vertex.id() << "\n";

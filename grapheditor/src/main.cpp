@@ -6,8 +6,6 @@
 #include "Global.h"
 
 
-static Editor& editor = Global::get().editor(); // Just an alias kind of
-
 static void handleInterrupt(int sig) {
     std::cout << "SIGINT received\n";
     std::cout << "Are you sure you want to leave? [quit/no]:\n";
@@ -17,15 +15,15 @@ int main(int argc, char **argv) {
     signal(SIGINT, &handleInterrupt);
 
     try {
-        editor.start();
+        Global::get().editor().start();
     }
     catch(const std::exception& e) {
-        editor.stop();
+        Global::get().editor().stop();
         std::cerr << "Crashed with exception: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     catch(...) {
-        editor.stop();
+        Global::get().editor().stop();
         std::cerr << "Crashed with unknown exception: " << std::endl;
         return EXIT_FAILURE;
     }

@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Command.h"
-#include "collabclient/Client.h"
 
 
 /**
