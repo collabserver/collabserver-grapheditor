@@ -3,9 +3,8 @@
 #include "Global.h"
 
 
-static Editor&              editor  = Global::get().editor(); // Simple alias
 static collab::Client&      client  = Global::get().collabclient();
-static collab::SimpleGraph* graph   = Global::get().graphdata();
+static collab::SimpleGraph& graph   = Global::get().graphdata();
 
 
 int AttributeAdd::exec(const std::vector<std::string> &args) {
@@ -26,7 +25,7 @@ int AttributeAdd::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    graph->addAttribute(args[0], args[1], args[2]);
+    graph.addAttribute(args[0], args[1], args[2]);
     return 0;
 }
 
@@ -48,7 +47,7 @@ int AttributeRemove::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    graph->removeAttribute(args[0], args[1]);
+    graph.removeAttribute(args[0], args[1]);
     return 0;
 }
 
@@ -70,7 +69,7 @@ int AttributeSet::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    graph->setAttribute(args[0], args[1], args[2]);
+    graph.setAttribute(args[0], args[1], args[2]);
     return 0;
 }
 

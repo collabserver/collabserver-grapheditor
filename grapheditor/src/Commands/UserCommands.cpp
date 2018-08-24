@@ -7,7 +7,6 @@
 
 static Editor&              editor = Global::get().editor(); // Simple alias
 static collab::Client&      client = Global::get().collabclient();
-static collab::SimpleGraph* graph  = Global::get().graphdata();
 
 
 // -----------------------------------------------------------------------------

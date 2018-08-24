@@ -12,9 +12,11 @@
  * The Editor class that manage le lifeCycle of the program
  */
 class Editor {
+    public:
+        typedef std::map<std::string, Command*> MapCommands;
     private:
-        bool _running = false;
-        std::map<std::string, Command*> _commands;
+        bool        _running = false;
+        MapCommands _commands;
 
     public:
         Editor();
@@ -25,9 +27,7 @@ class Editor {
         void stop();
 
     public:
-        const std::map<std::string, Command*>& getCommands() const {
-            return _commands;
-        }
+        const MapCommands& getCommands() const { return _commands; }
 };
 
 

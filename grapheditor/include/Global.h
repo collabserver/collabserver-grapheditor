@@ -11,6 +11,7 @@ class Global {
     private:
         Editor              _editor;
         collab::Client      _collabclient;
+        collab::SimpleGraph _graph;
 
     private:
         Global() = default;
@@ -26,10 +27,5 @@ class Global {
     public:
         Editor& editor() { return _editor; }
         collab::Client& collabclient() { return _collabclient; }
-        collab::SimpleGraph* graphdata() {
-            // TODO
-            //collab::CollabData* data = _collabclient.getCollabData();
-            //return static_cast<collab::SimpleGraph*>(data);
-            return nullptr;
-        }
+        collab::SimpleGraph& graphdata() { return _graph; }
 };

@@ -3,9 +3,8 @@
 #include "Global.h"
 
 
-static Editor&              editor  = Global::get().editor(); // Simple alias
 static collab::Client&      client  = Global::get().collabclient();
-static collab::SimpleGraph* graph   = Global::get().graphdata();
+static collab::SimpleGraph& graph   = Global::get().graphdata();
 
 
 // -----------------------------------------------------------------------------
@@ -30,7 +29,7 @@ int VertexAddCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    graph->addVertex(args[0]);
+    graph.addVertex(args[0]);
     return 0;
 }
 
@@ -57,7 +56,7 @@ int VertexRemoveCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    graph->removeVertex(args[0]);
+    graph.removeVertex(args[0]);
     return 0;
 }
 
@@ -85,7 +84,7 @@ int VertexInfoCommand::exec(const std::vector<std::string> &args) {
     }
 
     try {
-        collab::SimpleGraph::VertexDescriptor vertex = graph->at(args[0]);
+        collab::SimpleGraph::VertexDescriptor vertex = graph.at(args[0]);
         std::cout << "- " << vertex.id() << "\n";
 
         // Show attributes
@@ -148,7 +147,7 @@ int VertexListCommand::exec(const std::vector<std::string> &args) {
 
     std::cout << "\nVertex List:\n";
 
-    collab::SimpleGraph::VertexIterator it = graph->vertices();
+    collab::SimpleGraph::VertexIterator it = graph.vertices();
     while (it.moveNext()) {
         collab::SimpleGraph::VertexDescriptor vertex = it.current();
         std::cout << "- " << vertex.id() << "\n";
