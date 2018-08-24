@@ -15,8 +15,7 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
-
-    if(Global::get().collabclient().isConnected()) {
+    else if(Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You are already connected\n";
         return -1;
     }
@@ -30,16 +29,47 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
 
     std::cout << "Connecting to " << args[0] << ":" << port << "... ";
     bool success = Global::get().collabclient().connect(args[0].c_str(), port);
-    if(success && Global::get().collabclient().isConnected()) {
-        std::cout << "OK\n";
-        std::cout << "Successfully connected\n";
-        return 0;
-    }
-    else {
-        std::cout << "ERROR\n";
-        std::cout << "Unable to establish connect\n";
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "Unable to establish connection\n";
         return -1;
     }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully connected\n";
+    return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+// Disconnect
+// -----------------------------------------------------------------------------
+
+int DisconnectCommand::exec(const std::vector<std::string>& args) {
+    if(args.size() > 0) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+    else if(!Global::get().collabclient().isConnected()) {
+        std::cout << "ERROR: You are not connected\n";
+        return -1;
+    }
+    else if(Global::get().collabclient().isDataLoaded()) {
+        std::cout << "ERROR: You are connected to a collab data\n";
+        std::cout << "INFO:  You must leave the collab data before disconnect\n";
+        return -1;
+    }
+
+    std::cout << "Disconnecting... ";
+    bool success = Global::get().collabclient().disconnect();
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "ERROR: Unable to disconnect. Error occurred\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully disconnected\n";
+
     return 0;
 }
 
@@ -49,8 +79,33 @@ int ConnectCommand::exec(const std::vector<std::string> &args) {
 // -----------------------------------------------------------------------------
 
 int CreateDataVolatileCommand::exec(const std::vector<std::string>& args) {
-    // TODO
-    std::cout << "TODO: No implemented yet\n";
+    if(args.size() > 0) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+    else if(!Global::get().collabclient().isConnected()) {
+        std::cout << "ERROR: You are not connected\n";
+        return -1;
+    }
+    else if(Global::get().collabclient().isDataLoaded()) {
+        std::cout << "ERROR: You are already connected to a collab data\n";
+        std::cout << "INFO:  You must leave the collab data first\n";
+        return -1;
+    }
+
+    Global::get().resetGraphData();
+    collab::SimpleGraph& graph = Global::get().graphdata();
+
+    std::cout << "Creating collab data on server... ";
+    bool success = Global::get().collabclient().createDataVolatile(&graph);
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "ERROR: Unable to create the data. Error occurred\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Data successfully created and joined\n";
     return 0;
 }
 
@@ -60,8 +115,40 @@ int CreateDataVolatileCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int JoinDataCommand::exec(const std::vector<std::string>& args) {
-    // TODO
-    std::cout << "TODO: No implemented yet\n";
+    if(args.size() != 1) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+    else if(!Global::get().collabclient().isConnected()) {
+        std::cout << "ERROR: You are not connected\n";
+        return -1;
+    }
+    else if(Global::get().collabclient().isDataLoaded()) {
+        std::cout << "ERROR: You are already connected to a collab data\n";
+        std::cout << "INFO:  You must leave the collab data first\n";
+        return -1;
+    }
+
+    int dataID = atoi(args[0].c_str());
+    if (dataID == 0) {
+        std::cout << "ERROR: invalid data ID value (Number required)\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+
+    Global::get().resetGraphData();
+    collab::SimpleGraph& graph = Global::get().graphdata();
+
+    std::cout << "Joining data (" << dataID << ")... ";
+    bool success = Global::get().collabclient().joinData(&graph, dataID);
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "ERROR: Unable to join. Error occurred\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Collaborative data successfully joined\n";
     return 0;
 }
 
@@ -71,8 +158,29 @@ int JoinDataCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int LeaveDataCommand::exec(const std::vector<std::string>& args) {
-    // TODO
-    std::cout << "TODO: No implemented yet\n";
+    if(args.size() > 0) {
+        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+    else if(!Global::get().collabclient().isConnected()) {
+        std::cout << "ERROR: You are not connected\n";
+        return -1;
+    }
+    else if(!Global::get().collabclient().isDataLoaded()) {
+        std::cout << "ERROR: You are not connected to a collab data\n";
+        return -1;
+    }
+
+    std::cout << "Leaving current collab data... ";
+    bool success = Global::get().collabclient().leaveData();
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "ERROR: Unable to join. Error occurred\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Collaborative data successfully joined\n";
     return 0;
 }
 
@@ -82,14 +190,13 @@ int LeaveDataCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int InfoCommand::exec(const std::vector<std::string>& args) {
+    collab::Client& client = Global::get().collabclient();
     std::cout << "Status: "
-              << (Global::get().collabclient().isConnected()
-                      ? "connected" : "disconnected") << "\n"
+              << (client.isConnected() ? "connected" : "disconnected") << "\n"
               << "Data:   "
-              << (Global::get().collabclient().isDataLoaded()
-                      ? "loaded" : "no data loaded") << "\n"
+              << (client.isDataLoaded() ? "loaded" : "no data loaded") << "\n"
               << "DataID: "
-              << Global::get().collabclient().getDataID() << "\n";
+              << client.getDataID() << "\n";
     return 0;
 }
 
@@ -98,7 +205,19 @@ int InfoCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int QuitCommand::exec(const std::vector<std::string> &args) {
+    if(Global::get().collabclient().isConnected()) {
+        std::cout << "WARNING: You are connected.\n";
+        std::cout << "HINT:    Disconnect from the server first\n";
+        return -1;
+    }
+    else if(Global::get().collabclient().isDataLoaded()) {
+        std::cout << "WARNING: You are connected to a collab data.\n";
+        std::cout << "HINT:    Leave the collab data first\n";
+        return -1;
+    }
+
     Global::get().editor().stop();
+
     return 0;
 }
 

@@ -38,6 +38,7 @@ Editor::Editor() {
     pool.loadFromFile("resources/commands.csv");
 
     addCmd(new ConnectCommand(pool.get("CONNECT")), _commands);
+    addCmd(new DisconnectCommand(pool.get("DISCONNECT")), _commands);
     addCmd(new QuitCommand(pool.get("QUIT")), _commands);
     addCmd(new InfoCommand(pool.get("INFO")), _commands);
     addCmd(new HelpCommand(pool.get("HELP")), _commands);
@@ -99,6 +100,7 @@ void Editor::start() {
                       << "To see all available commands, type \"help\".\n";
         }
     }
+    std::cout << "See you\n";
 }
 
 void Editor::stop() {

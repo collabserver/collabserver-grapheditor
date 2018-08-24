@@ -24,6 +24,11 @@ class Global {
             return _instance;
         }
 
+        void resetGraphData() {
+            // TODO Not sure this actually works. To check
+            _graph = collab::SimpleGraph();
+        }
+
     public:
         Editor& editor() { return _editor; }
         collab::Client& collabclient() { return _collabclient; }
