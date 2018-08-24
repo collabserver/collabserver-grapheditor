@@ -87,13 +87,10 @@ int LeaveDataCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int InfoCommand::exec(const std::vector<std::string>& args) {
-    int users = client.getNbCollaborators();
     std::cout << "Status: "
               << (client.isConnected() ? "connected" : "disconnected") << "\n"
               << "Data:   "
               << (client.isDataLoaded() ? "loaded" : "no data loaded") << "\n"
-              << "Users:  "
-              << ((users > 0) ? users : 0) << "\n"
               << "DataID: "
               << client.getDataID() << "\n";
     return 0;

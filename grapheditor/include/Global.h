@@ -27,7 +27,9 @@ class Global {
         Editor& editor() { return _editor; }
         collab::Client& collabclient() { return _collabclient; }
         collab::SimpleGraph* graphdata() {
-            collab::CollabData* data = _collabclient.getCollabData();
-            return static_cast<collab::SimpleGraph*>(data);
+            // TODO
+            //collab::CollabData* data = _collabclient.getCollabData();
+            //return static_cast<collab::SimpleGraph*>(data);
+            return nullptr;
         }
 };
