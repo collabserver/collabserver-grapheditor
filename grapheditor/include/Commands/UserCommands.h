@@ -21,9 +21,9 @@ class DisconnectCommand : public Command {
         int exec(const std::vector<std::string>& args) override;
 };
 
-class CreateDataVolatileCommand : public Command {
+class CreateDataCommand : public Command {
     public:
-        CreateDataVolatileCommand(const CommandInfo& info) : Command(info) {}
+        CreateDataCommand(const CommandInfo& info) : Command(info) {}
         int exec(const std::vector<std::string>& args) override;
 };
 

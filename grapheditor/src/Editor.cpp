@@ -43,7 +43,7 @@ Editor::Editor() {
     addCmd(new InfoCommand(pool.get("INFO")), _commands);
     addCmd(new HelpCommand(pool.get("HELP")), _commands);
 
-    addCmd(new CreateDataVolatileCommand(pool.get("CREA_DATA_VOLATILE")), _commands);
+    addCmd(new CreateDataCommand(pool.get("CREA_DATA")), _commands);
     addCmd(new JoinDataCommand(pool.get("JOIN_DATA")), _commands);
     addCmd(new LeaveDataCommand(pool.get("LEAVE_DATA")), _commands);
 

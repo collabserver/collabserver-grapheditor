@@ -75,10 +75,10 @@ int DisconnectCommand::exec(const std::vector<std::string>& args) {
 
 
 // -----------------------------------------------------------------------------
-// CreateDataVolatile
+// CreateData
 // -----------------------------------------------------------------------------
 
-int CreateDataVolatileCommand::exec(const std::vector<std::string>& args) {
+int CreateDataCommand::exec(const std::vector<std::string>& args) {
     if(args.size() > 0) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
@@ -98,7 +98,7 @@ int CreateDataVolatileCommand::exec(const std::vector<std::string>& args) {
     collab::SimpleGraph& graph = Global::get().graphdata();
 
     std::cout << "Creating collab data on server... ";
-    bool success = Global::get().collabclient().createDataVolatile(&graph);
+    bool success = Global::get().collabclient().createData(&graph);
     if(!success) {
         std::cout << "FAILED\n";
         std::cout << "ERROR: Unable to create the data. Error occurred\n";

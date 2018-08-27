@@ -1,7 +1,7 @@
 REFERENCE_ID,Name,Shortname,Usage,Description
 CONNECT,connect,co,connect IP PORT,Connect this session to the given CollabServer
 DISCONNECT,disconnect,disco,disconnect,Disconnect from the server
-CREA_DATA_VOLATILE,createVolatile,creav,createVolatile,Create and join new data (Not saved in database). Can't be done if data already loaded
+CREA_DATA,create,crea,create,Create and join new data. Can't be done if data already loaded
 JOIN_DATA,join,join,join DATA_ID,Join an existing collaboration on a data
 LEAVE_DATA,leave,leave,leave,Leave the current data you are working on (Still exists for other collaborators)
 INFO,info,i,info,Display current session info such as connection status and number of collaborators
