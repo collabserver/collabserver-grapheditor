@@ -57,9 +57,9 @@ class HelpCommand : public Command {
         int exec(const std::vector<std::string>& args) override;
 };
 
-class EasterEggCommand : public Command {
+class UglyCommand : public Command {
     public:
-        EasterEggCommand(const CommandInfo& info) : Command(info) {}
+        UglyCommand(const CommandInfo& info) : Command(info) {}
         int exec(const std::vector<std::string>& args) override;
 };
 

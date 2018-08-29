@@ -7,7 +7,7 @@ LEAVE_DATA,leave,leave,leave,Leave the current data you are working on (Still ex
 INFO,info,i,info,Display current session info such as connection status and number of collaborators
 QUIT,quit,q,quit,Quit the editor
 HELP,help,h,help [COMMAND],Display all available commands or display help for a specific command
-EASTER_EGG,askgod,askgod,askgod,Ask god if you are ugly
+UGLY,askgod,askgod,askgod,Ask god if you are ugly
 EDGE_ADD,edgeAdd,eadd,edgeAdd VERTEX_SRC_ID VERTEX_DEST_ID,Add an edge between two vertex. Create the vertex if doesn’t exist
 EDGE_REM,edgeRemove,erem,edgeRemove VERTEX_SRC_ID VERTEX_DEST_ID,Remove an edge going from source to destination
 ATTR_ADD,attributeAdd,aadd,AttributeAdd [VERTEX_ID] [ATTR_NAME] [ATTR_VALUE],Add an attribute and its value to a vertex

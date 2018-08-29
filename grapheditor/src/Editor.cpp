@@ -42,7 +42,7 @@ Editor::Editor() {
     addCmd(new QuitCommand(pool.get("QUIT")), _commands);
     addCmd(new InfoCommand(pool.get("INFO")), _commands);
     addCmd(new HelpCommand(pool.get("HELP")), _commands);
-    addCmd(new EasterEggCommand(pool.get("EASTER_EGG")), _commands);
+    addCmd(new UglyCommand(pool.get("UGLY")), _commands);
 
     addCmd(new CreateDataCommand(pool.get("CREA_DATA")), _commands);
     addCmd(new JoinDataCommand(pool.get("JOIN_DATA")), _commands);

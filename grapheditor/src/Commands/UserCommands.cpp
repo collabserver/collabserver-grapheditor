@@ -276,18 +276,22 @@ int HelpCommand::exec(const std::vector<std::string>& args) {
 
 
 // -----------------------------------------------------------------------------
-// AskGod (EasterEgg)
+// AskGod (Ugly)
 // -----------------------------------------------------------------------------
 
-int EasterEggCommand::exec(const std::vector<std::string>& args) {
+int UglyCommand::exec(const std::vector<std::string>& args) {
     if(!Global::get().collabclient().isConnected()) {
         std::cout << "ERROR: You are not connected\n";
         return -1;
     }
     std::cout << "Asking God if you are ugly...\n";
-    std::cout << "Hum... it's not implemented yet...\n";
-    // TODO To implement
-    //collab::Client& client = Global::get().collabclient();
+    bool isUgly = Global::get().collabclient().isUgly();
+    if(isUgly) {
+        std::cout << "Hum... Sounds like you are ugly...\n";
+    }
+    else {
+        std::cout << "Incredible!! You are not ugly!!!!\n";
+    }
     return 0;
 }
 
