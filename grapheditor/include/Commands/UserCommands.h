@@ -57,4 +57,10 @@ class HelpCommand : public Command {
         int exec(const std::vector<std::string>& args) override;
 };
 
+class EasterEggCommand : public Command {
+    public:
+        EasterEggCommand(const CommandInfo& info) : Command(info) {}
+        int exec(const std::vector<std::string>& args) override;
+};
+
 

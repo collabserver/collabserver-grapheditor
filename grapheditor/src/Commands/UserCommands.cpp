@@ -9,7 +9,7 @@
 // Connect
 // -----------------------------------------------------------------------------
 
-int ConnectCommand::exec(const std::vector<std::string> &args) {
+int ConnectCommand::exec(const std::vector<std::string>& args) {
     if(args.size() != 2) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
@@ -204,16 +204,26 @@ int InfoCommand::exec(const std::vector<std::string>& args) {
 // Quit
 // -----------------------------------------------------------------------------
 
-int QuitCommand::exec(const std::vector<std::string> &args) {
-    if(Global::get().collabclient().isConnected()) {
-        std::cout << "WARNING: You are connected.\n";
-        std::cout << "HINT:    Disconnect from the server first\n";
-        return -1;
+int QuitCommand::exec(const std::vector<std::string>& args) {
+    if(Global::get().collabclient().isDataLoaded()) {
+        std::cout << "WARNING: You are connected to a collab data. Leaving... ";
+        bool success = Global::get().collabclient().leaveData();
+        if(!success) {
+            std::cout << "FAILED\n";
+            std::cout << "ERROR: Unable to leave the data. Error occurred\n";
+            return -1;
+        }
+        std::cout << "SUCCESS\n";
     }
-    else if(Global::get().collabclient().isDataLoaded()) {
-        std::cout << "WARNING: You are connected to a collab data.\n";
-        std::cout << "HINT:    Leave the collab data first\n";
-        return -1;
+    if(Global::get().collabclient().isConnected()) {
+        std::cout << "WARNING: You are connected. Disconnecting... ";
+        bool success = Global::get().collabclient().disconnect();
+        if(!success) {
+            std::cout << "FAILED\n";
+            std::cout << "ERROR: Unable to disconnect. Error occurred\n";
+            return -1;
+        }
+        std::cout << "SUCCESS\n";
     }
 
     Global::get().editor().stop();
@@ -226,7 +236,7 @@ int QuitCommand::exec(const std::vector<std::string> &args) {
 // Help
 // -----------------------------------------------------------------------------
 
-int HelpCommand::exec(const std::vector<std::string> &args) {
+int HelpCommand::exec(const std::vector<std::string>& args) {
     auto commands = Global::get().editor().getCommands();
     if(args.size() == 0) {
         std::cout << "COMMANDS:\n";
@@ -263,3 +273,22 @@ int HelpCommand::exec(const std::vector<std::string> &args) {
     }
     return 0;
 }
+
+
+// -----------------------------------------------------------------------------
+// AskGod (EasterEgg)
+// -----------------------------------------------------------------------------
+
+int EasterEggCommand::exec(const std::vector<std::string>& args) {
+    if(!Global::get().collabclient().isConnected()) {
+        std::cout << "ERROR: You are not connected\n";
+        return -1;
+    }
+    std::cout << "Asking God if you are ugly...\n";
+    std::cout << "Hum... it's not implemented yet...\n";
+    // TODO To implement
+    //collab::Client& client = Global::get().collabclient();
+    return 0;
+}
+
+
