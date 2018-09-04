@@ -39,22 +39,22 @@ std::vector<std::string> split_no_quotes(
 } // namespace utils
 
 
-class SimpleGraphOperationHandler : public collab::SimpleGraph::OpHandler {
+class SGraphOpHandlerDebug : public collab::SimpleGraph::OpHandler {
     public:
-        virtual void handleOperation(const collab::SimpleGraph::VertexAddOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::EdgeAddOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::EdgeRemoveOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::AttributeAddOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op);
-        virtual void handleOperation(const collab::SimpleGraph::AttributeSetOperation &op);
+        void handleOperation(const collab::SimpleGraph::VertexAddOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::EdgeAddOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::EdgeRemoveOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::AttributeAddOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op) override;
+        void handleOperation(const collab::SimpleGraph::AttributeSetOperation &op) override;
 };
 
-class SimpleGraphOperationObserver : public collab::OperationObserver {
+class SGraphOpObserverDebug : public collab::OperationObserver {
     private:
-        SimpleGraphOperationHandler opHandler;
+        SGraphOpHandlerDebug _opHandler;
     public:
-        SimpleGraphOperationObserver(SimpleGraphOperationHandler opHandler);
+        SGraphOpObserverDebug() = default;
         void onOperation(const collab::Operation &op) override;
 };
 

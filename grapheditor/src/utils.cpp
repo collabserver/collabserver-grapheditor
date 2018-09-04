@@ -49,42 +49,54 @@ std::vector<std::string> split_no_quotes(
 
 
 // -----------------------------------------------------------------------------
-// SimpleGraphOperationHandler
+// SGraphOpHandlerDebug
 // -----------------------------------------------------------------------------
 
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::VertexAddOperation &op){
-    std::cout << "Vertex \"" << op.vertexID() << "\" added" << std::endl;
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::VertexAddOperation &op){
+    std::cout << "Vertex added (" << op.vertexID() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op){
-    std::cout << "Vertex \"" << op.vertexID() << "\" removed" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::VertexRemoveOperation &op){
+    std::cout << "Vertex removed (" << op.vertexID() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::EdgeAddOperation &op){
-    std::cout << "Edge added bewteen \"" << op.fromID() << "\" and \"" << op.toID() << "\"" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::EdgeAddOperation &op){
+    std::cout << "Edge added (" << op.fromID() << " -> " << op.toID() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::EdgeRemoveOperation &op){
-    std::cout << "Edge removed bewteen \"" << op.fromID() << "\" and \"" << op.toID() << "\"" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::EdgeRemoveOperation &op){
+    std::cout << "Edge removed (" << op.fromID() << " -> " << op.toID() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::AttributeAddOperation &op){
-    std::cout << "Attribute \"" << op.attributeName() << "\" added to vertex \"" << op.vertexID() << "\" with value \"" << op.attributeValue() << "\"" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeAddOperation &op){
+    std::cout << "Attribute added to vertex (" << op.vertexID() << ": "
+              << op.attributeName() << " = " << op.attributeValue() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op){
-    std::cout << "Attribute \"" << op.attributeName() << "\" removed from vertex \"" << op.vertexID() << "\"" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeRemoveOperation &op){
+    std::cout << "Attribute removed from vertex (" << op.vertexID() << ": "
+              << op.attributeName() << ")\n";
 }
-void SimpleGraphOperationHandler::handleOperation(const collab::SimpleGraph::AttributeSetOperation &op){
-    std::cout << "Attribute \"" << op.attributeName() << "\" from vertex \"" << op.vertexID() << "\" set with value \"" << op.newValue() << "\"" << std::endl;
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeSetOperation &op){
+    std::cout << "Attribute set in vertex (" << op.vertexID() << ": "
+              << op.attributeName() << " = " << op.newValue() << ")\n";
 }
 
 
 // -----------------------------------------------------------------------------
-// SimpleGraphOperationObserver
+// SGraphOpObserverDebug
 // -----------------------------------------------------------------------------
 
-SimpleGraphOperationObserver::SimpleGraphOperationObserver(SimpleGraphOperationHandler opHandler) {
-    this->opHandler = opHandler;
-}
-
-void SimpleGraphOperationObserver::onOperation(const collab::Operation &op) {
-   op.accept(this->opHandler);
+void SGraphOpObserverDebug::onOperation(const collab::Operation &op) {
+   op.accept(_opHandler);
 }
 
 

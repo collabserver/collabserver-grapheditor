@@ -5,13 +5,15 @@
 #include "Editor.h"
 #include "collabclient/Client.h"
 #include "collabdata/custom/SimpleGraph.h"
+#include "utils.h"
 
 
 class Global {
     private:
-        Editor              _editor;
-        collab::Client      _collabclient;
-        collab::SimpleGraph _graph;
+        Editor                  _editor;
+        collab::Client          _collabclient;
+        collab::SimpleGraph     _graph;
+        SGraphOpObserverDebug   _obs;
 
     private:
         Global() = default;
@@ -27,6 +29,9 @@ class Global {
         void resetGraphData() {
             // TODO Not sure this actually works. To check
             _graph = collab::SimpleGraph();
+#ifndef _NDEBUG
+            _graph.addOperationObserver(_obs);
+#endif
         }
 
     public:
