@@ -12,7 +12,12 @@ add_dependencies(grapheditor_poc collab-common)
 add_dependencies(grapheditor_poc collab-client-interface)
 add_custom_target(runGrapheditor grapheditor_poc)
 
-target_link_libraries(grapheditor_poc collabclient collabcommon collabdata zmq)
+target_link_libraries(grapheditor_poc
+    collabclient
+    collabcommon
+    collabdata
+    zmq
+    pthread)
 
 
 # Copy grapheditor resources folder
