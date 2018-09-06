@@ -10,7 +10,7 @@
 void testSimpleGraphOperation() {
     MVKSimpleGraphOperationHandler opHandler;
     DatabaseObserver *observer = new DatabaseObserver(&opHandler);
-    collab::SimpleGraph graph;
+    collab::SimpleGraph graph(42); // 42 for dummy ID. See SimpleGraph doc
     graph.addOperationObserver(*observer);
 
     graph.addVertex("v1");

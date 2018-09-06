@@ -12,7 +12,7 @@
 #define ATTRIBUTEVALUE "Value"
 
 MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler() {
-    graph = new collab::SimpleGraph;
+    graph = new collab::SimpleGraph(42); // 42 is dummy ID: see SimpleGraph doc
     baseConstructor();
 }
 

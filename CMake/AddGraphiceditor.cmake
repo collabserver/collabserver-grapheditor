@@ -1,7 +1,6 @@
 message(STATUS "Building GraphicEditor client")
 
 include_directories("${CMAKE_SOURCE_DIR}/grapheditor/include")
-
 file(GLOB_RECURSE srcGrapheditor "${CMAKE_SOURCE_DIR}/grapheditor/src/*.cpp")
 
 add_executable(grapheditor_poc ${srcGrapheditor})
