@@ -12,7 +12,7 @@ class Global {
     private:
         Editor                  _editor;
         collab::Client          _collabclient;
-        collab::SimpleGraph     _graph;
+        collab::SimpleGraph     _graph = collab::SimpleGraph(0);
         SGraphOpObserverDebug   _obs;
 
     private:
@@ -28,10 +28,10 @@ class Global {
 
         void resetGraphData() {
             // TODO Not sure this actually works. To check
-            _graph = collab::SimpleGraph();
-#ifndef _NDEBUG
+            _graph = collab::SimpleGraph(42); // TODO WARNING: TMP ID
+#           ifndef _NDEBUG
             _graph.addOperationObserver(_obs);
-#endif
+#           endif
         }
 
     public:
