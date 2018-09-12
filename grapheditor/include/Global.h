@@ -12,8 +12,10 @@ class Global {
     private:
         Editor                  _editor;
         collab::Client          _collabclient;
-        collab::SimpleGraph     _graph = collab::SimpleGraph(0);
+        collab::SimpleGraph     _graph = collab::SimpleGraph::build(9999);
         SGraphOpObserverDebug   _obs;
+        // DevNote: _graph is initialized here, but id doesn't matter since
+        // it will be actually reset when user enter a collab room.
 
     private:
         Global() = default;
@@ -27,8 +29,7 @@ class Global {
         }
 
         void resetGraphData() {
-            // TODO Not sure this actually works. To check
-            _graph = collab::SimpleGraph(42); // TODO WARNING: TMP ID
+            _graph = collab::SimpleGraph::build(_collabclient.getUserID());
 #           ifndef _NDEBUG
             _graph.addOperationObserver(_obs);
 #           endif
