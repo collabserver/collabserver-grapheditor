@@ -8,10 +8,11 @@
 
 #include "utils.h"
 #include "CommandInfoPool.h"
-#include "Commands/UserCommands.h"
-#include "Commands/EdgeCommands.h"
-#include "Commands/VertexCommands.h"
 #include "Commands/AttributeCommands.h"
+#include "Commands/EdgeCommands.h"
+#include "Commands/GraphCommands.h"
+#include "Commands/UserCommands.h"
+#include "Commands/VertexCommands.h"
 
 
 #define WELCOME_MENU_TEXT     \
@@ -37,6 +38,7 @@ Editor::Editor() {
     CommandInfoPool pool;
     pool.loadFromFile("resources/commands.csv");
 
+    // User
     addCmd(new ConnectCommand(pool.get("CONNECT")), _commands);
     addCmd(new DisconnectCommand(pool.get("DISCONNECT")), _commands);
     addCmd(new QuitCommand(pool.get("QUIT")), _commands);
@@ -44,21 +46,29 @@ Editor::Editor() {
     addCmd(new HelpCommand(pool.get("HELP")), _commands);
     addCmd(new UglyCommand(pool.get("UGLY")), _commands);
 
+    // Data
     addCmd(new CreateDataCommand(pool.get("CREA_DATA")), _commands);
     addCmd(new JoinDataCommand(pool.get("JOIN_DATA")), _commands);
     addCmd(new LeaveDataCommand(pool.get("LEAVE_DATA")), _commands);
 
+    // Edge
     addCmd(new EdgeAddCommand(pool.get("EDGE_ADD")), _commands);
     addCmd(new EdgeRemoveCommand(pool.get("EDGE_REM")), _commands);
 
+    // Attr
     addCmd(new AttributeAdd(pool.get("ATTR_ADD")), _commands);
     addCmd(new AttributeRemove(pool.get("ATTR_REM")), _commands);
     addCmd(new AttributeSet(pool.get("ATTR_SET")), _commands);
 
+    // Vertex
     addCmd(new VertexAddCommand(pool.get("VERTEX_ADD")), _commands);
     addCmd(new VertexRemoveCommand(pool.get("VERTEX_REM")), _commands);
     addCmd(new VertexListCommand(pool.get("VERTEX_LIST")), _commands);
     addCmd(new VertexInfoCommand(pool.get("VERTEX_INFO")), _commands);
+
+    // Graph
+    addCmd(new GraphShowCommand(pool.get("GRAPH_SHOW")), _commands);
+    addCmd(new GraphInfoCommand(pool.get("GRAPH_INFO")), _commands);
 }
 
 Editor::~Editor() {

@@ -2,6 +2,59 @@
 
 #include <iostream>
 
+
+// -----------------------------------------------------------------------------
+// SGraphOpHandlerDebug
+// -----------------------------------------------------------------------------
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::VertexAddOperation &op) {
+    std::cout << "Vertex added (" << op.vertexID() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::VertexRemoveOperation &op) {
+    std::cout << "Vertex removed (" << op.vertexID() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::EdgeAddOperation &op) {
+    std::cout << "Edge added (" << op.fromID() << " -> " << op.toID() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::EdgeRemoveOperation &op) {
+    std::cout << "Edge removed (" << op.fromID() << " -> " << op.toID() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeAddOperation &op) {
+    std::cout << "Attribute added to vertex (" << op.vertexID() << ": "
+              << op.attributeName() << " = " << op.attributeValue() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeRemoveOperation &op) {
+    std::cout << "Attribute removed from vertex (" << op.vertexID() << ": "
+              << op.attributeName() << ")\n";
+}
+
+void SGraphOpHandlerDebug::handleOperation(
+        const collab::SimpleGraph::AttributeSetOperation &op) {
+    std::cout << "Attribute set in vertex (" << op.vertexID() << ": "
+              << op.attributeName() << " = " << op.newValue() << ")\n";
+}
+
+
+// -----------------------------------------------------------------------------
+// SGraphOpObserverDebug
+// -----------------------------------------------------------------------------
+
+void SGraphOpObserverDebug::onOperation(const collab::Operation &op) {
+   op.accept(_opHandler);
+}
+
+
 namespace utils {
 
 
@@ -46,57 +99,5 @@ std::vector<std::string> split_no_quotes(
 
 
 } // End namespace
-
-
-// -----------------------------------------------------------------------------
-// SGraphOpHandlerDebug
-// -----------------------------------------------------------------------------
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::VertexAddOperation &op){
-    std::cout << "Vertex added (" << op.vertexID() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::VertexRemoveOperation &op){
-    std::cout << "Vertex removed (" << op.vertexID() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::EdgeAddOperation &op){
-    std::cout << "Edge added (" << op.fromID() << " -> " << op.toID() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::EdgeRemoveOperation &op){
-    std::cout << "Edge removed (" << op.fromID() << " -> " << op.toID() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::AttributeAddOperation &op){
-    std::cout << "Attribute added to vertex (" << op.vertexID() << ": "
-              << op.attributeName() << " = " << op.attributeValue() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::AttributeRemoveOperation &op){
-    std::cout << "Attribute removed from vertex (" << op.vertexID() << ": "
-              << op.attributeName() << ")\n";
-}
-
-void SGraphOpHandlerDebug::handleOperation(
-        const collab::SimpleGraph::AttributeSetOperation &op){
-    std::cout << "Attribute set in vertex (" << op.vertexID() << ": "
-              << op.attributeName() << " = " << op.newValue() << ")\n";
-}
-
-
-// -----------------------------------------------------------------------------
-// SGraphOpObserverDebug
-// -----------------------------------------------------------------------------
-
-void SGraphOpObserverDebug::onOperation(const collab::Operation &op) {
-   op.accept(_opHandler);
-}
 
 

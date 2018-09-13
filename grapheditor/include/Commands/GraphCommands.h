@@ -4,15 +4,15 @@
 #include "CommandInfo.h"
 
 
-class EdgeAddCommand : public Command {
+class GraphShowCommand : public Command {
     public:
-        EdgeAddCommand(const CommandInfo& info) : Command(info) {}
+        GraphShowCommand(const CommandInfo& info) : Command(info) {}
         int exec(const std::vector<std::string>& args) override;
 };
 
-class EdgeRemoveCommand : public Command {
+class GraphInfoCommand : public Command {
     public:
-        EdgeRemoveCommand(const CommandInfo& info) : Command(info) {}
+        GraphInfoCommand(const CommandInfo& info) : Command(info) {}
         int exec(const std::vector<std::string>& args) override;
 };
 

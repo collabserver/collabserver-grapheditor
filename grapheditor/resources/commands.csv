@@ -1,10 +1,10 @@
 REFERENCE_ID,Name,Shortname,Usage,Description
-CONNECT,connect,co,connect IP PORT,Connect this session to the given CollabServer
-DISCONNECT,disconnect,disco,disconnect,Disconnect from the server
-CREA_DATA,create,crea,create,Create and join new data. Can't be done if data already loaded
-JOIN_DATA,join,join,join DATA_ID,Join an existing collaboration on a data
-LEAVE_DATA,leave,leave,leave,Leave the current data you are working on (Still exists for other collaborators)
-INFO,info,i,info,Display current session info such as connection status and number of collaborators
+CONNECT,connect,co,connect IP PORT,Connect editor to a CollabServer
+DISCONNECT,disconnect,disco,disconnect,Disconnect from server
+CREA_DATA,create,crea,create,Create and join new collab data. Can't be done if data already loaded
+JOIN_DATA,join,join,join DATA_ID,Join an existing collab data
+LEAVE_DATA,leave,leave,leave,Leave the current collab data you are working on (Still exists for other collaborators)
+INFO,info,i,info,Display information about current session such as connection and data status
 QUIT,quit,q,quit,Quit the editor
 HELP,help,h,help [COMMAND],Display all available commands or display help for a specific command
 UGLY,askgod,askgod,askgod,Ask god if you are ugly
@@ -15,5 +15,7 @@ ATTR_REM,attributeRemove,arem,AttributeRemove [VERTEX_ID] [ATTR_NAME],Remove att
 ATTR_SET,attributeSet,aset,attributeSet VERTEX_ID ATTR_NAME ATTR_VALUE,Set value of vertex attribute. Create any missing element if doesn't exists
 VERTEX_ADD,vertexAdd,vadd,vertexAdd VERTEX_ID,Add a new vertex to the graph
 VERTEX_REM,vertexRemove,vrem,vertexRemove VERTEX_ID,Remove this vertex from the graph
-VERTEX_INFO,vertexInfo,vinfo,vertexInfo VERTEX_ID,Display the information about a vertex
-VERTEX_LIST,vertexList,vlist,vertexList [--details],Display a list of all vertex in the graph
+VERTEX_INFO,vertexInfo,vinfo,vertexInfo VERTEX_ID,Display information about a vertex
+VERTEX_LIST,vertexList,vlist,vertexList,Display a list of all vertices
+GRAPH_SHOW,graphShow,gshow,graphShow,Show the graph (Vertices, attributes, and edges)
+GRAPH_INFO,graphInfo,ginfo,graphInfo,Display general information about the current graph

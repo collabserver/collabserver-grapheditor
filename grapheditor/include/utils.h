@@ -8,6 +8,7 @@
 
 namespace utils {
 
+
 /**
  * @brief
  * Collect words in the range [@c first, @c last).
@@ -49,6 +50,7 @@ class SGraphOpHandlerDebug : public collab::SimpleGraph::OpHandler {
         void handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op) override;
         void handleOperation(const collab::SimpleGraph::AttributeSetOperation &op) override;
 };
+
 
 class SGraphOpObserverDebug : public collab::OperationObserver {
     private:

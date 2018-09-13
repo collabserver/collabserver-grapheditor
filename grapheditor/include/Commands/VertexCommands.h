@@ -27,3 +27,5 @@ class VertexListCommand : public Command {
         VertexListCommand(const CommandInfo& info) : Command(info) {}
         int exec(const std::vector<std::string> &args) override;
 };
+
+

@@ -3,7 +3,7 @@
 #include "Global.h"
 
 
-int EdgeRemoveCommand::exec(const std::vector<std::string> &args){
+int EdgeRemoveCommand::exec(const std::vector<std::string> &args) {
     if(args.size() != 2) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";

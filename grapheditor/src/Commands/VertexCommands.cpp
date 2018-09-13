@@ -7,7 +7,7 @@
 // VertexAdd
 // -----------------------------------------------------------------------------
 
-int VertexAddCommand::exec(const std::vector<std::string> &args) {
+int VertexAddCommand::exec(const std::vector<std::string>& args) {
     if(args.size() != 1) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
@@ -34,7 +34,7 @@ int VertexAddCommand::exec(const std::vector<std::string> &args) {
 // VertexRemove
 // -----------------------------------------------------------------------------
 
-int VertexRemoveCommand::exec(const std::vector<std::string> &args) {
+int VertexRemoveCommand::exec(const std::vector<std::string>& args) {
     if (args.size() != 1) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
@@ -61,7 +61,7 @@ int VertexRemoveCommand::exec(const std::vector<std::string> &args) {
 // VertexInfo
 // -----------------------------------------------------------------------------
 
-int VertexInfoCommand::exec(const std::vector<std::string> &args) {
+int VertexInfoCommand::exec(const std::vector<std::string>& args) {
     if (args.size() != 1) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
@@ -80,30 +80,29 @@ int VertexInfoCommand::exec(const std::vector<std::string> &args) {
     }
 
     try {
-        collab::SimpleGraph::VertexDescriptor vertex = Global::get().graphdata().at(args[0]);
-        std::cout << "- " << vertex.id() << "\n";
+        const auto vertex = Global::get().graphdata().at(args[0]);
 
         // Show attributes
         collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
-        std::cout << "Attribute:\n";
-        while (attributes.moveNext()) {
-            const collab::SimpleGraph::AttributeDescriptor attribute = attributes.current();
-            std::cout << "\t" << attribute.name() << " : " << attribute.value() << "\n";
+        while(attributes.moveNext()) {
+            const auto attribute = attributes.current();
+            std::cout << "  " << attribute.name() << " : " << attribute.value() << "\n";
         }
-        std::cout << "\n";
+
+        std::cout << "  --- \n";
 
         // Show edges
         collab::SimpleGraph::EdgeIterator edges = vertex.edges();
-        std::cout << "Edge:\n";
-        while (edges.moveNext()) {
+        while(edges.moveNext()) {
             const collab::SimpleGraph::UUID &edge = edges.current();
-            std::cout << "\t" << vertex.id() << " -> " << edge << "\n";
+            std::cout << "  (" << vertex.id() << " -> " << edge << ")\n";
         }
     }
     catch (const std::out_of_range &e) {
-        std::cout << "ERROR: vertex " << args[0] << " not found in this graph\n";
+        std::cout << "ERROR: vertex '" << args[0] << "' not found\n";
         return -2;
     }
+
     return 0;
 }
 
@@ -112,19 +111,8 @@ int VertexInfoCommand::exec(const std::vector<std::string> &args) {
 // VertexList
 // -----------------------------------------------------------------------------
 
-int VertexListCommand::exec(const std::vector<std::string> &args) {
-    bool detail = false;
-    if(args.size() == 1) {
-        if (args[0] == "--details") {
-            detail = true;
-        }
-        else {
-            std::cout << "ERROR: invalid arguments\n";
-            std::cout << "USAGE: " << getUsage() << "\n";
-            return -2;
-        }
-    }
-    else if (args.size() > 1) {
+int VertexListCommand::exec(const std::vector<std::string>& args) {
+    if(args.size() != 0) {
         std::cout << "ERROR: invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
@@ -141,32 +129,13 @@ int VertexListCommand::exec(const std::vector<std::string> &args) {
         return -1;
     }
 
-    std::cout << "\nVertex List:\n";
-
     collab::SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
-    while (it.moveNext()) {
+    while(it.moveNext()) {
         collab::SimpleGraph::VertexDescriptor vertex = it.current();
-        std::cout << "- " << vertex.id() << "\n";
-
-        if(detail) {
-            // Show attributes
-            collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
-            std::cout << "\tAttribute:\n";
-            while (attributes.moveNext()) {
-                const collab::SimpleGraph::AttributeDescriptor attribute = attributes.current();
-                std::cout << "\t\t" << attribute.name() << " : " << attribute.value() << "\n";
-            }
-            std::cout << "\n";
-            // Show edges
-            collab::SimpleGraph::EdgeIterator edges = vertex.edges();
-            std::cout << "\tEdge:\n";
-            while (edges.moveNext()) {
-                const collab::SimpleGraph::UUID &edge = edges.current();
-                std::cout <<"\t\t" << vertex.id() << " -> " << edge << "\n";
-            }
-        }
-        std::cout << std::endl;
+        std::cout << vertex.id() << " ";
     }
+    std::cout << "\n";
+
     return 0;
 }
 
