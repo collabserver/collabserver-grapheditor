@@ -8,7 +8,7 @@
 
 static void handleInterrupt(int sig) {
     std::cout << "SIGINT received\n";
-    std::cout << "Are you sure you want to leave? [quit/no]:\n";
+    std::cout << "Are you sure you want to leave? [quit/no]: ";
 }
 
 int main(int argc, char **argv) {

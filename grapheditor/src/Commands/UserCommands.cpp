@@ -80,7 +80,7 @@ int DisconnectCommand::exec(const std::vector<std::string>& args) {
 
 int CreateDataCommand::exec(const std::vector<std::string>& args) {
     if(args.size() > 0) {
-        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "ERROR: Invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
@@ -116,7 +116,7 @@ int CreateDataCommand::exec(const std::vector<std::string>& args) {
 
 int JoinDataCommand::exec(const std::vector<std::string>& args) {
     if(args.size() != 1) {
-        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "ERROR: Invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
@@ -132,7 +132,7 @@ int JoinDataCommand::exec(const std::vector<std::string>& args) {
 
     int dataID = atoi(args[0].c_str());
     if (dataID == 0) {
-        std::cout << "ERROR: invalid data ID value (Number required)\n";
+        std::cout << "ERROR: Invalid data ID value (Number required)\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
@@ -159,7 +159,7 @@ int JoinDataCommand::exec(const std::vector<std::string>& args) {
 
 int LeaveDataCommand::exec(const std::vector<std::string>& args) {
     if(args.size() > 0) {
-        std::cout << "ERROR: invalid arguments\n";
+        std::cout << "ERROR: Invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
     }
@@ -176,11 +176,11 @@ int LeaveDataCommand::exec(const std::vector<std::string>& args) {
     bool success = Global::get().collabclient().leaveData();
     if(!success) {
         std::cout << "FAILED\n";
-        std::cout << "ERROR: Unable to join. Error occurred\n";
+        std::cout << "ERROR: Unable to leave\n";
         return -1;
     }
     std::cout << "SUCCESS\n";
-    std::cout << "Collaborative data successfully joined\n";
+    std::cout << "Collab data successfully left\n";
     return 0;
 }
 
@@ -206,21 +206,21 @@ int InfoCommand::exec(const std::vector<std::string>& args) {
 
 int QuitCommand::exec(const std::vector<std::string>& args) {
     if(Global::get().collabclient().isDataLoaded()) {
-        std::cout << "WARNING: You are connected to a collab data. Leaving... ";
+        std::cout << "Leaving collab data... ";
         bool success = Global::get().collabclient().leaveData();
         if(!success) {
             std::cout << "FAILED\n";
-            std::cout << "ERROR: Unable to leave the data. Error occurred\n";
+            std::cout << "ERROR: Unable to leave data\n";
             return -1;
         }
         std::cout << "SUCCESS\n";
     }
     if(Global::get().collabclient().isConnected()) {
-        std::cout << "WARNING: You are connected. Disconnecting... ";
+        std::cout << "Disconnecting from server... ";
         bool success = Global::get().collabclient().disconnect();
         if(!success) {
             std::cout << "FAILED\n";
-            std::cout << "ERROR: Unable to disconnect. Error occurred\n";
+            std::cout << "ERROR: Unable to disconnect\n";
             return -1;
         }
         std::cout << "SUCCESS\n";
