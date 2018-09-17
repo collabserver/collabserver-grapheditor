@@ -1,37 +1,30 @@
-/**
- * @brief Observer for any Metamodel
- */
-
-#ifndef MVK_DATABASEOBSERVER_H
-#define MVK_DATABASEOBSERVER_H
+#pragma once
 
 #include <collabdata/custom/OperationObserver.h>
 #include <collabdata/custom/Operation.h>
+
 #include "DatabaseSimpleGraphOperationHandler.h"
 #include "MVKSimpleGraphOperationHandler.h"
 #include "DatabaseOperationHandler.h"
 
+
 class DatabaseObserver : public collab::OperationObserver {
-protected:
-    /**
-     * @brief Used to apply every operation send by the observable item
-     */
-    DatabaseOperationHandler *opHandler;
+    protected:
 
-    DatabaseObserver() = default;
+        /**
+         * Used to apply every operation send by the observable item.
+         */
+        DatabaseOperationHandler *opHandler;
 
-public:
+        DatabaseObserver() = default;
 
-    explicit DatabaseObserver(DatabaseOperationHandler *opHandler);
+    public:
 
-    ~DatabaseObserver() override;
+        explicit DatabaseObserver(DatabaseOperationHandler *opHandler);
 
-    /**
-     * @brief call the operation in parameter by the handler
-     * @param op the operation send by the abservable item
-     */
-    void onOperation(const collab::Operation &op) override;
+        ~DatabaseObserver() override;
+
+        void onOperation(const collab::Operation &op) override;
 };
 
 
-#endif //MVK_DATABASEOBSERVER_H

@@ -1,22 +1,20 @@
-/**
- * @brief Basic Interface for any Database and any Metamodel
- *
- * You must instantiate one OperationHandler per Model
- */
-
-#ifndef MVK_DATABASEOPERATIONHANDLER_H
-#define MVK_DATABASEOPERATIONHANDLER_H
+#pragma once
 
 #include <iostream>
 #include <collabdata/custom/OperationHandler.h>
 #include <collabdata/custom/Operation.h>
 
+
+/**
+ * \brief Basic Interface for any Database and any Metamodel.
+ *
+ * You must instantiate one OperationHandler per Model.
+ */
 class DatabaseOperationHandler : public collab::OperationHandler {
-protected:
-    DatabaseOperationHandler() = default;
-    DatabaseOperationHandler(const DatabaseOperationHandler& other) = default;
-    DatabaseOperationHandler& operator=(const DatabaseOperationHandler& other) = default;
+    protected:
+        DatabaseOperationHandler() = default;
+        DatabaseOperationHandler(const DatabaseOperationHandler& other) = default;
+        DatabaseOperationHandler& operator=(const DatabaseOperationHandler& other) = default;
 };
 
 
-#endif //MVK_DATABASEOPERATIONHANDLER_H

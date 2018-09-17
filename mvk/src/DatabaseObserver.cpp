@@ -1,11 +1,12 @@
 #include "DatabaseObserver.h"
 
+
 DatabaseObserver::DatabaseObserver(DatabaseOperationHandler* opHandler) {
     this->opHandler = opHandler;
 }
 
 DatabaseObserver::~DatabaseObserver(){
-    if(opHandler!= nullptr) {
+    if(opHandler != nullptr) {
         delete opHandler;
         opHandler = nullptr;
     }

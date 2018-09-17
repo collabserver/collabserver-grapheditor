@@ -1,40 +1,34 @@
-/**
- * @brief Class test for MVK Wrapper with user interaction
- */
+#pragma once
 
-#ifndef MVK_PROMPT_H
-#define MVK_PROMPT_H
-
-
-#include "../include/MVKWrapper.h"
+#include "MVKWrapper.h"
 
 
 class Prompt {
+    private:
+        MVKWrapper database;
 
-private:
-    /** @brief the wrapper for the communication with Modelverse*/
-    MVKWrapper database;
 
-    /** @brief the connection part of Modelverse */
-    void connection();
+    private:
 
-    /** @brief the megamodeling part of Modelverse */
-    void megaModelling();
+        /** The connection part of Modelverse. */
+        void connection();
 
-    /** @brief the modeling part of Modelverse */
-    void modelling();
+        /** The megamodeling part of Modelverse. */
+        void megaModelling();
 
-    /**
-     * @brief get what the user type and return it
-     * @return the answer of the user
-     */
-    std::string getUserAnswer();
+        /** The modeling part of Modelverse. */
+        void modelling();
 
-public:
-    /** @brief launch the prompt*/
-    void runPrompt();
+        /**
+         * Get what the user type and return it.
+         *
+         * \return The answer of the user
+         */
+        std::string getUserAnswer();
 
+    public:
+        /** Launch the prompt. */
+        void runPrompt();
 };
 
 
-#endif //MVK_PROMPT_H

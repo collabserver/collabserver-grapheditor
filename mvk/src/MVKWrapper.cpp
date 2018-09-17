@@ -1,8 +1,5 @@
-//
-// Created by robin on 28/05/18.
-//
+#include "MVKWrapper.h"
 
-#include "../include/MVKWrapper.h"
 
 MVKWrapper::MVKWrapper() {
     uuid = UuidGenerator::basicGenerator();

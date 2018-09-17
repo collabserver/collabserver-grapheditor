@@ -1,8 +1,4 @@
-//
-// Created by robin on 04/07/18.
-//
-
-#include "../include/MVKSimpleGraphOperationHandler.h"
+#include "MVKSimpleGraphOperationHandler.h"
 
 #define NODETYPE "Vertex"
 #define EDGETYPE "Edge"
@@ -10,6 +6,7 @@
 #define ATTRIBUTEVERTEX "Vertex"
 #define ATTRIBUTENAME  "Name"
 #define ATTRIBUTEVALUE "Value"
+
 
 MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler() {
     graph = collab::SimpleGraph::buildNew(42); // 42 is dummy ID: see SimpleGraph doc

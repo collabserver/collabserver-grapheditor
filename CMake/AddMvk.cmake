@@ -11,7 +11,7 @@ target_link_libraries(mvk_poc
     collabcommon
     collabdata
     zmq
-    curl
-    pthread)
+    pthread
+    curl)
 
 

@@ -1,11 +1,14 @@
 #include <iostream>
+
 #include <collabdata/custom/SimpleGraph.h>
 
-#include "../include/MVKWrapper.h"
-#include "../include/Prompt.h"
-#include "../include/MVKSimpleGraphOperationHandler.h"
-#include "../include/DatabaseSimpleGraphOperationHandler.h"
-#include "../include/DatabaseObserver.h"
+#include "Global.h"
+#include "MVKWrapper.h"
+#include "Prompt.h"
+#include "MVKSimpleGraphOperationHandler.h"
+#include "DatabaseSimpleGraphOperationHandler.h"
+#include "DatabaseObserver.h"
+
 
 void testSimpleGraphOperation() {
     MVKSimpleGraphOperationHandler opHandler;

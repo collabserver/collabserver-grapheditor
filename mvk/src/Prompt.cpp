@@ -1,8 +1,5 @@
-//
-// Created by robin on 20/06/18.
-//
+#include "Prompt.h"
 
-#include "../include/Prompt.h"
 
 void Prompt::runPrompt() {
     std::cout << "Welcome to local shell for Modelverse C++ !\n";
@@ -154,3 +151,5 @@ std::string Prompt::getUserAnswer() {
     std::cin >> userAnswer;
     return userAnswer;
 }
+
+

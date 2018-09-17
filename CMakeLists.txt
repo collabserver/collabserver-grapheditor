@@ -32,7 +32,7 @@ endif()
 # ------------------------------------------------------------------------------
 # Mvk
 # ------------------------------------------------------------------------------
-option(collab_mvk "Build Mvk database client" OFF)
+option(collab_mvk "Build Mvk database client" ON)
 
 if(collab_mvk)
     message(STATUS "Build Mvk db client")
