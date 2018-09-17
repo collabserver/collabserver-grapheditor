@@ -10,6 +10,8 @@
 #include "DatabaseObserver.h"
 
 
+/*
+ * TODO TMP to cleanup
 void testSimpleGraphOperation() {
     MVKSimpleGraphOperationHandler opHandler;
     DatabaseObserver *observer = new DatabaseObserver(&opHandler);
@@ -27,12 +29,11 @@ void testSimpleGraphOperation() {
     graph.setAttribute("v2", "Ville", "Marseille");
 
 };
+*/
 
 int main() {
     std::cout << "Début du Programme !" << std::endl;
-    //MVKWrapper::unitTest();
-
-    testSimpleGraphOperation();
+    //testSimpleGraphOperation();
 
     std::cout << "Fin du Programme !\n";
     return 0;

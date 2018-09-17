@@ -1,5 +1,7 @@
 #include "MVKSimpleGraphOperationHandler.h"
 
+#include <cassert>
+
 #define NODETYPE "Vertex"
 #define EDGETYPE "Edge"
 #define ATTRIBUTETYPE "Attribute"
@@ -29,9 +31,12 @@ MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler(
 MVKSimpleGraphOperationHandler::~MVKSimpleGraphOperationHandler() {
     mvkConnector->modelExit();
 
+    assert(mvkConnector != nullptr);
+    assert(graph != nullptr);
+
     delete mvkConnector;
-    mvkConnector = nullptr;
     delete graph;
+    mvkConnector = nullptr;
     graph = nullptr;
 }
 

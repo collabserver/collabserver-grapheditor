@@ -6,10 +6,6 @@
 
 #include <curl/curl.h>
 
-#include "UuidGenerator.h"
-
-#define LOCALCONNECTIONADRESS "http://127.0.0.1:8001"
-
 
 /**
  * \brief Allows communication with Modelverse Database in C++
@@ -52,18 +48,17 @@ class MVKWrapper {
             char trace_ascii; /* 1 or 0 */
         };
 
-        /** Function for big debug mode (not used)*/
-        static size_t
-        WriteCallback(void *contents, size_t size, size_t nmemb, void *userp);
+        /** Function for big debug mode (not used) */
+        static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
+                                    void *userp);
 
-        /** Function for big debug mode (not used)*/
-        static int
-        MVKDebugTrace(CURL *handle, curl_infotype type, char *data, size_t size,
-                      void *userp);
+        /** Function for big debug mode (not used) */
+        static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
+                                 size_t size, void *userp);
 
-        /** Function for big debug mode (not used)*/
-        static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
-                                 size_t size, char nohex);
+        /** Function for big debug mode (not used) */
+        static void MVKDebugDump(const char *text, FILE *stream,
+                                 unsigned char *ptr, size_t size, char nohex);
 
     public:
 
@@ -290,8 +285,6 @@ class MVKWrapper {
         int defineAttribute(const std::string element,
                             const std::string attributeName,
                             const std::string attributeType);
-
-        static void unitTest();
 };
 
 
