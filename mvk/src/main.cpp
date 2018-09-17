@@ -1,13 +1,9 @@
+#include <cstdlib>
 #include <iostream>
 
 #include <collabdata/custom/SimpleGraph.h>
 
-#include "Global.h"
-#include "MVKWrapper.h"
-#include "Prompt.h"
-#include "MVKSimpleGraphOperationHandler.h"
-#include "DatabaseSimpleGraphOperationHandler.h"
-#include "DatabaseObserver.h"
+#include "MVKGlobal.h"
 
 
 /*
@@ -31,10 +27,53 @@ void testSimpleGraphOperation() {
 };
 */
 
-int main() {
-    std::cout << "Début du Programme !" << std::endl;
-    //testSimpleGraphOperation();
 
-    std::cout << "Fin du Programme !\n";
-    return 0;
+void usage() {
+    std::cout << "USAGE: mvk_poc IP_SERVER PORT_SERVER IP_MVK PORT_MVK MODEL\n";
 }
+
+int main(int argc, char** argv) {
+    if(argc != 6) {
+        usage();
+        return EXIT_FAILURE;
+    }
+
+    const char* collab_ip = argv[1];
+    const int collab_port = atoi(argv[2]);
+    const char* mvk_ip = argv[3];
+    const int mvk_port = atoi(argv[4]);
+    const char* modelName = argv[5];
+
+
+    // CollabServer
+    std::cout << "Connecting to CollabServer ("
+              << collab_ip << ":" << collab_port << ")... "
+              << std::endl;
+    bool success = MVKGlobal::get().collabclient().connect(collab_ip, collab_port);
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "Unable to establish connection with CollabServer\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully connected to CollabServer\n";
+
+
+    // Mvk
+    std::cout << "Connecting to Mvk Database ("
+              << mvk_ip << ":" << mvk_port << ")... "
+              << std::endl;
+    // TODO
+    //success = MVKGlobal::get().mvkWrapper().connect();
+    success = false; //TODO TMP
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "Unable to establish connection with Mvk database\n";
+        return -1;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully connected to Mvk Database\n";
+
+    return EXIT_SUCCESS;
+}
+

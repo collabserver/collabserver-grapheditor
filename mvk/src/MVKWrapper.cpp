@@ -1,5 +1,7 @@
 #include "MVKWrapper.h"
 
+#include <regex>
+#include <fstream>
 #include "UuidGenerator.h"
 
 
@@ -9,6 +11,13 @@
 MVKWrapper::MVKWrapper() {
     uuid = UuidGenerator::basicGenerator();
     connectionAdress = LOCALCONNECTIONADRESS;
+    DebugMode = false;
+    initCurl();
+}
+
+MVKWrapper::MVKWrapper(const char* ip, const int port, bool debugMode) {
+    uuid = UuidGenerator::basicGenerator();
+    this->connectionAdress = connectionAdress;
     DebugMode = false;
     initCurl();
 }
@@ -38,45 +47,10 @@ MVKWrapper::~MVKWrapper() {
     curl_global_cleanup(); // Cleaning of curl
 }
 
-const std::string &MVKWrapper::getUuid() const {
-    return uuid;
-}
-
-void MVKWrapper::setUuid(const std::string &uuid) {
-    this->uuid = uuid;
-}
-
-const std::string &MVKWrapper::getConnectionAdress() const {
-    return connectionAdress;
-}
-
-void MVKWrapper::setConnectionAdress(const std::string &connectionAdress) {
-    this->connectionAdress = connectionAdress;
-    curl_easy_setopt(curl, CURLOPT_URL, this->connectionAdress.c_str());
-}
-
-bool MVKWrapper::isDebugMode() const {
-    return DebugMode;
-}
-
-void MVKWrapper::setDebugMode(bool isDebugMode) {
-    this->DebugMode = isDebugMode;
-}
-
-const std::string &MVKWrapper::getDatabaseAnswer() const {
-    return databaseAnswer;
-}
-
-const std::string MVKWrapper::getCleanDatabaseAnswer() const {
-    std::string res = "";
-    if (databaseAnswer.length() > 11) {
-        res = databaseAnswer.substr(10, databaseAnswer.length() - 11);
+static void curlError(CURLcode code) {
+    if(code != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(code));
     }
-    return res;
-}
-
-void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
-    MVKWrapper::databaseAnswer = databaseAnswer;
 }
 
 void MVKWrapper::send(const char *data) {
@@ -95,53 +69,20 @@ bool MVKWrapper::receive() {
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, receiveRequest.c_str());
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
 
-    CURLcode curLAnswer = curl_easy_perform(curl);
-    if (isDebugMode()) {
+    CURLcode curlAnswer = curl_easy_perform(curl);
+    if(isDebugMode()) {
         *log << "Sending : " << receiveRequest << "\n   Answer :"
              << databaseAnswer << "\n";
         std::cout << databaseAnswer << "\n";
     }
-    curlError(curLAnswer);
-    if (functionError()) {
-        return false;
-    }
-    return true;
-
-}
-
-void MVKWrapper::curlError(CURLcode curlAnswer) {
-    if (curlAnswer != CURLE_OK) {
-        fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                curl_easy_strerror(curlAnswer));
-    }
-}
-
-bool MVKWrapper::functionError() {
-    // TODO Improve function success or fail
-
+    curlError(curlAnswer);
     std::regex unknownCommand("^\"[Uu]nknown command");
     std::regex success("^\"Success");
     if (std::regex_search(databaseAnswer, unknownCommand)) {
         return true;
     }
-    /*if (!isDebugMode()) {
-        if (std::regex_search(databaseAnswer, success) ||
-            databaseAnswer == "Model loaded, ready for commands!") {
-            return false;
-        } else {
-            return true;
-        }
-    }*/
-    return false;
-}
+    return true;
 
-int MVKWrapper::voidSending() {
-    std::string request =
-            "value=\"\"" + baseSendRequest;
-    send(request.c_str());
-    receive();
-
-    return 0;
 }
 
 int MVKWrapper::connect(const std::string username,
@@ -176,8 +117,7 @@ int MVKWrapper::connect(const std::string username,
 }
 
 int MVKWrapper::modelList(const std::string path) {
-    std::string request =
-            "data=[\"model_list\",\"" + path + "\"]" + baseSendRequest;
+    std::string request = "data=[\"model_list\",\"" + path + "\"]" + baseSendRequest;
     send(request.c_str());
     if (!receive()) { return -1; }
     if (isDebugMode()) {
@@ -499,6 +439,21 @@ int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
     return 0;
 }
 
+void MVKWrapper::setConnectionAdress(const std::string &connectionAdress) {
+    this->connectionAdress = connectionAdress;
+    curl_easy_setopt(curl, CURLOPT_URL, this->connectionAdress.c_str());
+}
 
+const std::string MVKWrapper::getCleanDatabaseAnswer() const {
+    std::string res = "";
+    if (databaseAnswer.length() > 11) {
+        res = databaseAnswer.substr(10, databaseAnswer.length() - 11);
+    }
+    return res;
+}
+
+void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
+    MVKWrapper::databaseAnswer = databaseAnswer;
+}
 
 

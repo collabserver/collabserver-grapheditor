@@ -1,19 +1,19 @@
 #pragma once
 
-#include <regex>
 #include <iostream>
-#include <fstream>
 
 #include <curl/curl.h>
 
 
 /**
- * \brief Allows communication with Modelverse Database in C++
+ * \brief C++ Wrapper for Modelverse Database.
  *
- * This is a basic wrapper with small error detection.
- * The communication is done using HTTP Requests with the curl librairie.
+ * Wrapper C++ to communicate with a Modelverse Database.
  */
 class MVKWrapper {
+    // -------------------------------------------------------------------------
+    // Attributes
+    // -------------------------------------------------------------------------
 
     private:
         /** Curl object for communication */
@@ -40,13 +40,20 @@ class MVKWrapper {
         /** The last answer of Modelverse */
         std::string databaseAnswer;
 
-        /** Basic stuff for curl initialisation*/
-        void initCurl();
-
         /** Struct for big debugging mode (not used)*/
         struct MVKDebugData {
             char trace_ascii; /* 1 or 0 */
         };
+
+
+    // -------------------------------------------------------------------------
+    // Init / Constructor
+    // -------------------------------------------------------------------------
+
+    private:
+
+        /** Basic stuff for curl initialisation*/
+        void initCurl();
 
         /** Function for big debug mode (not used) */
         static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
@@ -67,6 +74,8 @@ class MVKWrapper {
          */
         MVKWrapper();
 
+        MVKWrapper(const char* ip, const int port, bool debugMode = false);
+
         /**
          * Constructor for remote Modelverse
          * \param connectionAdress adress and port of the Modelverse database
@@ -83,34 +92,27 @@ class MVKWrapper {
 
         ~MVKWrapper();
 
-        const std::string &getUuid() const;
 
-        void setUuid(const std::string &uuid);
+    // -------------------------------------------------------------------------
+    // Network
+    // -------------------------------------------------------------------------
 
-        const std::string &getConnectionAdress() const;
-
-        void setConnectionAdress(const std::string &connectionAdress);
-
-        bool isDebugMode() const;
-
-        void setDebugMode(bool isDebugMode);
-
-        const std::string &getDatabaseAnswer() const;
+    public:
 
         /**
-         * Return the last database answer without uselsess information
-         * \warning There is no verification in the content of databaseAnswer so
-         *      use with caution
-         * \return The last database answer (without "\"Success :" at the begining
-         *      and "\"" at the end) or an empty string if the answer is to short
+         * Send a connection request to Modelverse,
+         * at the end you are in megamodeling mode.
+         *
+         * \post you are in megamodeling mode
+         * \param username username for connection
+         * \param password password for connection
+         * \return -1 if there is a detected error
          */
-        const std::string getCleanDatabaseAnswer() const;
-
-        void setDatabaseAnswer(const std::string &databaseAnswer);
+        int connect(const std::string username, const std::string password);
 
         /**
-         * Send the data parameter to Modelverse
-         * \param data what we send to Moderlverse without adding anything
+         * Send the data parameter to Modelverse.
+         * \param data what we send to Moderlverse without adding anything.
          */
         void send(const char *data);
 
@@ -119,34 +121,6 @@ class MVKWrapper {
          * \return false if there is a detected error with Modelverse
          */
         bool receive();
-
-        /**
-         * Check if there is an error with curl and the request in general
-         * \param curlAnswer the answer of curl after sending a request
-         */
-        void curlError(CURLcode curlAnswer);
-
-        /**
-         * A simple error detector for Modelverse
-         * \return true if there is an error
-         */
-        bool functionError();
-
-        /**
-         * Send a void request
-         * \return 0
-         */
-        int voidSending();
-
-        /**
-         * Send a connection request to Modelverse,
-         *      at the end you are in megamodeling mode
-         * \post you are in megamodeling mode
-         * \param username username for connection
-         * \param password password for connection
-         * \return -1 if there is a detected error
-         */
-        int connect(const std::string username, const std::string password);
 
         /**
          * Show all models/files in path
@@ -194,8 +168,7 @@ class MVKWrapper {
          * \param modelType the metamodel of the model
          * \return -1 if there is a detected error
          */
-        int
-        modelModify(const std::string workingModel, const std::string modelType);
+        int modelModify(const std::string workingModel, const std::string modelType);
 
         /**
          * Exit the modeling mode and return to the megamodelling mode
@@ -208,6 +181,7 @@ class MVKWrapper {
         /**
          * Shows all the element of the model
          * \pre being in modeling mode
+         *
          * \return -1 if there is a detected error
          */
         int listFull();
@@ -215,6 +189,7 @@ class MVKWrapper {
         /**
          * Show all the elements of the model in a JSON
          * \pre beign in modeling mode
+         *
          * \return -1 if there is a detected error
          */
         int JSON();
@@ -222,6 +197,7 @@ class MVKWrapper {
         /**
          * Create a new element in the model
          * \pre being in modeling mode
+         *
          * \param elementType the type of the new element
          * \param name the name of the new element
          * \return -1 if there is a detected error
@@ -285,6 +261,42 @@ class MVKWrapper {
         int defineAttribute(const std::string element,
                             const std::string attributeName,
                             const std::string attributeType);
+
+
+    // -------------------------------------------------------------------------
+    // Getters / Setters
+    // -------------------------------------------------------------------------
+    public:
+
+        const std::string &getUuid() const { return uuid; }
+
+        void setUuid(const std::string &uuid) { this->uuid = uuid; }
+
+        const std::string &getConnectionAdress() const { return connectionAdress; }
+
+        void setConnectionAdress(const std::string &connectionAdress);
+
+        bool isDebugMode() const { return DebugMode; }
+
+        void setDebugMode(bool isDebugMode) { this->DebugMode = isDebugMode; }
+
+        const std::string &getDatabaseAnswer() const { return databaseAnswer; }
+
+        /**
+         * Return the last database answer without uselsess information.
+         *
+         * Response removes "\"Success :" at the begining and "\"" at the end,
+         * or an empty string if the answer is to short.
+         *
+         * \warning
+         * There is no verification in the content of databaseAnswer
+         * so use with caution.
+         *
+         * \return The last database answer.
+         */
+        const std::string getCleanDatabaseAnswer() const;
+
+        void setDatabaseAnswer(const std::string &databaseAnswer);
 };
 
 
