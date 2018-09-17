@@ -2,50 +2,23 @@
 
 #include <regex>
 #include <fstream>
+
 #include "UuidGenerator.h"
 
 
-#define LOCALCONNECTIONADRESS "http://127.0.0.1:8001"
+#define LOCAL_ADDRESS "http://127.0.0.1:8001"
 
 
-MVKWrapper::MVKWrapper() {
-    uuid = UuidGenerator::basicGenerator();
-    connectionAdress = LOCALCONNECTIONADRESS;
-    DebugMode = false;
-    initCurl();
-}
 
-MVKWrapper::MVKWrapper(const char* ip, const int port, bool debugMode) {
-    uuid = UuidGenerator::basicGenerator();
-    this->connectionAdress = connectionAdress;
-    DebugMode = false;
-    initCurl();
-}
+// -----------------------------------------------------------------------------
+// Static util methods
+// -----------------------------------------------------------------------------
 
-MVKWrapper::MVKWrapper(const char *connectionAdress) {
-    uuid = UuidGenerator::basicGenerator();
-    this->connectionAdress = connectionAdress;
-    DebugMode = false;
-    initCurl();
-}
-
-MVKWrapper::MVKWrapper(const char *connectionAdress,
-                       const bool isDebugMode) {
-    uuid = UuidGenerator::basicGenerator();
-    this->connectionAdress = connectionAdress;
-    this->DebugMode = isDebugMode;
-    initCurl();
-}
-
-MVKWrapper::~MVKWrapper() {
-    if (isDebugMode()) {
-        log->close();
-        delete log;
-        log = nullptr;
-    }
-    curl_easy_cleanup(curl);
-    curl_global_cleanup(); // Cleaning of curl
-}
+static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
+                         size_t size, char nohex);
+static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
+                         size_t size, void *userp);
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void* userp);
 
 static void curlError(CURLcode code) {
     if(code != CURLE_OK) {
@@ -53,32 +26,71 @@ static void curlError(CURLcode code) {
     }
 }
 
-void MVKWrapper::send(const char *data) {
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
 
-    CURLcode curlAnswer = curl_easy_perform(curl);
-    if (isDebugMode()) {
-        *log << "Sending : " << data << "\n   Answer : "
-             << databaseAnswer << "\n";
+// -----------------------------------------------------------------------------
+// Init methods
+// -----------------------------------------------------------------------------
+
+MVKWrapper::MVKWrapper() {
+    _uuid = UuidGenerator::basicGenerator();
+    _address = LOCAL_ADDRESS;
+    initCurl();
+}
+
+MVKWrapper::MVKWrapper(const char* ip, const int port, bool debug) {
+    _uuid = UuidGenerator::basicGenerator();
+    _address = LOCAL_ADDRESS;
+    initCurl();
+}
+
+MVKWrapper::MVKWrapper(const char* address) {
+    _uuid = UuidGenerator::basicGenerator();
+    _address = address;
+    initCurl();
+}
+
+MVKWrapper::MVKWrapper(const char* address, const bool debug) {
+    _uuid = UuidGenerator::basicGenerator();
+    _address = address;
+    _debugMode = debug;
+    initCurl();
+}
+
+MVKWrapper::~MVKWrapper() {
+    curl_easy_cleanup(_curl);
+    curl_global_cleanup();
+}
+
+
+// -----------------------------------------------------------------------------
+// Network
+// -----------------------------------------------------------------------------
+
+void MVKWrapper::send(const char* data) {
+    curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, data);
+    curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
+
+    CURLcode curlAnswer = curl_easy_perform(_curl);
+    if(isDebugMode()) {
+        std::clog << "Sending : " << data << "\n";
+        std::clog << "Answer : " << databaseAnswer << std::endl;
     }
     curlError(curlAnswer);
 }
 
 bool MVKWrapper::receive() {
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, receiveRequest.c_str());
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
+    curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, receiveRequest.c_str());
+    curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
 
-    CURLcode curlAnswer = curl_easy_perform(curl);
+    CURLcode curlAnswer = curl_easy_perform(_curl);
     if(isDebugMode()) {
-        *log << "Sending : " << receiveRequest << "\n   Answer :"
-             << databaseAnswer << "\n";
-        std::cout << databaseAnswer << "\n";
+        std::clog << "Sending : " << receiveRequest << "\n";
+        std::clog << "Answer :" << databaseAnswer << std::endl;
     }
     curlError(curlAnswer);
     std::regex unknownCommand("^\"[Uu]nknown command");
     std::regex success("^\"Success");
-    if (std::regex_search(databaseAnswer, unknownCommand)) {
+    if(std::regex_search(databaseAnswer, unknownCommand)) {
         return true;
     }
     return true;
@@ -88,27 +100,27 @@ bool MVKWrapper::receive() {
 int MVKWrapper::connect(const std::string username,
                         const std::string password) {
     std::string request =
-            "op=set_input&value=\"" + uuid + "\"&taskname=task_manager";
+            "op=set_input&value=\"" + _uuid + "\"&taskname=task_manager";
     send(request.c_str());
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
     request = "value=\"" + username + "\"" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
     std::regex newUser("^[A-Za-z \"]+new user");
-    if (std::regex_search(databaseAnswer, newUser)) {
+    if(std::regex_search(databaseAnswer, newUser)) {
         request = "value=\"" + password + "\"" + baseSendRequest;
         send(request.c_str());
-        if (!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     request = "value=\"" + password + "\"" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
-    if (!isDebugMode()) {
+    if(!isDebugMode()) {
         request = "value=\"quiet\"" + baseSendRequest;
         send(request.c_str());
     }
@@ -116,14 +128,17 @@ int MVKWrapper::connect(const std::string username,
     return 0;
 }
 
+
+// -----------------------------------------------------------------------------
+// Models management
+// -----------------------------------------------------------------------------
+
 int MVKWrapper::modelList(const std::string path) {
     std::string request = "data=[\"model_list\",\"" + path + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
+    if(!receive()) {
+        return -1;
     }
-
     return 0;
 }
 
@@ -134,11 +149,11 @@ int MVKWrapper::modelAdd(const std::string savePathName,
             "data=[\"model_add\",\"" + modelType + "\",\"" + savePathName +
             "\",\"" + textualRepresentation + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -149,9 +164,9 @@ int MVKWrapper::modelDelete(const std::string savePathName) {
             "data=[\"model_delete\",\"" + savePathName + "\"]" +
             baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -163,10 +178,10 @@ int MVKWrapper::modelVerify(const std::string savePathName,
             "data=[\"verify\",\"" + savePathName + "\",\"" + modelType +
             "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
     return 0;
 }
@@ -177,37 +192,39 @@ int MVKWrapper::modelModify(const std::string workingModel,
             "data=[\"model_modify\",\"" + workingModel + "\",\"" + modelType +
             "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
     return 0;
 }
 
 int MVKWrapper::modelExit() {
-    std::string request =
-            "value=\"exit\"" + baseSendRequest;
+    std::string request = "value=\"exit\"" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
     return 0;
 }
 
+
+// -----------------------------------------------------------------------------
+// Model
+// -----------------------------------------------------------------------------
+
 int MVKWrapper::listFull() {
-    std::string request =
-            "value=\"list_full\"" + baseSendRequest;
+    std::string request = "value=\"list_full\"" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
     return 0;
 }
 
 int MVKWrapper::JSON() {
-    std::string request =
-            "value=\"JSON\"" + baseSendRequest;
+    std::string request = "value=\"JSON\"" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
 
     return 0;
 }
@@ -218,10 +235,10 @@ int MVKWrapper::instantiateNode(const std::string elementType,
             "data=[\"instantiate_node\",\"" + elementType + "\",\"" + name +
             "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
     return 0;
 }
@@ -234,23 +251,22 @@ int MVKWrapper::instantiateEdge(const std::string elementType,
             "data=[\"instantiate_edge\",\"" + elementType + "\",\"" + name +
             "\",\"" + source + "\",\"" + target + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
     return 0;
 }
 
 int MVKWrapper::deleteElement(const std::string name) {
-    std::string request =
-            "data=[\"delete\",\"" + name + "\"]" + baseSendRequest;
+    std::string request = "data=[\"delete\",\"" + name + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -263,11 +279,11 @@ int MVKWrapper::attributeAddModify(const std::string element,
             "data=[\"attr_add\",\"" + element + "\",\"" + attributeType +
             "\",\"" + attributeValue + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -280,11 +296,11 @@ int MVKWrapper::attributeAddModifyCode(const std::string element,
             "data=[\"attr_add_code\",\"" + element + "\",\"" + attributeType +
             "\",\"" + attributeValue + "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -296,10 +312,10 @@ int MVKWrapper::attributeDelete(const std::string element,
             "data=[\"attr_delete\",\"" + element + "\",\"" + attributeType +
             "\"]" + baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -312,11 +328,11 @@ int MVKWrapper::defineAttribute(const std::string element,
                           attributeName + "\",\"" + attributeType + "\"]" +
                           baseSendRequest;
     send(request.c_str());
-    if (!receive()) { return -1; }
-    if (isDebugMode()) {
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
-        if (!receive()) { return -1; }
+    if(!receive()) { return -1; }
+    if(isDebugMode()) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
     }
 
     return 0;
@@ -324,65 +340,82 @@ int MVKWrapper::defineAttribute(const std::string element,
 
 void MVKWrapper::initCurl() {
     curl_global_init(CURL_GLOBAL_ALL); // Init of curl
-    curl = curl_easy_init();
-    curl_easy_setopt(curl, CURLOPT_URL, this->connectionAdress.c_str());
-    if (isDebugMode()) {
-        log = new std::ofstream("log.txt", std::ios::trunc);
-    }
+    _curl = curl_easy_init();
+    curl_easy_setopt(_curl, CURLOPT_URL, _address.c_str());
     databaseAnswer = "";
 
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &databaseAnswer);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &databaseAnswer);
+    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+
     // This part usefull in case of we need a really big debug mode
-    /* if(DebugMode) {
+    /*
+    if(DebugMode) {
         MVKDebugData config;
         curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, MVKDebugTrace);
         curl_easy_setopt(curl, CURLOPT_DEBUGDATA, &config);
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    }*/
+    }
+    */
 
-    baseSendRequest = "&op=set_input&taskname=" + uuid;
-    receiveRequest = "op=get_output&taskname=" + uuid;
+    baseSendRequest = "&op=set_input&taskname=" + _uuid;
+    receiveRequest = "op=get_output&taskname=" + _uuid;
 }
 
-size_t MVKWrapper::WriteCallback(void *contents, size_t size, size_t nmemb,
-                                 void *userp) {
-    ((std::string *) userp)->clear();
-    ((std::string *) userp)->append((char *) contents, size * nmemb);
-    return size * nmemb;
+void MVKWrapper::setConnectionAdress(const std::string& address) {
+    _address = address;
+    curl_easy_setopt(_curl, CURLOPT_URL, _address.c_str());
 }
 
-void MVKWrapper::MVKDebugDump(const char *text, FILE *stream,
-                              unsigned char *ptr, size_t size, char nohex) {
+const std::string MVKWrapper::getCleanDatabaseAnswer() const {
+    if(databaseAnswer.length() > 11) {
+        return databaseAnswer.substr(10, databaseAnswer.length() - 11);
+    }
+    return "";
+}
+
+void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
+    MVKWrapper::databaseAnswer = databaseAnswer;
+}
+
+
+// -----------------------------------------------------------------------------
+// Static Debug
+// -----------------------------------------------------------------------------
+
+struct MVKDebugData {
+    char trace_ascii; /* 1 or 0 */
+};
+
+static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
+                         size_t size, char nohex) {
     size_t i;
     size_t c;
 
     unsigned int width = 0x10;
 
-    if (nohex)
+    if(nohex)
         /* without the hex output, we can fit more on screen */
         width = 0x40;
 
-    fprintf(stream, "%s, %10.10lu bytes (0x%8.8lx)\n",
-            text, size, size);
+    fprintf(stream, "%s, %10.10lu bytes (0x%8.8lx)\n", text, size, size);
 
     for (i = 0; i < size; i += width) {
-
         fprintf(stream, "%4.4lx: ", i);
 
-        if (!nohex) {
+        if(!nohex) {
             /* hex not disabled, show it */
-            for (c = 0; c < width; c++)
-                if (i + c < size)
+            for (c = 0; c < width; c++) {
+                if(i + c < size)
                     fprintf(stream, "%02x ", ptr[i + c]);
                 else
                     fputs("   ", stream);
+            }
         }
 
         for (c = 0; (c < width) && (i + c < size); c++) {
             /* check for 0D0A; if found, skip past and start a new line of output */
-            if (nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D &&
-                ptr[i + c + 1] == 0x0A) {
+            if(nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D &&
+                    ptr[i + c + 1] == 0x0A) {
                 i += (c + 2 - width);
                 break;
             }
@@ -390,18 +423,18 @@ void MVKWrapper::MVKDebugDump(const char *text, FILE *stream,
                     (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80) ? ptr[i + c]
                                                                 : '.');
             /* check again for 0D0A, to avoid an extra \n if it's at width */
-            if (nohex && (i + c + 2 < size) && ptr[i + c + 1] == 0x0D &&
+            if(nohex && (i + c + 2 < size) && ptr[i + c + 1] == 0x0D &&
                 ptr[i + c + 2] == 0x0A) {
                 i += (c + 3 - width);
                 break;
             }
         }
-        fputc('\n', stream); /* newline */
+        fputc('\n', stream);
     }
     fflush(stream);
 }
 
-int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
+static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
                               size_t size, void *userp) {
     struct MVKDebugData *config = (struct MVKDebugData *) userp;
     const char *text;
@@ -410,10 +443,6 @@ int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
     switch (type) {
         case CURLINFO_TEXT:
             fprintf(stderr, "== Info: %s", data);
-            /* FALLTHROUGH */
-        default: /* in case a new one is introduced to shock us */
-            return 0;
-
         case CURLINFO_HEADER_OUT:
             text = "=> Send header";
             break;
@@ -432,28 +461,17 @@ int MVKWrapper::MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
         case CURLINFO_SSL_DATA_IN:
             text = "<= Recv SSL data";
             break;
+
+        default: /* In case a new one is introduced to shock us */
+            return 0;
     }
 
-    MVKDebugDump(text, stderr, (unsigned char *) data, size,
-                 config->trace_ascii);
+    MVKDebugDump(text, stderr, (unsigned char*) data, size, config->trace_ascii);
     return 0;
 }
 
-void MVKWrapper::setConnectionAdress(const std::string &connectionAdress) {
-    this->connectionAdress = connectionAdress;
-    curl_easy_setopt(curl, CURLOPT_URL, this->connectionAdress.c_str());
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*) userp)->clear();
+    ((std::string*) userp)->append((char*) contents, size* nmemb);
+    return size * nmemb;
 }
-
-const std::string MVKWrapper::getCleanDatabaseAnswer() const {
-    std::string res = "";
-    if (databaseAnswer.length() > 11) {
-        res = databaseAnswer.substr(10, databaseAnswer.length() - 11);
-    }
-    return res;
-}
-
-void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
-    MVKWrapper::databaseAnswer = databaseAnswer;
-}
-
-

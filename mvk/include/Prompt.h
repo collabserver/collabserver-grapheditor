@@ -5,30 +5,21 @@
 
 class Prompt {
     private:
-        MVKWrapper database;
-
-
-    private:
-
-        /** The connection part of Modelverse. */
-        void connection();
-
-        /** The megamodeling part of Modelverse. */
-        void megaModelling();
-
-        /** The modeling part of Modelverse. */
-        void modelling();
-
-        /**
-         * Get what the user type and return it.
-         *
-         * \return The answer of the user
-         */
-        std::string getUserAnswer();
+        MVKWrapper _db;
 
     public:
         /** Launch the prompt. */
         void runPrompt();
+
+    private:
+        /** The connection part of Modelverse. */
+        void connection();
+
+        /** The megamodeling part of Modelverse. */
+        void enterMegaModellingMode();
+
+        /** The modeling part of Modelverse. */
+        void enterModellingMode();
 };
 
 

@@ -1,9 +1,11 @@
+#include <cstring>
 #include <cstdlib>
 #include <iostream>
 
 #include <collabdata/custom/SimpleGraph.h>
 
 #include "MVKGlobal.h"
+#include "Prompt.h"
 
 
 /*
@@ -28,12 +30,18 @@ void testSimpleGraphOperation() {
 */
 
 
-void usage() {
+static void usage() {
     std::cout << "USAGE: mvk_poc IP_SERVER PORT_SERVER IP_MVK PORT_MVK MODEL\n";
+    std::cout << "       mvk_poc --prompt" << std::endl;
 }
 
 int main(int argc, char** argv) {
-    if(argc != 6) {
+    if(argc == 2 && strcmp(argv[1], "--prompt") == 0) {
+        Prompt p;
+        p.runPrompt();
+        return EXIT_SUCCESS;
+    }
+    else if(argc != 6) {
         usage();
         return EXIT_FAILURE;
     }

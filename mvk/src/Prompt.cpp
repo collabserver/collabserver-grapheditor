@@ -1,81 +1,77 @@
 #include "Prompt.h"
 
 
+// -----------------------------------------------------------------------------
+// Core prompt
+// -----------------------------------------------------------------------------
+
 void Prompt::runPrompt() {
-    std::cout << "Welcome to local shell for Modelverse C++ !\n";
+    std::cout << "Modelverse C++ shell" << std::endl;
     connection();
-    megaModelling();
+    //enterMegaModellingMode();
 }
 
 void Prompt::connection() {
     using namespace std;
 
-    string userAnswer;
-    cout << "Please choose if you want to connect with a local modelverse "
-            "or a remote one.\n";
 
-    do {
-        userAnswer = getUserAnswer();
-        if ((userAnswer != "local" && userAnswer != "remote")) {
-            cout << "Write 'local' if you want to connect to a local Modelverse"
-                    "\nor 'remote' if you want to connect to a distant one.\n";
-        }
-    } while (userAnswer != "local" && userAnswer != "remote");
-    if (userAnswer != "local") {
-        string completeAdress;
-        cout << "Connection adress :\n";
-        userAnswer = getUserAnswer();
-        completeAdress = userAnswer;
-        cout << "Port :\n";
-        userAnswer = getUserAnswer();
-        completeAdress += ":" + userAnswer;
-        database.setConnectionAdress(completeAdress);
-    }
-    //database.setDebugMode(true);
+    string ip;
+    string port;
+    string username;
+    string password;
 
-    cout << "Please write your username\n";
-    string username = getUserAnswer();
-    cout << "Please write your password\n";
-    userAnswer = getUserAnswer();
-    database.connect(username, userAnswer);
+    cout << "Connect to Modelverse Database server.\n";
+    cout << "IP address: "; cin >> ip;
+    cout << "Port: ";       cin >> port;
+    cout << "Username: ";   cin >> username;
+    cout << "Password: ";   cin >> password;
+
+    cout << "Connecting to Modelverse... " << endl;
+    // TODO
+    //_db.setConnectionAdress(completeAdress);
+    //_db.connect(username, password);
 }
 
-
-void Prompt::megaModelling() {
+void Prompt::enterMegaModellingMode() {
     using namespace std;
-    cout << "You are now in the Mega Modelling of Modelverse.\n"
-            "You can exit using the command 'exit'.\n";
-    string userAnswer;
+    cout << "Entering Mega Modelling mode ('exit' to leave)" << endl;
 
+    string userAnswer;
     do {
-        userAnswer = getUserAnswer();
-        if (userAnswer == "model_list") {
+        cin >> userAnswer;
+        if(userAnswer == "model_list") {
             cout << "Location ?\n";
-            userAnswer = getUserAnswer();
-            database.modelList(userAnswer);
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "model_add") {
+            cin >> userAnswer;
+            _db.modelList(userAnswer);
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "model_add") {
             cout << "Model type ?\n";
-            string modelType = getUserAnswer();
+            string modelType;
+            cin >> modelType;
             cout << "Name of the new model ?\n";
-            userAnswer = getUserAnswer();
-            database.modelAdd(userAnswer, modelType, "");
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "model_delete") {
+            cin >> userAnswer;
+            _db.modelAdd(userAnswer, modelType, "");
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "model_delete") {
             cout << "Name of the model to delete ?\n";
-            userAnswer = getUserAnswer();
-            database.modelDelete(userAnswer);
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "model_modify") {
+            cin >> userAnswer;
+            _db.modelDelete(userAnswer);
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "model_modify") {
             cout << "Model name you want to modify ?\n";
-            string workingModel = getUserAnswer();
+            string workingModel;
+            cin >> workingModel;
             cout << "Model Type ?\n";
-            userAnswer = getUserAnswer();
-            database.modelModify(workingModel, userAnswer);
-            if (database.getDatabaseAnswer() ==
+            cin >> userAnswer;
+            _db.modelModify(workingModel, userAnswer);
+            if(_db.getDatabaseAnswer() ==
                 "\"Model loaded, ready for commands!\"") {
-                modelling();
-            } else {
+                enterModellingMode();
+            }
+            else {
                 cout << "Impossible to modify the model you want.\n";
             }
         } else {
@@ -85,71 +81,82 @@ void Prompt::megaModelling() {
     cout << "Exit of the shell succesfull\n";
 }
 
-void Prompt::modelling() {
+void Prompt::enterModellingMode() {
     using namespace std;
     cout << "You're now in the modelling mode\n";
 
     string userAnswer;
     do {
-        userAnswer = getUserAnswer();
-        if (userAnswer == "list_full") {
-            database.listFull();
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "JSON") {
-            database.JSON();
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "instantiate_node") {
+        cin >> userAnswer;
+        if(userAnswer == "list_full") {
+            _db.listFull();
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "JSON") {
+            _db.JSON();
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "instantiate_node") {
             cout << "Element Type ?\n";
-            string elementType = getUserAnswer();
+            string elementType;
+            cin >> elementType;
             cout << "Name of new Element ?\n";
-            userAnswer = getUserAnswer();
-            database.instantiateNode(elementType, userAnswer);
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "instantiate_edge") {
+            cin >> userAnswer;
+            _db.instantiateNode(elementType, userAnswer);
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "instantiate_edge") {
             cout << "Element Type ?\n";
-            string elementType = getUserAnswer();
+            string elementType;
+            cin >> elementType;
             cout << "Name of new Element ?\n";
-            string elementName = getUserAnswer();
+            string elementName;
+            cin >> elementName;
             cout << "Source of the edge ?\n";
-            string source = getUserAnswer();
+            string source;
+            cin >> source;
             cout << "Target of the edge ?\n";
-            userAnswer = getUserAnswer();
-            database.instantiateEdge(elementType, elementName, source,
+            cin >> userAnswer;
+            _db.instantiateEdge(elementType, elementName, source,
                                      userAnswer);
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "delete_element") {
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "delete_element") {
             cout << "Element to delete ?\n";
-            userAnswer = getUserAnswer();
-            database.deleteElement(userAnswer);
-            cout << database.getDatabaseAnswer() << "\n";
-        } else if (userAnswer == "attr_add") {
+            cin >> userAnswer;
+            _db.deleteElement(userAnswer);
+            cout << _db.getDatabaseAnswer() << "\n";
+        }
+        else if(userAnswer == "attr_add") {
             cout << "Element to modify ?\n";
-            string element = getUserAnswer();
+            string element;
+            cin >> element;
             cout << "Type of the new attribute ?\n";
-            string attributeType = getUserAnswer();
+            string attributeType;
+            cin >> attributeType;
             cout << "Value of the attribute ?\n";
-            userAnswer = getUserAnswer();
-            database.attributeAddModify(element,attributeType, userAnswer);
-        } else if (userAnswer == "attr_del") {
+            cin >> userAnswer;
+
+            _db.attributeAddModify(element, attributeType, userAnswer);
+        }
+        else if(userAnswer == "attr_del") {
             cout<<"Element to modify ?\n";
-            string element = getUserAnswer();
+            string element;
+            cin >> element;
             cout<<"Attribute to delete ?\n";
-            userAnswer = getUserAnswer();
-            database.attributeDelete(element, userAnswer);
-        } else {
+            cin >> userAnswer;
+
+            _db.attributeDelete(element, userAnswer);
+        }
+        else {
             cout << "Unknown Command !\n";
         }
     } while (userAnswer != "exit");
-    cout << "Exiting modelling prompt and going back to "
-            "mega modelling shell!\n";
-    database.modelExit();
-}
 
-std::string Prompt::getUserAnswer() {
-    std::string userAnswer;
-    std::cout << ">>";
-    std::cin >> userAnswer;
-    return userAnswer;
+    cout << "Exiting modelling prompt and going back to mega modelling shell!";
+    cout << endl;
+
+    _db.modelExit();
 }
 
 

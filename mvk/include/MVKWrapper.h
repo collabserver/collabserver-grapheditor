@@ -17,13 +17,13 @@ class MVKWrapper {
 
     private:
         /** Curl object for communication */
-        CURL *curl;
+        CURL* _curl = nullptr;
 
         /** Unique identifier for modelverse authentification */
-        std::string uuid;
+        std::string _uuid;
 
         /** The adresse/port where request are sent */
-        std::string connectionAdress;
+        std::string _address;
 
         /** A general part of the sending request */
         std::string baseSendRequest;
@@ -32,18 +32,10 @@ class MVKWrapper {
         std::string receiveRequest;
 
         /** Boolean to set the mvk verbose */
-        bool DebugMode = false;
-
-        /** Pointer where we store each request and answer */
-        std::ofstream *log;
+        bool _debugMode = false;
 
         /** The last answer of Modelverse */
         std::string databaseAnswer;
-
-        /** Struct for big debugging mode (not used)*/
-        struct MVKDebugData {
-            char trace_ascii; /* 1 or 0 */
-        };
 
 
     // -------------------------------------------------------------------------
@@ -54,18 +46,6 @@ class MVKWrapper {
 
         /** Basic stuff for curl initialisation*/
         void initCurl();
-
-        /** Function for big debug mode (not used) */
-        static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
-                                    void *userp);
-
-        /** Function for big debug mode (not used) */
-        static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
-                                 size_t size, void *userp);
-
-        /** Function for big debug mode (not used) */
-        static void MVKDebugDump(const char *text, FILE *stream,
-                                 unsigned char *ptr, size_t size, char nohex);
 
     public:
 
@@ -122,17 +102,26 @@ class MVKWrapper {
          */
         bool receive();
 
+
+    // -------------------------------------------------------------------------
+    // Models management
+    // -------------------------------------------------------------------------
+
+    public:
+
         /**
-         * Show all models/files in path
-         * \pre being in megamodeling mode
-         * \param path the place we want to see
-         * \return -1 if there is a detected error
+         * Show all models/files in path.
+         *
+         * \pre being in megamodeling mode.
+         * \param path PWD to use.
+         * \return 0 if success, otherwise, -1
          */
         int modelList(const std::string path);
 
         /**
-         * Add a new model to Modelverse
-         * \pre being in megamodeling mode
+         * Add a new model to Modelverse.
+         *
+         * \pre being in megamodeling mode.
          * \param savePathName the place and the name of the new model
          * \param modelType the metamodel of the new model
          * \param textualRepresentation the base model used to create you new model
@@ -143,12 +132,13 @@ class MVKWrapper {
                      const std::string textualRepresentation);
 
         /**
-         * Delete the model in parameter
-         * \pre being in megamodeling mode
-         * \param savePathName the model you want to delete
-         * \return -1 if there is a detected error
+         * Delete specific model.
+         *
+         * \pre being in megamodeling mode.
+         * \param path Model you want to delete.
+         * \return 0 if success, otherwise, return -1.
          */
-        int modelDelete(const std::string savePathName);
+        int modelDelete(const std::string path);
 
         /**
          * Check if the model respect the metamodel
@@ -161,7 +151,8 @@ class MVKWrapper {
         int modelVerify(const std::string savePathName, const std::string modelType);
 
         /**
-         * Start the modeling mode in the model in parameter
+         * Start the modeling mode in the model in parameter.
+         *
          * \pre being in megamodeling mode
          * \post you are in modeling mode
          * \param workingModel the model you want to modify
@@ -178,11 +169,17 @@ class MVKWrapper {
          */
         int modelExit();
 
+    // -------------------------------------------------------------------------
+    // Model
+    // -------------------------------------------------------------------------
+
+    public:
+
         /**
-         * Shows all the element of the model
-         * \pre being in modeling mode
+         * Shows all the element of the model.
+         * \pre being in modeling mode.
          *
-         * \return -1 if there is a detected error
+         * \return 0 if success, otherwise, return -1.
          */
         int listFull();
 
@@ -205,7 +202,8 @@ class MVKWrapper {
         int instantiateNode(const std::string elementType, const std::string name);
 
         /**
-         * Create a link between two elements in the model
+         * Create a link between two elements in the model.
+         *
          * \pre being in modeling mode
          * \param elementType the type of the new link
          * \param name the name of the new link
@@ -268,19 +266,17 @@ class MVKWrapper {
     // -------------------------------------------------------------------------
     public:
 
-        const std::string &getUuid() const { return uuid; }
+        const std::string& getUuid() const { return _uuid; }
 
-        void setUuid(const std::string &uuid) { this->uuid = uuid; }
+        void setUuid(const std::string& uuid) { _uuid = uuid; }
 
-        const std::string &getConnectionAdress() const { return connectionAdress; }
+        const std::string& getConnectionAdress() const { return _address; }
 
         void setConnectionAdress(const std::string &connectionAdress);
 
-        bool isDebugMode() const { return DebugMode; }
+        bool isDebugMode() const { return _debugMode; }
 
-        void setDebugMode(bool isDebugMode) { this->DebugMode = isDebugMode; }
-
-        const std::string &getDatabaseAnswer() const { return databaseAnswer; }
+        const std::string& getDatabaseAnswer() const { return databaseAnswer; }
 
         /**
          * Return the last database answer without uselsess information.
@@ -296,7 +292,7 @@ class MVKWrapper {
          */
         const std::string getCleanDatabaseAnswer() const;
 
-        void setDatabaseAnswer(const std::string &databaseAnswer);
+        void setDatabaseAnswer(const std::string& databaseAnswer);
 };
 
 
