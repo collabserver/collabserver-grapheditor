@@ -1,4 +1,4 @@
-message(STATUS "Building Mvk client")
+message(STATUS "Building MVK client")
 
 include_directories("${CMAKE_SOURCE_DIR}/mvk/include")
 file(GLOB_RECURSE srcMvk "${CMAKE_SOURCE_DIR}/mvk/src/*.cpp")
@@ -16,10 +16,10 @@ target_link_libraries(mvk_poc
 
 
 # Tests MVK
-file(GLOB_RECURSE srcMvk_tests 
+file(GLOB_RECURSE srcMvk_tests
     "${CMAKE_SOURCE_DIR}/mvk/tests/Test_MVKWrapper.cpp"
     "${CMAKE_SOURCE_DIR}/mvk/src/MVKWrapper.cpp"
-    "${CMAKE_SOURCE_DIR}/mvk/src/UuidGenerator.cpp"
+    "${CMAKE_SOURCE_DIR}/mvk/src/UUIDGenerator.cpp"
     )
 
 add_executable(mvk_tests ${srcMvk_tests})

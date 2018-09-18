@@ -2,12 +2,15 @@
 
 #include <cassert>
 
-#define NODETYPE "Vertex"
-#define EDGETYPE "Edge"
-#define ATTRIBUTETYPE "Attribute"
-#define ATTRIBUTEVERTEX "Vertex"
-#define ATTRIBUTENAME  "Name"
-#define ATTRIBUTEVALUE "Value"
+
+#define ELEMENT_TYPE        "Vertex"
+#define EDGE_TYPE           "Edge"
+#define ATTRIBUTE_TYPE      "Attribute"
+#define ATTRIBUTE_VERTEX    "Vertex"
+#define ATTRIBUTE_NAME      "Name"
+#define ATTRIBUTE_VALUE     "Value"
+
+typedef collab::SimpleGraph SGraph;
 
 
 MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler() {
@@ -22,7 +25,7 @@ MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler(
 }
 
 MVKSimpleGraphOperationHandler::MVKSimpleGraphOperationHandler(
-        collab::SimpleGraph *graph, const std::string savePath) {
+        collab::SimpleGraph* graph, const std::string savePath) {
     this->graph = graph;
     workingModel = savePath;
     baseConstructor();
@@ -40,105 +43,88 @@ MVKSimpleGraphOperationHandler::~MVKSimpleGraphOperationHandler() {
     graph = nullptr;
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::VertexAddOperation operation) {
-    mvkConnector->instantiateNode(NODETYPE, operation.vertexID());
+typedef SGraph::VertexAddOperation VertexAddOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const VertexAddOP op) {
+    mvkConnector->elementCreate(ELEMENT_TYPE, op.vertexID());
     if (!isModelCorrect()) {
-        mvkConnector->deleteElement(operation.vertexID());
-        graph->removeVertex(operation.vertexID());
+        mvkConnector->elementDelete(op.vertexID());
+        graph->removeVertex(op.vertexID());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::VertexRemoveOperation operation) {
-    mvkConnector->deleteElement(operation.vertexID());
+typedef SGraph::VertexRemoveOperation VertexRemOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const VertexRemOP op) {
+    mvkConnector->elementDelete(op.vertexID());
     if (!isModelCorrect()) {
-        mvkConnector->instantiateNode(NODETYPE, operation.vertexID());
-        graph->addVertex(operation.vertexID());
+        mvkConnector->elementCreate(ELEMENT_TYPE, op.vertexID());
+        graph->addVertex(op.vertexID());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::EdgeAddOperation operation) {
-    mvkConnector->instantiateEdge(EDGETYPE,
-                                  operation.fromID() + operation.toID(),
-                                  operation.fromID(), operation.toID());
-    if (!isModelCorrect()) {
-        mvkConnector->deleteElement(operation.fromID() + operation.toID());
-        graph->removeEdge(operation.fromID(), operation.toID());
+typedef SGraph::EdgeAddOperation EdgeAddOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const EdgeAddOP op) {
+    mvkConnector->edgeCreate(EDGE_TYPE, (op.fromID() + op.toID()),
+                             op.fromID(), op.toID());
+    if(!isModelCorrect()) {
+        mvkConnector->elementDelete(op.fromID() + op.toID());
+        graph->removeEdge(op.fromID(), op.toID());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::EdgeRemoveOperation operation) {
-    mvkConnector->deleteElement(operation.fromID() + operation.toID());
+typedef SGraph::EdgeRemoveOperation EdgeRemOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const EdgeRemOP op) {
+    mvkConnector->elementDelete(op.fromID() + op.toID());
     if (!isModelCorrect()) {
-        mvkConnector->instantiateEdge(EDGETYPE,
-                                      operation.fromID() + operation.toID(),
-                                      operation.fromID(), operation.toID());
-        graph->addEdge(operation.fromID(), operation.toID());
+        mvkConnector->edgeCreate(EDGE_TYPE, (op.fromID() + op.toID()),
+                                 op.fromID(), op.toID());
+        graph->addEdge(op.fromID(), op.toID());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::AttributeAddOperation operation) {
-    mvkConnector->instantiateNode(ATTRIBUTETYPE, operation.vertexID() +
-                                                 operation.attributeName());
-    mvkConnector->attributeAddModify(operation.vertexID() +
-                                     operation.attributeName(), ATTRIBUTENAME,
-                                     operation.attributeName());
-    mvkConnector->attributeAddModify(operation.vertexID() +
-                                     operation.attributeName(), ATTRIBUTEVALUE,
-                                     operation.attributeValue());
-    mvkConnector->attributeAddModify(
-            operation.vertexID() + operation.attributeName(), ATTRIBUTEVERTEX,
-            operation.vertexID());
-    if (!isModelCorrect()) {
-        mvkConnector->deleteElement(
-                operation.vertexID() + operation.attributeName());
-        graph->removeAttribute(operation.vertexID(), operation.attributeName());
+typedef SGraph::AttributeAddOperation AttrAddOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const AttrAddOP op) {
+    mvkConnector->elementCreate(ATTRIBUTE_TYPE, op.vertexID() + op.attributeName());
+    mvkConnector->attributeSet(op.vertexID() + op.attributeName(), ATTRIBUTE_NAME,
+                               op.attributeName());
+    mvkConnector->attributeSet(op.vertexID() + op.attributeName(), ATTRIBUTE_VALUE,
+                               op.attributeValue());
+    mvkConnector->attributeSet(op.vertexID() + op.attributeName(), ATTRIBUTE_VERTEX,
+                               op.vertexID());
+    if(!isModelCorrect()) {
+        mvkConnector->elementDelete(op.vertexID() + op.attributeName());
+        graph->removeAttribute(op.vertexID(), op.attributeName());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::AttributeRemoveOperation operation) {
-    std::string value = getAttributeValue(
-            operation.vertexID() + operation.attributeName());
-    mvkConnector->deleteElement(
-            operation.vertexID() + operation.attributeName());
-    if (!isModelCorrect()) {
-        graph->addAttribute(operation.vertexID(), operation.attributeName(),
+typedef SGraph::AttributeRemoveOperation AttrRemOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const AttrRemOP op) {
+    std::string value = getAttributeValue(op.vertexID() + op.attributeName());
+
+    mvkConnector->elementDelete(op.vertexID() + op.attributeName());
+
+    if(!isModelCorrect()) {
+        graph->addAttribute(op.vertexID(), op.attributeName(),
                             value);
-        mvkConnector->instantiateNode(ATTRIBUTETYPE, operation.vertexID() +
-                                                     operation.attributeName());
-        mvkConnector->attributeAddModify(operation.vertexID() +
-                                         operation.attributeName(),
-                                         ATTRIBUTENAME,
-                                         operation.attributeName());
-        mvkConnector->attributeAddModify(operation.vertexID() +
-                                         operation.attributeName(),
-                                         ATTRIBUTEVALUE,
-                                         value);
-        mvkConnector->attributeAddModify(
-                operation.vertexID() + operation.attributeName(),
-                ATTRIBUTEVERTEX,
-                operation.vertexID());
+        mvkConnector->elementCreate(ATTRIBUTE_TYPE,
+                                    op.vertexID() + op.attributeName());
+        mvkConnector->attributeSet(op.vertexID() + op.attributeName(),
+                                   ATTRIBUTE_NAME, op.attributeName());
+        mvkConnector->attributeSet(op.vertexID() + op.attributeName(),
+                                   ATTRIBUTE_VALUE, value);
+        mvkConnector->attributeSet(op.vertexID() + op.attributeName(),
+                                   ATTRIBUTE_VERTEX, op.vertexID());
     }
 }
 
-void MVKSimpleGraphOperationHandler::applyOperation(
-        const collab::SimpleGraph::AttributeSetOperation operation) {
-    std::string value = getAttributeValue(
-            operation.vertexID() + operation.attributeName());
-    mvkConnector->attributeAddModify(
-            operation.vertexID() + operation.attributeName(), ATTRIBUTEVALUE,
-            operation.newValue());
-    if (!isModelCorrect()) {
-        graph->setAttribute(operation.vertexID(), operation.attributeName(),
-                            value);
-        mvkConnector->attributeAddModify(
-                operation.vertexID() + operation.attributeName(),
-                ATTRIBUTEVALUE, value);
+typedef SGraph::AttributeSetOperation AttrSetOP;
+void MVKSimpleGraphOperationHandler::applyOperation(const AttrSetOP op) {
+    std::string value = getAttributeValue(op.vertexID() + op.attributeName());
+    mvkConnector->attributeSet(op.vertexID() + op.attributeName(), ATTRIBUTE_VALUE,
+                               op.newValue());
+    if(!isModelCorrect()) {
+        graph->setAttribute(op.vertexID(), op.attributeName(), value);
+        mvkConnector->attributeSet(op.vertexID() + op.attributeName(),
+                                   ATTRIBUTE_VALUE, value);
     }
 }
 
@@ -164,10 +150,10 @@ void MVKSimpleGraphOperationHandler::loadModel() {
         type = cJSON_GetStringValue(
                 cJSON_GetObjectItem(elementJson, "__type"));
         realType = type;
-        if (realType == NODETYPE) {
+        if (realType == ELEMENT_TYPE) {
             graph->addVertex(cJSON_GetStringValue(
                     cJSON_GetObjectItem(elementJson, "__id")));
-        } else if (realType == EDGETYPE) {
+        } else if (realType == EDGE_TYPE) {
             graph->addEdge(cJSON_GetStringValue(
                     cJSON_GetObjectItem(elementJson, "__source")),
                            cJSON_GetStringValue(
@@ -191,9 +177,8 @@ void MVKSimpleGraphOperationHandler::loadModel() {
 }
 
 void MVKSimpleGraphOperationHandler::baseConstructor() {
-    //mvkConnector = new MVKWrapper(LOCALCONNECTIONADRESS, true);
-    mvkConnector = new MVKWrapper;
-    mvkConnector->connect("admin", "admin");
+    mvkConnector = new MVKWrapper();
+    mvkConnector->connect("localhost", 8001, "admin", "admin");
     generateMetamodel();
 
     mvkConnector->modelAdd(workingModel, metaModel, "");
@@ -223,21 +208,21 @@ void MVKSimpleGraphOperationHandler::generateMetamodel() {
         "\"Model exists: " + workingMetaModel + "\"") {
         mvkConnector->modelModify(workingMetaModel, metaMetaModel);
 
-        mvkConnector->instantiateNode("Class", vertex);
-        mvkConnector->instantiateEdge("Association", edge, vertex, vertex);
-        mvkConnector->instantiateNode("Class", attribute);
+        mvkConnector->elementCreate("Class", vertex);
+        mvkConnector->edgeCreate("Association", edge, vertex, vertex);
+        mvkConnector->elementCreate("Class", attribute);
 
-        mvkConnector->instantiateNode(string, string);
-        mvkConnector->defineAttribute(attribute, vertex, string);
-        mvkConnector->defineAttribute(attribute, "Name", string);
-        mvkConnector->defineAttribute(attribute, "Value", string);
+        mvkConnector->elementCreate(string, string);
+        mvkConnector->attributeDefine(attribute, vertex, string);
+        mvkConnector->attributeDefine(attribute, "Name", string);
+        mvkConnector->attributeDefine(attribute, "Value", string);
 
         mvkConnector->modelExit();
     }
 }
 
 cJSON *MVKSimpleGraphOperationHandler::getJSON() {
-    mvkConnector->JSON();
+    mvkConnector->elementListJSON();
     std::string modelStringJSON = mvkConnector->getCleanDatabaseAnswer();
     for (int i = 0; i < modelStringJSON.length(); i++) {
         if (modelStringJSON.at(i) == '\\') {
@@ -253,8 +238,7 @@ cJSON *MVKSimpleGraphOperationHandler::getJSON() {
     return modelJSON;
 }
 
-std::string
-MVKSimpleGraphOperationHandler::getAttributeValue(std::string attributeId) {
+std::string MVKSimpleGraphOperationHandler::getAttributeValue(std::string attributeId) {
     cJSON *modelJSON = getJSON();
     cJSON *elementJSON;
     int i = 0;

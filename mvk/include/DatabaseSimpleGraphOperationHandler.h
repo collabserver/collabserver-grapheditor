@@ -1,7 +1,9 @@
 #pragma once
 
 #include <collabdata/custom/SimpleGraph.h>
+
 #include "DatabaseOperationHandler.h"
+
 
 /**
  * \brief Abs class to handle operations from any Database (SimpleGraph data).

@@ -1,5 +1,7 @@
 #include "Prompt.h"
 
+#include <iostream>
+
 
 // -----------------------------------------------------------------------------
 // Core prompt
@@ -37,6 +39,8 @@ void Prompt::enterMegaModellingMode() {
     cout << "Entering Mega Modelling mode ('exit' to leave)" << endl;
 
     string userAnswer;
+    /*
+     * TODO TMP COMMENTED
     do {
         cin >> userAnswer;
         if(userAnswer == "model_list") {
@@ -78,6 +82,7 @@ void Prompt::enterMegaModellingMode() {
             cout << "Unknown Command !\n";
         }
     } while (userAnswer != "exit");
+    */
     cout << "Exit of the shell succesfull\n";
 }
 
@@ -86,6 +91,8 @@ void Prompt::enterModellingMode() {
     cout << "You're now in the modelling mode\n";
 
     string userAnswer;
+    /*
+     * TODO TMP COMMENTED
     do {
         cin >> userAnswer;
         if(userAnswer == "list_full") {
@@ -93,7 +100,7 @@ void Prompt::enterModellingMode() {
             cout << _db.getDatabaseAnswer() << "\n";
         }
         else if(userAnswer == "JSON") {
-            _db.JSON();
+            _db.listFullJSON();
             cout << _db.getDatabaseAnswer() << "\n";
         }
         else if(userAnswer == "instantiate_node") {
@@ -152,6 +159,7 @@ void Prompt::enterModellingMode() {
             cout << "Unknown Command !\n";
         }
     } while (userAnswer != "exit");
+    */
 
     cout << "Exiting modelling prompt and going back to mega modelling shell!";
     cout << endl;

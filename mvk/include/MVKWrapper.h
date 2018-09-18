@@ -1,14 +1,17 @@
 #pragma once
 
-#include <iostream>
+#include <string>
 
 #include <curl/curl.h>
 
 
 /**
- * \brief C++ Wrapper for Modelverse Database.
+ * \brief
+ * C++ Wrapper for Modelverse Database.
  *
  * Wrapper C++ to communicate with a Modelverse Database.
+ *
+ * \see https://msdl.uantwerpen.be/git/yentl/modelverse
  */
 class MVKWrapper {
     // -------------------------------------------------------------------------
@@ -16,91 +19,57 @@ class MVKWrapper {
     // -------------------------------------------------------------------------
 
     private:
-        /** Curl object for communication */
-        CURL* _curl = nullptr;
+        bool            _debugMode = false;
+        std::string     _uuid;
 
-        /** Unique identifier for modelverse authentification */
-        std::string _uuid;
-
-        /** The adresse/port where request are sent */
-        std::string _address;
-
-        /** A general part of the sending request */
-        std::string baseSendRequest;
-
-        /** The receving request */
-        std::string receiveRequest;
-
-        /** Boolean to set the mvk verbose */
-        bool _debugMode = false;
-
-        /** The last answer of Modelverse */
-        std::string databaseAnswer;
+    private:
+        CURL*           _curl = nullptr;
+        std::string     _dbAnswer; // The last answer of Modelverse
+        std::string     _sendRequest; // General part of the sending request
+        std::string     _recvRequest; // The receiving request
 
 
     // -------------------------------------------------------------------------
     // Init / Constructor
     // -------------------------------------------------------------------------
 
-    private:
-
-        /** Basic stuff for curl initialisation*/
-        void initCurl();
-
     public:
 
         /**
-         * Basic constructor for local Modelverse
-         */
-        MVKWrapper();
-
-        MVKWrapper(const char* ip, const int port, bool debugMode = false);
-
-        /**
-         * Constructor for remote Modelverse
-         * \param connectionAdress adress and port of the Modelverse database
-         */
-        explicit MVKWrapper(const char *connectionAdress);
-
-        /**
-         * Constructor for remote or local server with debug
-         *      mode initialisation
-         * \param connectionAdress adress and port of the Modelverse database
-         * \param isDebugMode debug mode setting
-         */
-        explicit MVKWrapper(const char *connectionAdress, const bool isDebugMode);
-
-        ~MVKWrapper();
-
-
-    // -------------------------------------------------------------------------
-    // Network
-    // -------------------------------------------------------------------------
-
-    public:
-
-        /**
-         * Send a connection request to Modelverse,
-         * at the end you are in megamodeling mode.
+         * Create a new MVKWrapper.
+         * In debug mode (debugMode = true), we get more information
+         * from the MVK about ongoing requests.
          *
-         * \post you are in megamodeling mode
-         * \param username username for connection
-         * \param password password for connection
-         * \return -1 if there is a detected error
+         * \param debugMode Set the debug mode.
          */
-        int connect(const std::string username, const std::string password);
+        MVKWrapper(bool debugMode = false);
+
+
+    // -------------------------------------------------------------------------
+    // User interface
+    // -------------------------------------------------------------------------
+
+    public:
 
         /**
-         * Send the data parameter to Modelverse.
-         * \param data what we send to Moderlverse without adding anything.
+         * Connect to a remote MVK database and login given user.
+         *
+         * \post you are in megamodeling mode.
+         * \param ip Server IP.
+         * \param port Server port.
+         * \param username Username as registered in MVK.
+         * \param pswd Password as registered in MVK.
+         * \return -1 if there is a detected error.
          */
-        void send(const char *data);
+        int connect(const std::string& ip, const int port,
+                    const std::string& username, const std::string& pswd);
 
         /**
-         * Ask for the answer of Modelverse
-         * \return false if there is a detected error with Modelverse
+         * Disconnect from MVK. Do nothing if not connected yet.
+         *
+         * \return -1 if there is a detected error.
          */
-        bool receive();
+        int disconnect();
 
 
     // -------------------------------------------------------------------------
@@ -111,63 +80,68 @@ class MVKWrapper {
 
         /**
          * Show all models/files in path.
+         * \pre Being in megamodeling mode.
          *
-         * \pre being in megamodeling mode.
          * \param path PWD to use.
-         * \return 0 if success, otherwise, -1
+         * \return -1 if there is a detected error.
          */
-        int modelList(const std::string path);
+        int modelList(const std::string& path);
 
         /**
          * Add a new model to Modelverse.
          *
-         * \pre being in megamodeling mode.
-         * \param savePathName the place and the name of the new model
-         * \param modelType the metamodel of the new model
-         * \param textualRepresentation the base model used to create you new model
-         *      (send a void string for an empty model)
-         * \return -1 if there is a detected error
+         * \pre Being in megamodeling mode.
+         * \param name Model name (Its full path).
+         * \param mmodel Metamodel of the new model.
+         * \param syntax Base model to use (Or empty for empty model).
+         * \return -1 if there is a detected error.
          */
-        int modelAdd(const std::string savePathName, const std::string modelType,
-                     const std::string textualRepresentation);
+        int modelAdd(const std::string& name, const std::string& mmodel,
+                     const std::string& syntax);
 
         /**
-         * Delete specific model.
+         * Delete a model.
+         * \pre Being in megamodeling mode.
          *
-         * \pre being in megamodeling mode.
-         * \param path Model you want to delete.
-         * \return 0 if success, otherwise, return -1.
+         * \param name Model to delete.
+         * \return -1 if there is a detected error.
          */
-        int modelDelete(const std::string path);
+        int modelDelete(const std::string& name);
 
         /**
-         * Check if the model respect the metamodel
-         *      if it's good databaseAnswer should be : "Success : OK"
-         * \pre being in megamodeling mode
-         * \param savePathName the model you want to verify
-         * \param modelType the metamodel you want to use
-         * \return -1 if there is a detected error
-         */
-        int modelVerify(const std::string savePathName, const std::string modelType);
-
-        /**
-         * Start the modeling mode in the model in parameter.
+         * Check if the model respect the metamodel.
+         * Expect message "Success : OK" if respect metamodel.
+         * \pre Being in megamodeling mode.
          *
-         * \pre being in megamodeling mode
-         * \post you are in modeling mode
-         * \param workingModel the model you want to modify
-         * \param modelType the metamodel of the model
-         * \return -1 if there is a detected error
+         * \param model Model to validate.
+         * \param mmodel Metamodel to use.
+         * \return -1 if there is a detected error.
          */
-        int modelModify(const std::string workingModel, const std::string modelType);
+        int modelVerify(const std::string& model, const std::string& mmodel);
 
         /**
-         * Exit the modeling mode and return to the megamodelling mode
-         * \pre being in modeling mode
-         * \post you are in megamodeling mode
-         * \return -1 if there is a detected error
+         * Work on a specific model.
+         * This start the MVK to be in modeling mode for the requested model.
+         *
+         * \pre Being in megamodeling mode.
+         * \post You are in modeling mode.
+         *
+         * \param model Model to work on.
+         * \param mmodel Model's metamodel.
+         * \return -1 if there is a detected error.
+         */
+        int modelModify(const std::string& model, const std::string& mmodel);
+
+        /**
+         * Exit the modeling mode and return to the megamodelling mode.
+         *
+         * \pre Being in modeling mode.
+         * \post You are in megamodeling mode.
+         *
+         * \return -1 if there is a detected error.
          */
         int modelExit();
+
 
     // -------------------------------------------------------------------------
     // Model
@@ -176,123 +150,133 @@ class MVKWrapper {
     public:
 
         /**
-         * Shows all the element of the model.
-         * \pre being in modeling mode.
+         * Request to list all elements in current model.
+         * \pre Being in modeling mode.
          *
-         * \return 0 if success, otherwise, return -1.
+         * \return -1 if there is a detected error.
          */
-        int listFull();
+        int elementList();
 
         /**
-         * Show all the elements of the model in a JSON
-         * \pre beign in modeling mode
+         * Request list of all elements in current model (JSON format).
+         * \pre Being in modeling mode.
          *
-         * \return -1 if there is a detected error
+         * \return -1 if there is a detected error.
          */
-        int JSON();
+        int elementListJSON();
 
         /**
-         * Create a new element in the model
-         * \pre being in modeling mode
+         * Create a new element in current model.
+         * \pre Being in modeling mode.
          *
-         * \param elementType the type of the new element
-         * \param name the name of the new element
-         * \return -1 if there is a detected error
+         * \param type Type of the new element.
+         * \param name Name of the new element.
+         * \return -1 if there is a detected error.
          */
-        int instantiateNode(const std::string elementType, const std::string name);
+        int elementCreate(const std::string& type, const std::string& name);
 
         /**
-         * Create a link between two elements in the model.
+         * Delete given element and all its edges.
+         * \pre Being in modeling mode.
          *
-         * \pre being in modeling mode
-         * \param elementType the type of the new link
-         * \param name the name of the new link
-         * \param source the first element linked
-         * \param target the second element linked
-         * \return -1 if there is a detected error
+         * \param name Path of the element to delete.
+         * \return -1 if there is a detected error.
          */
-        int instantiateEdge(const std::string elementType, const std::string name,
-                            const std::string source, const std::string target);
+        int elementDelete(const std::string& name);
 
         /**
-         * Delete the element in paramter (and the edge linked to him)
-         * \pre being in modeling mode
-         * \param name the path of the element to delete
-         * \return -1 if there is a detected error
+         * Create a link between two elements in current model.
+         * \pre Being in modeling mode.
+         *
+         * \param type Type of the new link.
+         * \param name Name of the new link
+         * \param from First element linked.
+         * \param to Second element linked.
+         * \return -1 if there is a detected error.
          */
-        int deleteElement(const std::string name);
+        int edgeCreate(const std::string& type , const std::string& name,
+                       const std::string& from, const std::string& to);
 
         /**
-         * Add an attribute to the element in parameter or modify an already
-         *      created element
-         * \pre being in modeling mode
-         * \param element the element in wich we want to add an element
-         * \param attributeType the type of the element we add
-         * \param attributeValue the value of the new attribute
-         * \return
+         * Set attribute value in element. Create attribute if doesn't exists.
+         * Modify previous value if exists.
+         * \pre Being in modeling mode
+         *
+         * \param element Element to modify.
+         * \param attrType Type of attribute to add.
+         * \param attrValue Value of the new attribute.
+         * \return -1 if there is a detected error.
          */
-        int attributeAddModify(const std::string element,
-                               const std::string attributeType,
-                               const std::string attributeValue);
+        int attributeSet(const std::string& element,
+                         const std::string& attrType,
+                         const std::string& attrValue);
 
         /**
-         * Delete the attribute of the element in parameters
-         * \pre being in modeling mode
-         * \param element the element in which we want to delete
-         * \param attributeType the attribute to delete
-         * \return -1 if there is a detected error
+         * Delete attribute from element.
+         * \pre Being in modeling mode
+         *
+         * \param elt Element where attribute is.
+         * \param attr Attribute to delete
+         * \return -1 if there is a detected error.
          */
-        int attributeDelete(const std::string element, const std::string attributeType);
-
-        int attributeAddModifyCode(const std::string element,
-                                   const std::string attributeType,
-                                   const std::string attributeValue);
+        int attributeDelete(const std::string& elt, const std::string& attr);
 
         /**
-         * Define another attribute for the element in parameters
-         * \warning Metamodeling Function
-         * \param element the element in which we define the new attribute
-         * \param attributeName the name of the new attribute
-         * \param attributeType the type of the new attribute
-         * \return
+         * Define another attribute in element.
+         *
+         * \warning
+         * MetaModeling Function
+         *
+         * \param element Element to work on.
+         * \param attrType Type of the new attribute.
+         * \param attrName Name of the new attribute.
+         * \return -1 if there is a detected error.
          */
-        int defineAttribute(const std::string element,
-                            const std::string attributeName,
-                            const std::string attributeType);
+        int attributeDefine(const std::string& element,
+                            const std::string& attrType,
+                            const std::string& attrName);
+
+        // TODO (What is this? I should ask Robin)
+        int attributeAddModifyCode(const std::string& element,
+                                   const std::string& attrType,
+                                   const std::string& attrName);
+
+
+    // -------------------------------------------------------------------------
+    // Network
+    // -------------------------------------------------------------------------
+
+    private:
+
+        /**
+         * Send data to Modelverse.
+         *
+         * \param data Raw data to send to MVK. (MVK format).
+         */
+        void send(const char* data);
+
+        /**
+         * Ask Modelverse for an answer.
+         *
+         * \return -1 if there is a detected error.
+         */
+        int receive();
 
 
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
     public:
-
-        const std::string& getUuid() const { return _uuid; }
-
-        void setUuid(const std::string& uuid) { _uuid = uuid; }
-
-        const std::string& getConnectionAdress() const { return _address; }
-
-        void setConnectionAdress(const std::string &connectionAdress);
-
-        bool isDebugMode() const { return _debugMode; }
-
-        const std::string& getDatabaseAnswer() const { return databaseAnswer; }
+        const std::string& getDatabaseAnswer() const { return _dbAnswer; }
 
         /**
-         * Return the last database answer without uselsess information.
+         * Return the last database answer with clean format.
+         * Removes "\"Success :" at the beginning and "\"" at the end.
+         * (Or empty string if the answer is to short).
          *
-         * Response removes "\"Success :" at the begining and "\"" at the end,
-         * or an empty string if the answer is to short.
-         *
-         * \warning
-         * There is no verification in the content of databaseAnswer
-         * so use with caution.
-         *
-         * \return The last database answer.
+         * \return Last database answer with clean format.
          */
         const std::string getCleanDatabaseAnswer() const;
-
-        void setDatabaseAnswer(const std::string& databaseAnswer);
 };
 
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "collabclient/Client.h"
-#include "collabdata/custom/SimpleGraph.h"
+#include <collabclient/Client.h>
+#include <collabdata/custom/SimpleGraph.h>
 
 #include "MVKWrapper.h"
 

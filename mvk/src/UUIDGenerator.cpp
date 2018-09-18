@@ -1,7 +1,9 @@
-#include "UuidGenerator.h"
+#include "UUIDGenerator.h"
+
+#include <ctime>
 
 
-std::string UuidGenerator::basicGenerator() {
+std::string generateNewUUID() {
     std::srand(std::time(nullptr));
     const std::string CHARS =
             "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -27,3 +29,5 @@ std::string UuidGenerator::basicGenerator() {
     }
     return uuid;
 }
+
+

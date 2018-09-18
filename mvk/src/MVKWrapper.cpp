@@ -1,13 +1,10 @@
 #include "MVKWrapper.h"
 
+#include <iostream>
+#include <sstream>
 #include <regex>
-#include <fstream>
 
-#include "UuidGenerator.h"
-
-
-#define LOCAL_ADDRESS "http://127.0.0.1:8001"
-
+#include "UUIDGenerator.h"
 
 
 // -----------------------------------------------------------------------------
@@ -31,34 +28,78 @@ static void curlError(CURLcode code) {
 // Init methods
 // -----------------------------------------------------------------------------
 
-MVKWrapper::MVKWrapper() {
-    _uuid = UuidGenerator::basicGenerator();
-    _address = LOCAL_ADDRESS;
-    initCurl();
+MVKWrapper::MVKWrapper(bool debugMode) {
+    _debugMode = debugMode;
+    _uuid = generateNewUUID();
 }
 
-MVKWrapper::MVKWrapper(const char* ip, const int port, bool debug) {
-    _uuid = UuidGenerator::basicGenerator();
-    _address = LOCAL_ADDRESS;
-    initCurl();
+
+// -----------------------------------------------------------------------------
+// User interface
+// -----------------------------------------------------------------------------
+
+int MVKWrapper::connect(const std::string& ip, const int port,
+                         const std::string& username, const std::string& pswd) {
+    // Init CURL
+    curl_global_init(CURL_GLOBAL_ALL);
+    _curl = curl_easy_init();
+    std::stringstream addr;
+    addr << "https://" << ip << ":" << port; // Format: "http://127.0.0.1:8001"
+    curl_easy_setopt(_curl, CURLOPT_URL, addr.str().c_str());
+    _dbAnswer = "";
+
+    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_dbAnswer);
+    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+
+    _sendRequest = "&op=set_input&taskname=" + _uuid;
+    _recvRequest = "op=get_output&taskname=" + _uuid;
+
+    // This part usefull in case of we need a really big debug mode
+    /*
+    if(DebugMode) {
+        MVKDebugData config;
+        curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, MVKDebugTrace);
+        curl_easy_setopt(curl, CURLOPT_DEBUGDATA, &config);
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    }
+    */
+
+
+    // Connect MVK
+    std::string request;
+
+    request = "op=set_input&value=\"" + _uuid + "\"&taskname=task_manager";
+    send(request.c_str());
+    if(!receive()) { return -1; }
+
+    request = "value=\"" + username + "\"" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+
+    std::regex newUser("^[A-Za-z \"]+new user");
+    if(std::regex_search(_dbAnswer, newUser)) {
+        request = "value=\"" + pswd + "\"" + _sendRequest;
+        send(request.c_str());
+        if(!receive()) { return -1; }
+    }
+
+    request = "value=\"" + pswd + "\"" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(!receive()) { return -1; }
+
+    if(!_debugMode) {
+        request = "value=\"quiet\"" + _sendRequest;
+        send(request.c_str());
+    }
+
+    return 0;
 }
 
-MVKWrapper::MVKWrapper(const char* address) {
-    _uuid = UuidGenerator::basicGenerator();
-    _address = address;
-    initCurl();
-}
-
-MVKWrapper::MVKWrapper(const char* address, const bool debug) {
-    _uuid = UuidGenerator::basicGenerator();
-    _address = address;
-    _debugMode = debug;
-    initCurl();
-}
-
-MVKWrapper::~MVKWrapper() {
+int MVKWrapper::disconnect() {
     curl_easy_cleanup(_curl);
     curl_global_cleanup();
+    return 0;
 }
 
 
@@ -71,61 +112,30 @@ void MVKWrapper::send(const char* data) {
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
 
     CURLcode curlAnswer = curl_easy_perform(_curl);
-    if(isDebugMode()) {
-        std::clog << "Sending : " << data << "\n";
-        std::clog << "Answer : " << databaseAnswer << std::endl;
+    if(_debugMode) {
+        std::clog << "Sending: " << data << "\n";
+        std::clog << "Answer: " << _dbAnswer << std::endl;
     }
     curlError(curlAnswer);
 }
 
-bool MVKWrapper::receive() {
-    curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, receiveRequest.c_str());
+int MVKWrapper::receive() {
+    curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, _recvRequest.c_str());
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
 
     CURLcode curlAnswer = curl_easy_perform(_curl);
-    if(isDebugMode()) {
-        std::clog << "Sending : " << receiveRequest << "\n";
-        std::clog << "Answer :" << databaseAnswer << std::endl;
+    if(_debugMode) {
+        std::clog << "Sending: " << _recvRequest << "\n";
+        std::clog << "Answer:" << _dbAnswer << std::endl;
     }
     curlError(curlAnswer);
     std::regex unknownCommand("^\"[Uu]nknown command");
     std::regex success("^\"Success");
-    if(std::regex_search(databaseAnswer, unknownCommand)) {
-        return true;
+    if(std::regex_search(_dbAnswer, unknownCommand)) {
+        return 0;
     }
-    return true;
-
-}
-
-int MVKWrapper::connect(const std::string username,
-                        const std::string password) {
-    std::string request =
-            "op=set_input&value=\"" + _uuid + "\"&taskname=task_manager";
-    send(request.c_str());
-    if(!receive()) { return -1; }
-
-    request = "value=\"" + username + "\"" + baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-
-    std::regex newUser("^[A-Za-z \"]+new user");
-    if(std::regex_search(databaseAnswer, newUser)) {
-        request = "value=\"" + password + "\"" + baseSendRequest;
-        send(request.c_str());
-        if(!receive()) { return -1; }
-    }
-
-    request = "value=\"" + password + "\"" + baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(!receive()) { return -1; }
-
-    if(!isDebugMode()) {
-        request = "value=\"quiet\"" + baseSendRequest;
-        send(request.c_str());
-    }
-
     return 0;
+
 }
 
 
@@ -133,24 +143,22 @@ int MVKWrapper::connect(const std::string username,
 // Models management
 // -----------------------------------------------------------------------------
 
-int MVKWrapper::modelList(const std::string path) {
-    std::string request = "data=[\"model_list\",\"" + path + "\"]" + baseSendRequest;
+int MVKWrapper::modelList(const std::string& path) {
+    std::string request = "data=[\"model_list\",\"" + path + "\"]" + _sendRequest;
     send(request.c_str());
-    if(!receive()) {
-        return -1;
-    }
+    if(!receive()) { return -1; }
     return 0;
 }
 
-int MVKWrapper::modelAdd(const std::string savePathName,
-                         const std::string modelType,
-                         const std::string textualRepresentation) {
-    std::string request =
-            "data=[\"model_add\",\"" + modelType + "\",\"" + savePathName +
-            "\",\"" + textualRepresentation + "\"]" + baseSendRequest;
+int MVKWrapper::modelAdd(const std::string& name,
+                         const std::string& mmodel,
+                         const std::string& syntax) {
+    std::string request;
+    request = "data=[\"model_add\",\"" + mmodel + "\",\"" + name +
+              "\",\"" + syntax + "\"]" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
@@ -159,41 +167,38 @@ int MVKWrapper::modelAdd(const std::string savePathName,
     return 0;
 }
 
-int MVKWrapper::modelDelete(const std::string savePathName) {
-    std::string request =
-            "data=[\"model_delete\",\"" + savePathName + "\"]" +
-            baseSendRequest;
+int MVKWrapper::modelDelete(const std::string& name) {
+    std::string request;
+    request = "data=[\"model_delete\",\"" + name + "\"]" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
         if(!receive()) { return -1; }
     }
-
     return 0;
 }
 
-int MVKWrapper::modelVerify(const std::string savePathName,
-                            const std::string modelType) {
-    std::string request =
-            "data=[\"verify\",\"" + savePathName + "\",\"" + modelType +
-            "\"]" + baseSendRequest;
+int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
+    std::string request;
+    request = "data=[\"verify\",\"" + model + "\",\"" + mmodel + "\"]"
+              + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
     }
     return 0;
 }
 
-int MVKWrapper::modelModify(const std::string workingModel,
-                            const std::string modelType) {
-    std::string request =
-            "data=[\"model_modify\",\"" + workingModel + "\",\"" + modelType +
-            "\"]" + baseSendRequest;
+int MVKWrapper::modelModify(const std::string& model,
+                            const std::string& mmodel) {
+    std::string request;
+    request = "data=[\"model_modify\",\"" + model + "\",\"" + mmodel + "\"]"
+              + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
     }
@@ -201,7 +206,7 @@ int MVKWrapper::modelModify(const std::string workingModel,
 }
 
 int MVKWrapper::modelExit() {
-    std::string request = "value=\"exit\"" + baseSendRequest;
+    std::string request = "value=\"exit\"" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
 
@@ -213,74 +218,67 @@ int MVKWrapper::modelExit() {
 // Model
 // -----------------------------------------------------------------------------
 
-int MVKWrapper::listFull() {
-    std::string request = "value=\"list_full\"" + baseSendRequest;
+int MVKWrapper::elementList() {
+    std::string request = "value=\"list_full\"" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-
     return 0;
 }
 
-int MVKWrapper::JSON() {
-    std::string request = "value=\"JSON\"" + baseSendRequest;
+int MVKWrapper::elementListJSON() {
+    std::string request = "value=\"JSON\"" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-
     return 0;
 }
 
-int MVKWrapper::instantiateNode(const std::string elementType,
-                                const std::string name) {
-    std::string request =
-            "data=[\"instantiate_node\",\"" + elementType + "\",\"" + name +
-            "\"]" + baseSendRequest;
+int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
+    std::string request;
+    request = "data=[\"instantiate_node\",\"" + type + "\",\"" + name + "\"]"
+              + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+    }
+    return 0;
+}
+int MVKWrapper::elementDelete(const std::string& name) {
+    std::string request = "data=[\"delete\",\"" + name + "\"]" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+    }
+    return 0;
+}
+
+int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
+                            const std::string& from, const std::string& to) {
+    std::string request;
+    request = "data=[\"instantiate_edge\",\"" + type + "\",\"" + name
+              + "\",\"" + from + "\",\"" + to + "\"]" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
     }
     return 0;
 }
 
-int MVKWrapper::instantiateEdge(const std::string elementType,
-                                const std::string name,
-                                const std::string source,
-                                const std::string target) {
-    std::string request =
-            "data=[\"instantiate_edge\",\"" + elementType + "\",\"" + name +
-            "\",\"" + source + "\",\"" + target + "\"]" + baseSendRequest;
+int MVKWrapper::attributeSet(const std::string& element,
+                              const std::string& attrType,
+                              const std::string& attrValue) {
+    std::string request;
+    request = "data=[\"attr_add\",\"" + element + "\",\"" + attrType
+              + "\",\"" + attrValue + "\"]" + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-    }
-    return 0;
-}
-
-int MVKWrapper::deleteElement(const std::string name) {
-    std::string request = "data=[\"delete\",\"" + name + "\"]" + baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(isDebugMode()) {
-        if(!receive()) { return -1; }
-    }
-
-    return 0;
-}
-
-int MVKWrapper::attributeAddModify(const std::string element,
-                                   const std::string attributeType,
-                                   const std::string attributeValue) {
-    std::string request =
-            "data=[\"attr_add\",\"" + element + "\",\"" + attributeType +
-            "\",\"" + attributeValue + "\"]" + baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
@@ -289,15 +287,46 @@ int MVKWrapper::attributeAddModify(const std::string element,
     return 0;
 }
 
-int MVKWrapper::attributeAddModifyCode(const std::string element,
-                                       const std::string attributeType,
-                                       const std::string attributeValue) {
-    std::string request =
-            "data=[\"attr_add_code\",\"" + element + "\",\"" + attributeType +
-            "\",\"" + attributeValue + "\"]" + baseSendRequest;
+int MVKWrapper::attributeDelete(const std::string& element,
+                                 const std::string& attrType) {
+    std::string request;
+    request = "data=[\"attr_delete\",\"" + element + "\",\"" + attrType + "\"]"
+              + _sendRequest;
     send(request.c_str());
     if(!receive()) { return -1; }
-    if(isDebugMode()) {
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+    }
+
+    return 0;
+}
+
+int MVKWrapper::attributeDefine(const std::string& element,
+                                 const std::string& attrType,
+                                 const std::string& attrName) {
+    std::string request;
+    request = "data=[\"define_attribute\",\"" + element + "\",\""
+              + attrName + "\",\"" + attrType + "\"]" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+    }
+    return 0;
+}
+
+int MVKWrapper::attributeAddModifyCode(const std::string& element,
+                                        const std::string& attrType,
+                                        const std::string& attrValue) {
+    std::string request;
+    request = "data=[\"attr_add_code\",\"" + element + "\",\"" + attrType
+              + "\",\"" + attrValue + "\"]" + _sendRequest;
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(_debugMode) {
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
         if(!receive()) { return -1; }
@@ -306,75 +335,16 @@ int MVKWrapper::attributeAddModifyCode(const std::string element,
     return 0;
 }
 
-int MVKWrapper::attributeDelete(const std::string element,
-                                const std::string attributeType) {
-    std::string request =
-            "data=[\"attr_delete\",\"" + element + "\",\"" + attributeType +
-            "\"]" + baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(isDebugMode()) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-    }
 
-    return 0;
-}
-
-int MVKWrapper::defineAttribute(const std::string element,
-                                const std::string attributeName,
-                                const std::string attributeType) {
-    std::string request = "data=[\"define_attribute\",\"" + element + "\",\"" +
-                          attributeName + "\",\"" + attributeType + "\"]" +
-                          baseSendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(isDebugMode()) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-    }
-
-    return 0;
-}
-
-void MVKWrapper::initCurl() {
-    curl_global_init(CURL_GLOBAL_ALL); // Init of curl
-    _curl = curl_easy_init();
-    curl_easy_setopt(_curl, CURLOPT_URL, _address.c_str());
-    databaseAnswer = "";
-
-    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &databaseAnswer);
-    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-
-    // This part usefull in case of we need a really big debug mode
-    /*
-    if(DebugMode) {
-        MVKDebugData config;
-        curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, MVKDebugTrace);
-        curl_easy_setopt(curl, CURLOPT_DEBUGDATA, &config);
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    }
-    */
-
-    baseSendRequest = "&op=set_input&taskname=" + _uuid;
-    receiveRequest = "op=get_output&taskname=" + _uuid;
-}
-
-void MVKWrapper::setConnectionAdress(const std::string& address) {
-    _address = address;
-    curl_easy_setopt(_curl, CURLOPT_URL, _address.c_str());
-}
+// -----------------------------------------------------------------------------
+// Getters / Setters
+// -----------------------------------------------------------------------------
 
 const std::string MVKWrapper::getCleanDatabaseAnswer() const {
-    if(databaseAnswer.length() > 11) {
-        return databaseAnswer.substr(10, databaseAnswer.length() - 11);
+    if(_dbAnswer.length() > 11) {
+        return _dbAnswer.substr(10, _dbAnswer.length() - 11);
     }
     return "";
-}
-
-void MVKWrapper::setDatabaseAnswer(const std::string &databaseAnswer) {
-    MVKWrapper::databaseAnswer = databaseAnswer;
 }
 
 
