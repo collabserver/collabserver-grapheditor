@@ -237,9 +237,9 @@ class MVKWrapper {
                             const std::string& attrName);
 
         // TODO (What is this? I should ask Robin)
-        int attributeAddModifyCode(const std::string& element,
-                                   const std::string& attrType,
-                                   const std::string& attrName);
+        int attributeSetCode(const std::string& element,
+                             const std::string& attrType,
+                             const std::string& attrName);
 
 
     // -------------------------------------------------------------------------

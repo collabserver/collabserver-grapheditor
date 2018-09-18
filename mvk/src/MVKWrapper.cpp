@@ -8,6 +8,66 @@
 
 
 // -----------------------------------------------------------------------------
+// MVK Messaging format (Megamodel mode)
+// -----------------------------------------------------------------------------
+
+#define MSG_MODEL_LIST(path_, body_) \
+    "data=[\"model_list\",\"" + path_ + "\"]" + body_
+
+#define MSG_MODEL_ADD(name_, mmodel_, syntax_, body_) \
+    "data=[\"model_add\",\"" + mmodel_ + "\",\"" + name_ + \
+    "\",\"" + syntax_ + "\"]" + body_
+
+#define MSG_MODEL_DEL(name_, body_) \
+    "data=[\"model_delete\",\"" + name_ + "\"]" + body_
+
+#define MSG_MODEL_VERIFY(model_, mmodel_, body_) \
+    "data=[\"verify\",\"" + model_ + "\",\"" + mmodel_ + "\"]" + body_
+
+#define MSG_MODEL_MODIFY(model_, mmodel_, body_) \
+    "data=[\"model_modify\",\"" + model_ + "\",\"" + mmodel_ + "\"]" + body_
+
+#define MSG_MODEL_EXIT(body_) \
+    "value=\"exit\"" + body_
+
+
+// -----------------------------------------------------------------------------
+// MVK Messaging format (Model mode)
+// -----------------------------------------------------------------------------
+
+#define MSG_ELT_LIST(body_) \
+    "value=\"list_full\"" + body_
+
+#define MSG_ELT_LIST_JSON(body_) \
+    "value=\"JSON\"" + body_
+
+#define MSG_ELT_CREA(type_, name_, body_) \
+    "data=[\"instantiate_node\",\"" + type_ + "\",\"" + name_ + "\"]" + body_
+
+#define MSG_ELT_DEL(name_, body_) \
+    "data=[\"delete\",\"" + name_ + "\"]" + body_
+
+#define MSG_EDGE_CREA(type_, name_, from_, to_, body_) \
+    "data=[\"instantiate_edge\",\"" + type_ + "\",\"" + name_ \
+    + "\",\"" + from_ + "\",\"" + to_ + "\"]" + body_
+
+#define MSG_ATTR_SET(elt_, attrType_, attrValue_, body_) \
+    "data=[\"attr_add\",\"" + elt_ + "\",\"" + attrType_ \
+    + "\",\"" + attrValue_ + "\"]" + body_
+
+#define MSG_ATTR_DEL(elt_, attrType_, body_) \
+    "data=[\"attr_delete\",\"" + elt_ + "\",\"" + attrType_ + "\"]" + body_
+
+#define MSG_ATTR_DEFINE(elt_, type_, name_, body_) \
+    "data=[\"define_attribute\",\"" + elt_ + "\",\"" \
+    + name_ + "\",\"" + type_ + "\"]" + body_
+
+#define MSG_ATTR_SET_CODE(elt_, type_, value_, body_) \
+    "data=[\"attr_add_code\",\"" + elt_ + "\",\"" + type_ \
+    + "\",\"" + value_ + "\"]" + body_
+
+
+// -----------------------------------------------------------------------------
 // Static util methods
 // -----------------------------------------------------------------------------
 
@@ -144,7 +204,7 @@ int MVKWrapper::receive() {
 // -----------------------------------------------------------------------------
 
 int MVKWrapper::modelList(const std::string& path) {
-    std::string request = "data=[\"model_list\",\"" + path + "\"]" + _sendRequest;
+    std::string request = MSG_MODEL_LIST(path, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
@@ -153,9 +213,7 @@ int MVKWrapper::modelList(const std::string& path) {
 int MVKWrapper::modelAdd(const std::string& name,
                          const std::string& mmodel,
                          const std::string& syntax) {
-    std::string request;
-    request = "data=[\"model_add\",\"" + mmodel + "\",\"" + name +
-              "\",\"" + syntax + "\"]" + _sendRequest;
+    std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -168,8 +226,7 @@ int MVKWrapper::modelAdd(const std::string& name,
 }
 
 int MVKWrapper::modelDelete(const std::string& name) {
-    std::string request;
-    request = "data=[\"model_delete\",\"" + name + "\"]" + _sendRequest;
+    std::string request = MSG_MODEL_DEL(name, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -179,9 +236,7 @@ int MVKWrapper::modelDelete(const std::string& name) {
 }
 
 int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
-    std::string request;
-    request = "data=[\"verify\",\"" + model + "\",\"" + mmodel + "\"]"
-              + _sendRequest;
+    std::string request = MSG_MODEL_VERIFY(model, mmodel, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -191,11 +246,8 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
     return 0;
 }
 
-int MVKWrapper::modelModify(const std::string& model,
-                            const std::string& mmodel) {
-    std::string request;
-    request = "data=[\"model_modify\",\"" + model + "\",\"" + mmodel + "\"]"
-              + _sendRequest;
+int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel) {
+    std::string request = MSG_MODEL_MODIFY(model, mmodel, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -206,10 +258,9 @@ int MVKWrapper::modelModify(const std::string& model,
 }
 
 int MVKWrapper::modelExit() {
-    std::string request = "value=\"exit\"" + _sendRequest;
+    std::string request = MSG_MODEL_EXIT(_sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
-
     return 0;
 }
 
@@ -219,23 +270,21 @@ int MVKWrapper::modelExit() {
 // -----------------------------------------------------------------------------
 
 int MVKWrapper::elementList() {
-    std::string request = "value=\"list_full\"" + _sendRequest;
+    std::string request = MSG_ELT_LIST(_sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementListJSON() {
-    std::string request = "value=\"JSON\"" + _sendRequest;
+    std::string request = MSG_ELT_LIST_JSON(_sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
-    std::string request;
-    request = "data=[\"instantiate_node\",\"" + type + "\",\"" + name + "\"]"
-              + _sendRequest;
+    std::string request = MSG_ELT_CREA(type, name, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -245,7 +294,7 @@ int MVKWrapper::elementCreate(const std::string& type, const std::string& name) 
     return 0;
 }
 int MVKWrapper::elementDelete(const std::string& name) {
-    std::string request = "data=[\"delete\",\"" + name + "\"]" + _sendRequest;
+    std::string request = MSG_ELT_DEL(name, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -255,10 +304,8 @@ int MVKWrapper::elementDelete(const std::string& name) {
 }
 
 int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
-                            const std::string& from, const std::string& to) {
-    std::string request;
-    request = "data=[\"instantiate_edge\",\"" + type + "\",\"" + name
-              + "\",\"" + from + "\",\"" + to + "\"]" + _sendRequest;
+                           const std::string& from, const std::string& to) {
+    std::string request = MSG_EDGE_CREA(type, name, from, type, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -270,12 +317,10 @@ int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
     return 0;
 }
 
-int MVKWrapper::attributeSet(const std::string& element,
-                              const std::string& attrType,
-                              const std::string& attrValue) {
-    std::string request;
-    request = "data=[\"attr_add\",\"" + element + "\",\"" + attrType
-              + "\",\"" + attrValue + "\"]" + _sendRequest;
+int MVKWrapper::attributeSet(const std::string& elt,
+                             const std::string& attrType,
+                             const std::string& attrValue) {
+    std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -287,11 +332,9 @@ int MVKWrapper::attributeSet(const std::string& element,
     return 0;
 }
 
-int MVKWrapper::attributeDelete(const std::string& element,
-                                 const std::string& attrType) {
-    std::string request;
-    request = "data=[\"attr_delete\",\"" + element + "\",\"" + attrType + "\"]"
-              + _sendRequest;
+int MVKWrapper::attributeDelete(const std::string& elt,
+                                const std::string& attrType) {
+    std::string request = MSG_ATTR_DEL(elt, attrType, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -302,28 +345,24 @@ int MVKWrapper::attributeDelete(const std::string& element,
     return 0;
 }
 
-int MVKWrapper::attributeDefine(const std::string& element,
+int MVKWrapper::attributeDefine(const std::string& elt,
+                                const std::string& attrType,
+                                const std::string& attrName) {
+    std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _sendRequest);
+    send(request.c_str());
+    if(!receive()) { return -1; }
+    if(_debugMode) {
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+        if(!receive()) { return -1; }
+    }
+    return 0;
+}
+
+int MVKWrapper::attributeSetCode(const std::string& elt,
                                  const std::string& attrType,
-                                 const std::string& attrName) {
-    std::string request;
-    request = "data=[\"define_attribute\",\"" + element + "\",\""
-              + attrName + "\",\"" + attrType + "\"]" + _sendRequest;
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-    }
-    return 0;
-}
-
-int MVKWrapper::attributeAddModifyCode(const std::string& element,
-                                        const std::string& attrType,
-                                        const std::string& attrValue) {
-    std::string request;
-    request = "data=[\"attr_add_code\",\"" + element + "\",\"" + attrType
-              + "\",\"" + attrValue + "\"]" + _sendRequest;
+                                 const std::string& attrValue) {
+    std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _sendRequest);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
