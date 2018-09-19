@@ -5,7 +5,7 @@
 
 class Prompt {
     private:
-        MVKWrapper _db;
+        MVKWrapper _mvk = MVKWrapper(true);
 
     public:
         /** Launch the prompt. */
@@ -13,7 +13,7 @@ class Prompt {
 
     private:
         /** The connection part of Modelverse. */
-        void connection();
+        void menuConnect();
 
         /** The megamodeling part of Modelverse. */
         void enterMegaModellingMode();

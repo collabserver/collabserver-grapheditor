@@ -25,7 +25,6 @@ class MVKWrapper {
     private:
         CURL*           _curl = nullptr;
         std::string     _dbAnswer; // The last answer of Modelverse
-        std::string     _sendRequest; // General part of the sending request
         std::string     _recvRequest; // The receiving request
 
 

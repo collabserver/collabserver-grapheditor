@@ -1,75 +1,19 @@
 #include "MVKWrapper.h"
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <regex>
 
 #include "UUIDGenerator.h"
-
-
-// -----------------------------------------------------------------------------
-// MVK Messaging format (Megamodel mode)
-// -----------------------------------------------------------------------------
-
-#define MSG_MODEL_LIST(path_, body_) \
-    "data=[\"model_list\",\"" + path_ + "\"]" + body_
-
-#define MSG_MODEL_ADD(name_, mmodel_, syntax_, body_) \
-    "data=[\"model_add\",\"" + mmodel_ + "\",\"" + name_ + \
-    "\",\"" + syntax_ + "\"]" + body_
-
-#define MSG_MODEL_DEL(name_, body_) \
-    "data=[\"model_delete\",\"" + name_ + "\"]" + body_
-
-#define MSG_MODEL_VERIFY(model_, mmodel_, body_) \
-    "data=[\"verify\",\"" + model_ + "\",\"" + mmodel_ + "\"]" + body_
-
-#define MSG_MODEL_MODIFY(model_, mmodel_, body_) \
-    "data=[\"model_modify\",\"" + model_ + "\",\"" + mmodel_ + "\"]" + body_
-
-#define MSG_MODEL_EXIT(body_) \
-    "value=\"exit\"" + body_
-
-
-// -----------------------------------------------------------------------------
-// MVK Messaging format (Model mode)
-// -----------------------------------------------------------------------------
-
-#define MSG_ELT_LIST(body_) \
-    "value=\"list_full\"" + body_
-
-#define MSG_ELT_LIST_JSON(body_) \
-    "value=\"JSON\"" + body_
-
-#define MSG_ELT_CREA(type_, name_, body_) \
-    "data=[\"instantiate_node\",\"" + type_ + "\",\"" + name_ + "\"]" + body_
-
-#define MSG_ELT_DEL(name_, body_) \
-    "data=[\"delete\",\"" + name_ + "\"]" + body_
-
-#define MSG_EDGE_CREA(type_, name_, from_, to_, body_) \
-    "data=[\"instantiate_edge\",\"" + type_ + "\",\"" + name_ \
-    + "\",\"" + from_ + "\",\"" + to_ + "\"]" + body_
-
-#define MSG_ATTR_SET(elt_, attrType_, attrValue_, body_) \
-    "data=[\"attr_add\",\"" + elt_ + "\",\"" + attrType_ \
-    + "\",\"" + attrValue_ + "\"]" + body_
-
-#define MSG_ATTR_DEL(elt_, attrType_, body_) \
-    "data=[\"attr_delete\",\"" + elt_ + "\",\"" + attrType_ + "\"]" + body_
-
-#define MSG_ATTR_DEFINE(elt_, type_, name_, body_) \
-    "data=[\"define_attribute\",\"" + elt_ + "\",\"" \
-    + name_ + "\",\"" + type_ + "\"]" + body_
-
-#define MSG_ATTR_SET_CODE(elt_, type_, value_, body_) \
-    "data=[\"attr_add_code\",\"" + elt_ + "\",\"" + type_ \
-    + "\",\"" + value_ + "\"]" + body_
+#include "Messaging.h"
 
 
 // -----------------------------------------------------------------------------
 // Static util methods
 // -----------------------------------------------------------------------------
+
+struct MVKDebugData { char trace_ascii; /* 1 or 0 */ };
 
 static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
                          size_t size, char nohex);
@@ -103,53 +47,57 @@ int MVKWrapper::connect(const std::string& ip, const int port,
     // Init CURL
     curl_global_init(CURL_GLOBAL_ALL);
     _curl = curl_easy_init();
+    assert(_curl != nullptr);
+    if(_curl == nullptr) {
+        return -1;
+    }
+
     std::stringstream addr;
-    addr << "https://" << ip << ":" << port; // Format: "http://127.0.0.1:8001"
+    addr << "http://" << ip << ":" << port; // Format: "http://127.0.0.1:8001"
     curl_easy_setopt(_curl, CURLOPT_URL, addr.str().c_str());
     _dbAnswer = "";
 
     curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_dbAnswer);
     curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 
-    _sendRequest = "&op=set_input&taskname=" + _uuid;
-    _recvRequest = "op=get_output&taskname=" + _uuid;
-
     // This part usefull in case of we need a really big debug mode
     /*
-    if(DebugMode) {
+    if(_debugMode) {
         MVKDebugData config;
-        curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, MVKDebugTrace);
-        curl_easy_setopt(curl, CURLOPT_DEBUGDATA, &config);
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        curl_easy_setopt(_curl, CURLOPT_DEBUGFUNCTION, MVKDebugTrace);
+        curl_easy_setopt(_curl, CURLOPT_DEBUGDATA, &config);
+        curl_easy_setopt(_curl, CURLOPT_VERBOSE, 1L);
     }
     */
+
+    _recvRequest = "op=get_output&taskname=" + _uuid;
 
 
     // Connect MVK
     std::string request;
 
-    request = "op=set_input&value=\"" + _uuid + "\"&taskname=task_manager";
+    request = MSG_USER_CONNECT(_uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
 
-    request = "value=\"" + username + "\"" + _sendRequest;
+    request = MSG_USER_LOGIN(username, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
 
     std::regex newUser("^[A-Za-z \"]+new user");
     if(std::regex_search(_dbAnswer, newUser)) {
-        request = "value=\"" + pswd + "\"" + _sendRequest;
+        request = MSG_USER_LOGIN(pswd, _uuid);
         send(request.c_str());
         if(!receive()) { return -1; }
     }
 
-    request = "value=\"" + pswd + "\"" + _sendRequest;
+    request = MSG_USER_LOGIN(pswd, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(!receive()) { return -1; }
 
     if(!_debugMode) {
-        request = "value=\"quiet\"" + _sendRequest;
+        request = MSG_USER_QUIET(_uuid);
         send(request.c_str());
     }
 
@@ -168,6 +116,7 @@ int MVKWrapper::disconnect() {
 // -----------------------------------------------------------------------------
 
 void MVKWrapper::send(const char* data) {
+    assert(_curl != nullptr);
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
 
@@ -204,7 +153,7 @@ int MVKWrapper::receive() {
 // -----------------------------------------------------------------------------
 
 int MVKWrapper::modelList(const std::string& path) {
-    std::string request = MSG_MODEL_LIST(path, _sendRequest);
+    std::string request = MSG_MODEL_LIST(path, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
@@ -213,7 +162,7 @@ int MVKWrapper::modelList(const std::string& path) {
 int MVKWrapper::modelAdd(const std::string& name,
                          const std::string& mmodel,
                          const std::string& syntax) {
-    std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _sendRequest);
+    std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -226,7 +175,7 @@ int MVKWrapper::modelAdd(const std::string& name,
 }
 
 int MVKWrapper::modelDelete(const std::string& name) {
-    std::string request = MSG_MODEL_DEL(name, _sendRequest);
+    std::string request = MSG_MODEL_DEL(name, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -236,7 +185,7 @@ int MVKWrapper::modelDelete(const std::string& name) {
 }
 
 int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
-    std::string request = MSG_MODEL_VERIFY(model, mmodel, _sendRequest);
+    std::string request = MSG_MODEL_VERIFY(model, mmodel, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -247,7 +196,7 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
 }
 
 int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel) {
-    std::string request = MSG_MODEL_MODIFY(model, mmodel, _sendRequest);
+    std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -258,7 +207,7 @@ int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel)
 }
 
 int MVKWrapper::modelExit() {
-    std::string request = MSG_MODEL_EXIT(_sendRequest);
+    std::string request = MSG_MODEL_EXIT(_uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
@@ -270,21 +219,21 @@ int MVKWrapper::modelExit() {
 // -----------------------------------------------------------------------------
 
 int MVKWrapper::elementList() {
-    std::string request = MSG_ELT_LIST(_sendRequest);
+    std::string request = MSG_ELT_LIST(_uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementListJSON() {
-    std::string request = MSG_ELT_LIST_JSON(_sendRequest);
+    std::string request = MSG_ELT_LIST_JSON(_uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
-    std::string request = MSG_ELT_CREA(type, name, _sendRequest);
+    std::string request = MSG_ELT_CREA(type, name, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -294,7 +243,7 @@ int MVKWrapper::elementCreate(const std::string& type, const std::string& name) 
     return 0;
 }
 int MVKWrapper::elementDelete(const std::string& name) {
-    std::string request = MSG_ELT_DEL(name, _sendRequest);
+    std::string request = MSG_ELT_DEL(name, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -305,7 +254,7 @@ int MVKWrapper::elementDelete(const std::string& name) {
 
 int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
                            const std::string& from, const std::string& to) {
-    std::string request = MSG_EDGE_CREA(type, name, from, type, _sendRequest);
+    std::string request = MSG_EDGE_CREA(type, name, from, type, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -320,7 +269,7 @@ int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
 int MVKWrapper::attributeSet(const std::string& elt,
                              const std::string& attrType,
                              const std::string& attrValue) {
-    std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _sendRequest);
+    std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -334,7 +283,7 @@ int MVKWrapper::attributeSet(const std::string& elt,
 
 int MVKWrapper::attributeDelete(const std::string& elt,
                                 const std::string& attrType) {
-    std::string request = MSG_ATTR_DEL(elt, attrType, _sendRequest);
+    std::string request = MSG_ATTR_DEL(elt, attrType, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -348,7 +297,7 @@ int MVKWrapper::attributeDelete(const std::string& elt,
 int MVKWrapper::attributeDefine(const std::string& elt,
                                 const std::string& attrType,
                                 const std::string& attrName) {
-    std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _sendRequest);
+    std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -362,7 +311,7 @@ int MVKWrapper::attributeDefine(const std::string& elt,
 int MVKWrapper::attributeSetCode(const std::string& elt,
                                  const std::string& attrType,
                                  const std::string& attrValue) {
-    std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _sendRequest);
+    std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _uuid);
     send(request.c_str());
     if(!receive()) { return -1; }
     if(_debugMode) {
@@ -390,10 +339,6 @@ const std::string MVKWrapper::getCleanDatabaseAnswer() const {
 // -----------------------------------------------------------------------------
 // Static Debug
 // -----------------------------------------------------------------------------
-
-struct MVKDebugData {
-    char trace_ascii; /* 1 or 0 */
-};
 
 static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
                          size_t size, char nohex) {
