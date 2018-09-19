@@ -19,12 +19,17 @@ static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
                          size_t size, char nohex);
 static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
                          size_t size, void *userp);
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void* userp);
 
 static void curlError(CURLcode code) {
     if(code != CURLE_OK) {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(code));
     }
+}
+
+static size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*) userp)->clear();
+    ((std::string*) userp)->append((char*) contents, size* nmemb);
+    return size * nmemb;
 }
 
 
@@ -35,30 +40,14 @@ static void curlError(CURLcode code) {
 MVKWrapper::MVKWrapper(bool debugMode) {
     _debugMode = debugMode;
     _uuid = generateNewUUID();
-}
 
-
-// -----------------------------------------------------------------------------
-// User interface
-// -----------------------------------------------------------------------------
-
-int MVKWrapper::connect(const std::string& ip, const int port,
-                         const std::string& username, const std::string& pswd) {
     // Init CURL
     curl_global_init(CURL_GLOBAL_ALL);
     _curl = curl_easy_init();
     assert(_curl != nullptr);
-    if(_curl == nullptr) {
-        return -1;
-    }
 
-    std::stringstream addr;
-    addr << "http://" << ip << ":" << port; // Format: "http://127.0.0.1:8001"
-    curl_easy_setopt(_curl, CURLOPT_URL, addr.str().c_str());
-    _dbAnswer = "";
-
-    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_dbAnswer);
-    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_buffer);
+    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, curlWriteCallback);
 
     // This part usefull in case of we need a really big debug mode
     /*
@@ -69,44 +58,79 @@ int MVKWrapper::connect(const std::string& ip, const int port,
         curl_easy_setopt(_curl, CURLOPT_VERBOSE, 1L);
     }
     */
+}
 
-    _recvRequest = "op=get_output&taskname=" + _uuid;
+MVKWrapper::~MVKWrapper() {
+    curl_easy_cleanup(_curl);
+    curl_global_cleanup();
+}
 
 
-    // Connect MVK
-    std::string request;
+// -----------------------------------------------------------------------------
+// Connection
+// -----------------------------------------------------------------------------
 
-    request = MSG_USER_CONNECT(_uuid);
-    send(request.c_str());
-    if(!receive()) { return -1; }
-
-    request = MSG_USER_LOGIN(username, _uuid);
-    send(request.c_str());
-    if(!receive()) { return -1; }
-
-    std::regex newUser("^[A-Za-z \"]+new user");
-    if(std::regex_search(_dbAnswer, newUser)) {
-        request = MSG_USER_LOGIN(pswd, _uuid);
-        send(request.c_str());
-        if(!receive()) { return -1; }
-    }
-
-    request = MSG_USER_LOGIN(pswd, _uuid);
-    send(request.c_str());
-    if(!receive()) { return -1; }
-    if(!receive()) { return -1; }
-
-    if(!_debugMode) {
-        request = MSG_USER_QUIET(_uuid);
-        send(request.c_str());
-    }
-
+int MVKWrapper::connect(const std::string& ip, const int port,
+                        const std::string& username, const std::string& pswd) {
+    this->connectMVK(ip, port);
+    this->login(username, pswd);
     return 0;
 }
 
 int MVKWrapper::disconnect() {
-    curl_easy_cleanup(_curl);
-    curl_global_cleanup();
+    this->logout();
+    this->disconnectMVK();
+    return 0;
+}
+
+int MVKWrapper::connectMVK(const std::string& ip, const int port) {
+    // Addr format: "http://127.0.0.1:8001"
+    std::stringstream addr;
+    addr << "http://" << ip << ":" << port;
+    curl_easy_setopt(_curl, CURLOPT_URL, addr.str().c_str());
+    _buffer = "";
+
+    return 0;
+}
+
+int MVKWrapper::disconnectMVK() {
+    curl_easy_setopt(_curl, CURLOPT_URL, "");
+    _buffer = "";
+    return 0;
+}
+
+int MVKWrapper::login(const std::string& username, const std::string& pswd) {
+    // Connect MVK
+    std::string msg = MSG_USER_CONNECT(_uuid);
+    send(msg.c_str());
+    if(!sendInternal()) { return -1; }
+
+    msg = MSG_USER_LOGIN(username, _uuid);
+    send(msg.c_str());
+    if(!sendInternal()) { return -1; }
+
+    std::regex newUser("^[A-Za-z \"]+new user");
+    if(std::regex_search(_buffer, newUser)) {
+        msg = MSG_USER_LOGIN(pswd, _uuid);
+        send(msg.c_str());
+        if(!sendInternal()) { return -1; }
+    }
+
+    msg = MSG_USER_LOGIN(pswd, _uuid);
+    send(msg.c_str());
+    if(!sendInternal()) { return -1; }
+    if(!sendInternal()) { return -1; }
+
+    if(!_debugMode) {
+        msg = MSG_CONFIG_SET_QUIET(_uuid);
+        send(msg.c_str());
+    }
+    return 0;
+}
+
+int MVKWrapper::logout() {
+    // DevNote: Well. We actually don't know how to logout.
+    // More MVK reading doc required.
     return 0;
 }
 
@@ -120,31 +144,26 @@ void MVKWrapper::send(const char* data) {
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
 
-    CURLcode curlAnswer = curl_easy_perform(_curl);
+    CURLcode rabbit = curl_easy_perform(_curl);
+    curlError(rabbit);
     if(_debugMode) {
-        std::clog << "Sending: " << data << "\n";
-        std::clog << "Answer: " << _dbAnswer << std::endl;
+        std::clog << "[REQUEST]: " << data << "\n";
+        std::clog << "[RESPONSE]: " << _buffer << std::endl;
     }
-    curlError(curlAnswer);
 }
 
-int MVKWrapper::receive() {
-    curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, _recvRequest.c_str());
-    curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
+bool MVKWrapper::sendInternal() {
+    // TODO I actually need to check the doc etc to understand:
+    // Do we really need this dummy request?
+    std::string msg = MSG_DUMMY(_uuid);
+    this->send(msg.c_str());
 
-    CURLcode curlAnswer = curl_easy_perform(_curl);
-    if(_debugMode) {
-        std::clog << "Sending: " << _recvRequest << "\n";
-        std::clog << "Answer:" << _dbAnswer << std::endl;
-    }
-    curlError(curlAnswer);
     std::regex unknownCommand("^\"[Uu]nknown command");
-    std::regex success("^\"Success");
-    if(std::regex_search(_dbAnswer, unknownCommand)) {
+    if (std::regex_search(_buffer, unknownCommand)) {
         return 0;
     }
-    return 0;
 
+    return -1;
 }
 
 
@@ -155,7 +174,7 @@ int MVKWrapper::receive() {
 int MVKWrapper::modelList(const std::string& path) {
     std::string request = MSG_MODEL_LIST(path, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     return 0;
 }
 
@@ -164,11 +183,11 @@ int MVKWrapper::modelAdd(const std::string& name,
                          const std::string& syntax) {
     std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
 
     return 0;
@@ -177,9 +196,9 @@ int MVKWrapper::modelAdd(const std::string& name,
 int MVKWrapper::modelDelete(const std::string& name) {
     std::string request = MSG_MODEL_DEL(name, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -187,10 +206,10 @@ int MVKWrapper::modelDelete(const std::string& name) {
 int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_VERIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -198,10 +217,10 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
 int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -209,7 +228,7 @@ int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel)
 int MVKWrapper::modelExit() {
     std::string request = MSG_MODEL_EXIT(_uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     return 0;
 }
 
@@ -221,33 +240,33 @@ int MVKWrapper::modelExit() {
 int MVKWrapper::elementList() {
     std::string request = MSG_ELT_LIST(_uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementListJSON() {
     std::string request = MSG_ELT_LIST_JSON(_uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
     std::string request = MSG_ELT_CREA(type, name, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
 int MVKWrapper::elementDelete(const std::string& name) {
     std::string request = MSG_ELT_DEL(name, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -256,12 +275,12 @@ int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
                            const std::string& from, const std::string& to) {
     std::string request = MSG_EDGE_CREA(type, name, from, type, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -271,11 +290,11 @@ int MVKWrapper::attributeSet(const std::string& elt,
                              const std::string& attrValue) {
     std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
 
     return 0;
@@ -285,10 +304,10 @@ int MVKWrapper::attributeDelete(const std::string& elt,
                                 const std::string& attrType) {
     std::string request = MSG_ATTR_DEL(elt, attrType, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
 
     return 0;
@@ -299,11 +318,11 @@ int MVKWrapper::attributeDefine(const std::string& elt,
                                 const std::string& attrName) {
     std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
     return 0;
 }
@@ -313,11 +332,11 @@ int MVKWrapper::attributeSetCode(const std::string& elt,
                                  const std::string& attrValue) {
     std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(!receive()) { return -1; }
+    if(!sendInternal()) { return -1; }
     if(_debugMode) {
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
-        if(!receive()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
+        if(!sendInternal()) { return -1; }
     }
 
     return 0;
@@ -329,8 +348,8 @@ int MVKWrapper::attributeSetCode(const std::string& elt,
 // -----------------------------------------------------------------------------
 
 const std::string MVKWrapper::getCleanDatabaseAnswer() const {
-    if(_dbAnswer.length() > 11) {
-        return _dbAnswer.substr(10, _dbAnswer.length() - 11);
+    if(_buffer.length() > 11) {
+        return _buffer.substr(10, _buffer.length() - 11);
     }
     return "";
 }
@@ -422,10 +441,4 @@ static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
 
     MVKDebugDump(text, stderr, (unsigned char*) data, size, config->trace_ascii);
     return 0;
-}
-
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*) userp)->clear();
-    ((std::string*) userp)->append((char*) contents, size* nmemb);
-    return size * nmemb;
 }

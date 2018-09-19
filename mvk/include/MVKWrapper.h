@@ -20,12 +20,11 @@ class MVKWrapper {
 
     private:
         bool            _debugMode = false;
-        std::string     _uuid;
+        std::string     _uuid = "";
 
     private:
         CURL*           _curl = nullptr;
-        std::string     _dbAnswer; // The last answer of Modelverse
-        std::string     _recvRequest; // The receiving request
+        std::string     _buffer = ""; // The last answer of Modelverse
 
 
     // -------------------------------------------------------------------------
@@ -43,9 +42,11 @@ class MVKWrapper {
          */
         MVKWrapper(bool debugMode = false);
 
+        ~MVKWrapper();
+
 
     // -------------------------------------------------------------------------
-    // User interface
+    // Connection
     // -------------------------------------------------------------------------
 
     public:
@@ -65,10 +66,45 @@ class MVKWrapper {
 
         /**
          * Disconnect from MVK. Do nothing if not connected yet.
+         * Logout user and disconnect from server.
          *
          * \return -1 if there is a detected error.
          */
         int disconnect();
+
+    private:
+
+        /**
+         * Connect to MVK (But doesn't log as a user).
+         *
+         * \param ip Server IP.
+         * \param port Server port.
+         * \return -1 if there is a detected error.
+         */
+        int connectMVK(const std::string& ip, const int port);
+
+        /**
+         * Disconnect from MVK server.
+         * \return -1 if there is a detected error.
+         */
+        int disconnectMVK();
+
+        /**
+         * Log as user.
+         * You must be connected to MVK server first.
+         *
+         * \param username Username as registered in MVK.
+         * \param pswd Password as registered in MVK.
+         * \return -1 if there is a detected error.
+         */
+        int login(const std::string& username, const std::string& pswd);
+
+        /**
+         * Logout current user.
+         * You must be loged.
+         * \return -1 if there is a detected error.
+         */
+        int logout();
 
 
     // -------------------------------------------------------------------------
@@ -248,25 +284,26 @@ class MVKWrapper {
     private:
 
         /**
-         * Send data to Modelverse.
+         * Send data to Modelverse and update buffer with its response.
+         * Block until response.
          *
          * \param data Raw data to send to MVK. (MVK format).
          */
         void send(const char* data);
 
         /**
-         * Ask Modelverse for an answer.
+         * Internal send method.
          *
          * \return -1 if there is a detected error.
          */
-        int receive();
+        bool sendInternal();
 
 
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
     public:
-        const std::string& getDatabaseAnswer() const { return _dbAnswer; }
+        const std::string& getDatabaseAnswer() const { return _buffer; }
 
         /**
          * Return the last database answer with clean format.

@@ -5,7 +5,7 @@
 
 class Prompt {
     private:
-        MVKWrapper _mvk = MVKWrapper(true);
+        MVKWrapper _mvk = MVKWrapper(true); // Debug mode
 
     public:
         /** Launch the prompt. */
