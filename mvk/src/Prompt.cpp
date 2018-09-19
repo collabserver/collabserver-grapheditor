@@ -3,12 +3,26 @@
 #include <iostream>
 
 
+// Font: shadow
+// See: http://www.patorjk.com/software/taag/#p=display&f=Shadow&t=MVK
+#define WELCOME_MENU_TEXT \
+"________________________________________________________________________________\n"\
+"                                                                                \n"\
+"        \\  | \\ \\     /  |  /       ___|   |   |  ____|  |      |             \n"\
+"       |\\/ |  \\ \\   /   ' /      \\___ \\   |   |  __|    |      |           \n"\
+"       |   |   \\ \\ /    . \\            |  ___ |  |      |      |             \n"\
+"      _|  _|    \\_/    _|\\_\\     _____/  _|  _| _____| _____| _____|         \n"\
+"                                                                                \n"\
+"________________________________________________________________________________\n"
+
+
 // -----------------------------------------------------------------------------
 // Core prompt
 // -----------------------------------------------------------------------------
 
 void Prompt::runPrompt() {
-    std::cout << "Modelverse C++ shell" << std::endl;
+    std::cout << WELCOME_MENU_TEXT << std::endl;
+    //std::cout << "Modelverse C++ shell" << std::endl;
     menuConnect();
     menuMegaModelingMode();
 }

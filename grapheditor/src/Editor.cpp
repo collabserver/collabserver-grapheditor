@@ -15,7 +15,9 @@
 #include "Commands/VertexCommands.h"
 
 
-#define WELCOME_MENU_TEXT     \
+// Font: shadow
+// See: http://www.patorjk.com/software/taag/#p=display&f=Shadow&t=GraphEditor
+#define WELCOME_MENU_TEXT \
 "________________________________________________________________________________\n"\
 "                                                                                \n"\
 "          ___|                 |       ____|     |_) |                          \n"\
