@@ -135,7 +135,7 @@ bool MVKSimpleGraphOperationHandler::isModelCorrect() {
     if (mvkConnector->getDatabaseAnswer() != "\"Success: OK\"") {
         res = false;
     }
-    mvkConnector->modelModify(workingModel, metaModel);
+    mvkConnector->modelEnter(workingModel, metaModel);
     return res;
 }
 
@@ -186,11 +186,11 @@ void MVKSimpleGraphOperationHandler::baseConstructor() {
         "\"Model exists: " + workingModel + "\"") {
         //TODO if model exist load it
         std::cout<<graph->nbVertices()<<"\n";
-        mvkConnector->modelModify(workingModel, metaModel);
+        mvkConnector->modelEnter(workingModel, metaModel);
         loadModel();
         std::cout<<graph->nbVertices()<<"\n";
     } else {
-        mvkConnector->modelModify(workingModel, metaModel);
+        mvkConnector->modelEnter(workingModel, metaModel);
     }
 }
 
@@ -206,7 +206,7 @@ void MVKSimpleGraphOperationHandler::generateMetamodel() {
     mvkConnector->modelAdd(workingMetaModel, metaMetaModel, "");
     if (mvkConnector->getDatabaseAnswer() !=
         "\"Model exists: " + workingMetaModel + "\"") {
-        mvkConnector->modelModify(workingMetaModel, metaMetaModel);
+        mvkConnector->modelEnter(workingMetaModel, metaMetaModel);
 
         mvkConnector->elementCreate("Class", vertex);
         mvkConnector->edgeCreate("Association", edge, vertex, vertex);

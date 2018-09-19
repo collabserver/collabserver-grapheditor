@@ -214,7 +214,7 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
     return 0;
 }
 
-int MVKWrapper::modelModify(const std::string& model, const std::string& mmodel) {
+int MVKWrapper::modelEnter(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
     if(!sendInternal()) { return -1; }

@@ -3,23 +3,38 @@
 #include "MVKWrapper.h"
 
 
+/**
+ * A simple command line prompt to manage MVK database.
+ */
 class Prompt {
     private:
         MVKWrapper _mvk = MVKWrapper(true); // Debug mode
 
     public:
-        /** Launch the prompt. */
+
+        /**
+         * Start and run this prompt.
+         */
         void runPrompt();
 
     private:
-        /** The connection part of Modelverse. */
+
+        /**
+         * Show connection / login menu.
+         */
         void menuConnect();
 
-        /** The megamodeling part of Modelverse. */
-        void enterMegaModellingMode();
+        /**
+         * Show megamodeling menu mode.
+         * (Working on the MVK database globally).
+         */
+        void menuMegaModelingMode();
 
-        /** The modeling part of Modelverse. */
-        void enterModellingMode();
+        /**
+         * Show modeling menu mode.
+         * (Working on a specific model in MVK).
+         */
+        void menuModelingMode();
 };
 
 

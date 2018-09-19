@@ -165,10 +165,10 @@ class MVKWrapper {
          * \param mmodel Model's metamodel.
          * \return -1 if there is a detected error.
          */
-        int modelModify(const std::string& model, const std::string& mmodel);
+        int modelEnter(const std::string& model, const std::string& mmodel);
 
         /**
-         * Exit the modeling mode and return to the megamodelling mode.
+         * Exit the modeling mode and return to the megamodeling mode.
          *
          * \pre Being in modeling mode.
          * \post You are in megamodeling mode.

@@ -10,11 +10,11 @@
 void Prompt::runPrompt() {
     std::cout << "Modelverse C++ shell" << std::endl;
     menuConnect();
+    menuMegaModelingMode();
 }
 
 void Prompt::menuConnect() {
-    using namespace std;
-
+    using namespace std; // Yes, I dare using the 'using namespace'! Crazy!
 
     string ip;
     string port;
@@ -28,140 +28,170 @@ void Prompt::menuConnect() {
     cout << "Password: ";   cin >> password;
 
     cout << "Connecting to Modelverse... " << endl;
-    _mvk.connect(ip, std::atoi(port.c_str()), username, password);
-    //_mvk.setConnectionAdress(completeAdress);
-    //_mvk.connect(username, password);
+
+    int success = _mvk.connect(ip, std::atoi(port.c_str()), username, password);
+    if(success == 0) {
+        cout << "Successfully connected\n";
+    }
+    else {
+        cout << "Error. Unable to connect with MVK\n";
+    }
 }
 
-void Prompt::enterMegaModellingMode() {
+static void showHelpMegaModeling() {
     using namespace std;
-    cout << "Entering Mega Modelling mode ('exit' to leave)" << endl;
+    cout << "MetaModeling commands: \n";
+    cout << "    mlist (model_list)\n";
+    cout << "    madd (model_add)\n";
+    cout << "    mdel (model_delete)\n";
+    cout << "    mmod (model_modify)\n";
+}
 
-    string userAnswer;
-    /*
-     * TODO TMP COMMENTED
-    do {
-        cin >> userAnswer;
-        if(userAnswer == "model_list") {
-            cout << "Location ?\n";
-            cin >> userAnswer;
-            _mvk.modelList(userAnswer);
-            cout << _mvk.getDatabaseAnswer() << "\n";
+void Prompt::menuMegaModelingMode() {
+    using namespace std;
+    cout << "Entering MegaModeling mode ('help' for help. 'exit' to leave)";
+    cout << endl;
+
+    string choice;
+    while(true) {
+        cout << ">> ";
+        cin >> choice;
+
+        if(choice == "exit" || choice == "quit") {
+            break;
         }
-        else if(userAnswer == "model_add") {
-            cout << "Model type ?\n";
+        else if(choice == "help") {
+            showHelpMegaModeling();
+        }
+        else if(choice == "mlist") {
+            cout << "Location: ";
+            cin >> choice;
+            _mvk.modelList(choice);
+            cout << _mvk.getDatabaseAnswer() << endl;
+        }
+        else if(choice == "madd") {
+            cout << "Model type: ";
             string modelType;
             cin >> modelType;
-            cout << "Name of the new model ?\n";
-            cin >> userAnswer;
-            _mvk.modelAdd(userAnswer, modelType, "");
-            cout << _mvk.getDatabaseAnswer() << "\n";
+            cout << "Model name: ";
+            cin >> choice;
+            _mvk.modelAdd(choice, modelType, "");
+            cout << _mvk.getDatabaseAnswer() << endl;
         }
-        else if(userAnswer == "model_delete") {
-            cout << "Name of the model to delete ?\n";
-            cin >> userAnswer;
-            _mvk.modelDelete(userAnswer);
-            cout << _mvk.getDatabaseAnswer() << "\n";
+        else if(choice == "mdel") {
+            cout << "Model name: ";
+            cin >> choice;
+            _mvk.modelDelete(choice);
+            cout << _mvk.getDatabaseAnswer() << endl;
         }
-        else if(userAnswer == "model_modify") {
-            cout << "Model name you want to modify ?\n";
+        else if(choice == "mmod") {
+            cout << "Model name: ";
             string workingModel;
             cin >> workingModel;
-            cout << "Model Type ?\n";
-            cin >> userAnswer;
-            _mvk.modelModify(workingModel, userAnswer);
-            if(_mvk.getDatabaseAnswer() ==
-                "\"Model loaded, ready for commands!\"") {
-                enterModellingMode();
+            cout << "Model Type: ";
+            cin >> choice;
+            _mvk.modelEnter(workingModel, choice);
+            if(_mvk.getDatabaseAnswer() == "\"Model loaded, ready for commands!\"") {
+                menuModelingMode();
             }
             else {
-                cout << "Impossible to modify the model you want.\n";
+                cout << "Error: Unable to load this model" << endl;
             }
-        } else {
-            cout << "Unknown Command !\n";
-        }
-    } while (userAnswer != "exit");
-    */
-    cout << "Exit of the shell succesfull\n";
-}
-
-void Prompt::enterModellingMode() {
-    using namespace std;
-    cout << "You're now in the modelling mode\n";
-
-    string userAnswer;
-    /*
-     * TODO TMP COMMENTED
-    do {
-        cin >> userAnswer;
-        if(userAnswer == "list_full") {
-            _mvk.listFull();
-            cout << _mvk.getDatabaseAnswer() << "\n";
-        }
-        else if(userAnswer == "JSON") {
-            _mvk.listFullJSON();
-            cout << _mvk.getDatabaseAnswer() << "\n";
-        }
-        else if(userAnswer == "instantiate_node") {
-            cout << "Element Type ?\n";
-            string elementType;
-            cin >> elementType;
-            cout << "Name of new Element ?\n";
-            cin >> userAnswer;
-            _mvk.instantiateNode(elementType, userAnswer);
-            cout << _mvk.getDatabaseAnswer() << "\n";
-        }
-        else if(userAnswer == "instantiate_edge") {
-            cout << "Element Type ?\n";
-            string elementType;
-            cin >> elementType;
-            cout << "Name of new Element ?\n";
-            string elementName;
-            cin >> elementName;
-            cout << "Source of the edge ?\n";
-            string source;
-            cin >> source;
-            cout << "Target of the edge ?\n";
-            cin >> userAnswer;
-            _mvk.instantiateEdge(elementType, elementName, source,
-                                     userAnswer);
-            cout << _mvk.getDatabaseAnswer() << "\n";
-        }
-        else if(userAnswer == "delete_element") {
-            cout << "Element to delete ?\n";
-            cin >> userAnswer;
-            _mvk.deleteElement(userAnswer);
-            cout << _mvk.getDatabaseAnswer() << "\n";
-        }
-        else if(userAnswer == "attr_add") {
-            cout << "Element to modify ?\n";
-            string element;
-            cin >> element;
-            cout << "Type of the new attribute ?\n";
-            string attributeType;
-            cin >> attributeType;
-            cout << "Value of the attribute ?\n";
-            cin >> userAnswer;
-
-            _mvk.attributeAddModify(element, attributeType, userAnswer);
-        }
-        else if(userAnswer == "attr_del") {
-            cout<<"Element to modify ?\n";
-            string element;
-            cin >> element;
-            cout<<"Attribute to delete ?\n";
-            cin >> userAnswer;
-
-            _mvk.attributeDelete(element, userAnswer);
         }
         else {
-            cout << "Unknown Command !\n";
+            cout << "Unknown Command" << endl;
         }
-    } while (userAnswer != "exit");
-    */
+    }
+}
 
-    cout << "Exiting modelling prompt and going back to mega modelling shell!";
+static void showHelpModeling() {
+    using namespace std;
+    cout << "Modeling commands: \n";
+    cout << "    mlist (model_list)\n";
+    cout << "    madd (model_add)\n";
+    cout << "    mdel (model_delete)\n";
+    cout << "    mmod (model_modify)\n";
+}
+
+void Prompt::menuModelingMode() {
+    using namespace std;
+    cout << "Entering Modeling mode ('help' for help. 'exit' to leave)";
     cout << endl;
+
+    string choice;
+    while(true) {
+        cout << ">> ";
+        cin >> choice;
+
+        if(choice == "exit" || choice == "quit") {
+            break;
+        }
+        else if(choice == "help") {
+            showHelpModeling();
+        }
+        else if(choice == "eltlist") {
+            _mvk.elementList();
+            cout << _mvk.getDatabaseAnswer() << "\n";
+        }
+        else if(choice == "eltlistjson") {
+            _mvk.elementListJSON();
+            cout << _mvk.getDatabaseAnswer() << "\n";
+        }
+        else if(choice == "eltcrea") {
+            cout << "Element Type: ";
+            string elementType;
+            cin >> elementType;
+            cout << "Element name: ";
+            cin >> choice;
+            _mvk.elementCreate(elementType, choice);
+            cout << _mvk.getDatabaseAnswer() << "\n";
+        }
+        else if(choice == "eltdel") {
+            cout << "Element to delete: ";
+            cin >> choice;
+            _mvk.elementDelete(choice);
+            cout << _mvk.getDatabaseAnswer() << "\n";
+        }
+        else if(choice == "edgecrea") {
+            cout << "Element type: ";
+            string elementType;
+            cin >> elementType;
+            cout << "Element name: ";
+            string elementName;
+            cin >> elementName;
+            cout << "Edge source: ";
+            string source;
+            cin >> source;
+            cout << "Edge dest: ";
+            cin >> choice;
+            _mvk.edgeCreate(elementType, elementName, source, choice);
+            cout << _mvk.getDatabaseAnswer() << "\n";
+        }
+        else if(choice == "attradd") {
+            cout << "Element: ";
+            string element;
+            cin >> element;
+            cout << "Attribute name: ";
+            string attributeType;
+            cin >> attributeType;
+            cout << "Attribute value: ";
+            cin >> choice;
+
+            _mvk.attributeSet(element, attributeType, choice);
+        }
+        else if(choice == "attrdel") {
+            cout<<"Element: ";
+            string element;
+            cin >> element;
+            cout<<"Attribute: ";
+            cin >> choice;
+
+            _mvk.attributeDelete(element, choice);
+        }
+        else {
+            cout << "Unknown command";
+        }
+    }
 
     _mvk.modelExit();
 }
