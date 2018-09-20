@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "MVKWrapper.h"
+#include "mvk/MvkWrapper.h"
 
 
 /**
@@ -12,13 +12,13 @@
  * Gives set of operation to use SimpleGraph with MVK database.
  * (CRUD Operations etc).
  */
-class SGraphMVKMapper {
+class SGraphMvkMapper {
     // -------------------------------------------------------------------------
     // Data
     // -------------------------------------------------------------------------
     private:
 
-        MVKWrapper* _mvk = nullptr;
+        MvkWrapper* _mvk = nullptr;
 
 
     // -------------------------------------------------------------------------
@@ -27,7 +27,7 @@ class SGraphMVKMapper {
 
     public:
 
-        SGraphMVKMapper(MVKWrapper* mvk);
+        SGraphMvkMapper(MvkWrapper* mvk);
 
 
     // -------------------------------------------------------------------------

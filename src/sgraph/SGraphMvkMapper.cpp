@@ -1,4 +1,4 @@
-#include "mvk/SGraphMVKMapper.h"
+#include "sgraph/SGraphMvkMapper.h"
 
 #include <cassert>
 
@@ -14,10 +14,11 @@
 #define ATTRIBUTE_NAME      "Name"
 #define ATTRIBUTE_VALUE     "Value"
 
-static bool isModelValid(MVKWrapper* mvk,
+static bool isModelValid(MvkWrapper* mvk,
                          const std::string& model,
                          const std::string& mmodel) {
     // DevNote: you already entered model
+    assert(mvk != nullptr);
     mvk->modelVerify(model, mmodel);
     return mvk->isSuccess();
 }
@@ -27,7 +28,7 @@ static bool isModelValid(MVKWrapper* mvk,
 // INIT
 // -----------------------------------------------------------------------------
 
-SGraphMVKMapper::SGraphMVKMapper(MVKWrapper* mvk) : _mvk(mvk) {
+SGraphMvkMapper::SGraphMvkMapper(MvkWrapper* mvk) : _mvk(mvk) {
     assert(mvk != nullptr);
 }
 
@@ -36,7 +37,7 @@ SGraphMVKMapper::SGraphMVKMapper(MVKWrapper* mvk) : _mvk(mvk) {
 // CRUD
 // -----------------------------------------------------------------------------
 
-bool SGraphMVKMapper::vertexAdd(const std::string& model,
+bool SGraphMvkMapper::vertexAdd(const std::string& model,
                                 const std::string& metamodel,
                                 const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
@@ -47,7 +48,7 @@ bool SGraphMVKMapper::vertexAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::vertexRemove(const std::string& model,
+bool SGraphMvkMapper::vertexRemove(const std::string& model,
                                    const std::string& metamodel,
                                    const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
@@ -58,7 +59,7 @@ bool SGraphMVKMapper::vertexRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::edgeAdd(const std::string& model,
+bool SGraphMvkMapper::edgeAdd(const std::string& model,
                               const std::string& metamodel,
                               const std::string& from,
                               const std::string& to) const {
@@ -72,7 +73,7 @@ bool SGraphMVKMapper::edgeAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::edgeRemove(const std::string& model,
+bool SGraphMvkMapper::edgeRemove(const std::string& model,
                                  const std::string& metamodel,
                                  const std::string& from,
                                  const std::string& to) const {
@@ -86,7 +87,7 @@ bool SGraphMVKMapper::edgeRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::attributeAdd(const std::string& model,
+bool SGraphMvkMapper::attributeAdd(const std::string& model,
                                    const std::string& metamodel,
                                    const std::string& vertexID,
                                    const std::string& attrName,
@@ -104,7 +105,7 @@ bool SGraphMVKMapper::attributeAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::attributeRemove(const std::string& model,
+bool SGraphMvkMapper::attributeRemove(const std::string& model,
                                       const std::string& metamodel,
                                       const std::string& vertexID,
                                       const std::string& attrName) const {
@@ -118,7 +119,7 @@ bool SGraphMVKMapper::attributeRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMVKMapper::attributeSet(const std::string& model,
+bool SGraphMvkMapper::attributeSet(const std::string& model,
                                    const std::string& metamodel,
                                    const std::string& vertexID,
                                    const std::string& attrName,

@@ -1,4 +1,4 @@
-#include "mvk/SGraphOpHandlerMVK.h"
+#include "sgraph/SGraphMvkOpHandler.h"
 
 #include <cassert>
 
@@ -19,10 +19,10 @@
 typedef collab::SimpleGraph SGraph;
 
 
-SGraphOpHandlerMVK::SGraphOpHandlerMVK(const SGraphMVKMapper* mapper,
+SGraphMvkOpHandler::SGraphMvkOpHandler(const SGraphMvkMapper* mapper,
                                        collab::SimpleGraph* graph,
-                                       std::string& model,
-                                       std::string& metamodel) {
+                                       const std::string& model,
+                                       const std::string& metamodel) {
     _mapperMVK  = mapper;
     _graph      = graph;
     _model      = model;
@@ -33,35 +33,35 @@ SGraphOpHandlerMVK::SGraphOpHandlerMVK(const SGraphMVKMapper* mapper,
     assert(_metamodel.size() > 1);
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::VertexAddOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::VertexAddOperation& op) {
     bool success = _mapperMVK->vertexAdd(_model, _metamodel, op.vertexID());
     if(!success) {
         _graph->removeVertex(op.vertexID());
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::VertexRemoveOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::VertexRemoveOperation& op) {
     bool success = _mapperMVK->vertexRemove(_model, _metamodel, op.vertexID());
     if(!success) {
         _graph->addVertex(op.vertexID());
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::EdgeAddOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeAddOperation& op) {
     bool success = _mapperMVK->edgeAdd(_model, _metamodel, op.fromID(), op.toID());
     if(!success) {
         _graph->removeEdge(op.fromID(), op.toID());
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::EdgeRemoveOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeRemoveOperation& op) {
     bool success = _mapperMVK->edgeRemove(_model, _metamodel, op.fromID(), op.toID());
     if(!success) {
         _graph->addEdge(op.fromID(), op.toID());
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::AttributeAddOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeAddOperation& op) {
     // Just some aliases for me
     const std::string& vertexID = op.vertexID();
     const std::string& name = op.attributeName();
@@ -73,7 +73,7 @@ void SGraphOpHandlerMVK::handleOperation(const SGraph::AttributeAddOperation& op
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::AttributeRemoveOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeRemoveOperation& op) {
     // Some aliases
     const std::string& vertexID = op.vertexID();
     const std::string& name = op.attributeName();
@@ -86,7 +86,7 @@ void SGraphOpHandlerMVK::handleOperation(const SGraph::AttributeRemoveOperation&
     }
 }
 
-void SGraphOpHandlerMVK::handleOperation(const SGraph::AttributeSetOperation& op) {
+void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeSetOperation& op) {
     // Some aliases
     const std::string& vertexID = op.vertexID();
     const std::string& name = op.attributeName();

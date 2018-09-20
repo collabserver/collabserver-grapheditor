@@ -20,7 +20,7 @@
  *
  * \see https://msdl.uantwerpen.be/git/yentl/modelverse
  */
-class MVKWrapper {
+class MvkWrapper {
     // -------------------------------------------------------------------------
     // Attributes
     // -------------------------------------------------------------------------
@@ -41,15 +41,15 @@ class MVKWrapper {
     public:
 
         /**
-         * Create a new MVKWrapper.
+         * Create a new MvkWrapper.
          * In debug mode (debugMode = true), we get more information
          * from the MVK about ongoing requests.
          *
          * \param debugMode Set the debug mode.
          */
-        MVKWrapper(bool debugMode = false);
+        MvkWrapper(bool debugMode = false);
 
-        ~MVKWrapper();
+        ~MvkWrapper();
 
 
     // -------------------------------------------------------------------------

@@ -1,22 +1,33 @@
-#include "mvk/MVKWrapper.h"
+#include "mvk/MvkWrapper.h"
 
 #include <cassert>
 #include <iostream>
 #include <sstream>
 #include <regex>
 
-#include "utils/UUIDTools.h"
+#include "utils/utils.h"
 #include "mvk/Messaging.h"
+
+/*
+ * DevNote: sendInternal
+ * There is often things like this: if(sendInternal() == -1) { return -1; }
+ * This was done on purpose (Ask Robin) but I don't know why.
+ * -> Check the MVK doc + get more information. (Maybe this can be removed?).
+ */
 
 
 // -----------------------------------------------------------------------------
 // Static util methods
 // -----------------------------------------------------------------------------
 
+// Curl debug
 struct MVKDebugData { char trace_ascii; /* 1 or 0 */ };
 
+// Curl debug method
 static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
                          size_t size, char nohex);
+
+// Curl debug method
 static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
                          size_t size, void *userp);
 
@@ -37,7 +48,7 @@ static size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void*
 // Init methods
 // -----------------------------------------------------------------------------
 
-MVKWrapper::MVKWrapper(bool debugMode) {
+MvkWrapper::MvkWrapper(bool debugMode) {
     _debugMode = debugMode;
     _uuid = generateNewUUID();
 
@@ -60,7 +71,7 @@ MVKWrapper::MVKWrapper(bool debugMode) {
     */
 }
 
-MVKWrapper::~MVKWrapper() {
+MvkWrapper::~MvkWrapper() {
     curl_easy_cleanup(_curl);
     curl_global_cleanup();
 }
@@ -70,20 +81,20 @@ MVKWrapper::~MVKWrapper() {
 // Connection
 // -----------------------------------------------------------------------------
 
-int MVKWrapper::connect(const std::string& ip, const int port,
+int MvkWrapper::connect(const std::string& ip, const int port,
                         const std::string& username, const std::string& pswd) {
     this->connectMVK(ip, port);
     this->login(username, pswd);
     return 0;
 }
 
-int MVKWrapper::disconnect() {
+int MvkWrapper::disconnect() {
     this->logout();
     this->disconnectMVK();
     return 0;
 }
 
-int MVKWrapper::connectMVK(const std::string& ip, const int port) {
+int MvkWrapper::connectMVK(const std::string& ip, const int port) {
     // Addr format: "http://127.0.0.1:8001"
     std::stringstream addr;
     addr << "http://" << ip << ":" << port;
@@ -93,13 +104,13 @@ int MVKWrapper::connectMVK(const std::string& ip, const int port) {
     return 0;
 }
 
-int MVKWrapper::disconnectMVK() {
+int MvkWrapper::disconnectMVK() {
     curl_easy_setopt(_curl, CURLOPT_URL, "");
     _buffer = "";
     return 0;
 }
 
-int MVKWrapper::login(const std::string& username, const std::string& pswd) {
+int MvkWrapper::login(const std::string& username, const std::string& pswd) {
     // Connect MVK
     std::string msg = MSG_USER_CONNECT(_uuid);
     send(msg.c_str());
@@ -128,7 +139,7 @@ int MVKWrapper::login(const std::string& username, const std::string& pswd) {
     return 0;
 }
 
-int MVKWrapper::logout() {
+int MvkWrapper::logout() {
     // DevNote: Well. We actually don't know how to logout.
     // More MVK reading doc required.
     return 0;
@@ -139,7 +150,7 @@ int MVKWrapper::logout() {
 // Network
 // -----------------------------------------------------------------------------
 
-void MVKWrapper::send(const char* data) {
+void MvkWrapper::send(const char* data) {
     assert(_curl != nullptr);
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(_curl, CURLOPT_POSTFIELDSIZE, -1L);
@@ -152,7 +163,7 @@ void MVKWrapper::send(const char* data) {
     }
 }
 
-int MVKWrapper::sendInternal() {
+int MvkWrapper::sendInternal() {
     // TODO I actually need to check the doc etc to understand:
     // Do we really need this dummy request?
     std::string msg = MSG_DUMMY(_uuid);
@@ -171,14 +182,14 @@ int MVKWrapper::sendInternal() {
 // Models management
 // -----------------------------------------------------------------------------
 
-int MVKWrapper::modelList(const std::string& path) {
+int MvkWrapper::modelList(const std::string& path) {
     std::string request = MSG_MODEL_LIST(path, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
-int MVKWrapper::modelAdd(const std::string& name,
+int MvkWrapper::modelAdd(const std::string& name,
                          const std::string& mmodel,
                          const std::string& syntax) {
     std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _uuid);
@@ -193,7 +204,7 @@ int MVKWrapper::modelAdd(const std::string& name,
     return 0;
 }
 
-int MVKWrapper::modelDelete(const std::string& name) {
+int MvkWrapper::modelDelete(const std::string& name) {
     std::string request = MSG_MODEL_DEL(name, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -203,7 +214,7 @@ int MVKWrapper::modelDelete(const std::string& name) {
     return 0;
 }
 
-int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
+int MvkWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_VERIFY(model, mmodel, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -214,7 +225,7 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
     return 0;
 }
 
-int MVKWrapper::modelEnter(const std::string& model, const std::string& mmodel) {
+int MvkWrapper::modelEnter(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -225,7 +236,7 @@ int MVKWrapper::modelEnter(const std::string& model, const std::string& mmodel) 
     return 0;
 }
 
-int MVKWrapper::modelExit() {
+int MvkWrapper::modelExit() {
     std::string request = MSG_MODEL_EXIT(_uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -237,21 +248,21 @@ int MVKWrapper::modelExit() {
 // Model
 // -----------------------------------------------------------------------------
 
-int MVKWrapper::elementList() {
+int MvkWrapper::elementList() {
     std::string request = MSG_ELT_LIST(_uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
-int MVKWrapper::elementListJSON() {
+int MvkWrapper::elementListJSON() {
     std::string request = MSG_ELT_LIST_JSON(_uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
-int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
+int MvkWrapper::elementCreate(const std::string& type, const std::string& name) {
     std::string request = MSG_ELT_CREA(type, name, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -261,7 +272,7 @@ int MVKWrapper::elementCreate(const std::string& type, const std::string& name) 
     }
     return 0;
 }
-int MVKWrapper::elementDelete(const std::string& name) {
+int MvkWrapper::elementDelete(const std::string& name) {
     std::string request = MSG_ELT_DEL(name, _uuid);
     send(request.c_str());
     if(sendInternal() == -1) { return -1; }
@@ -271,7 +282,7 @@ int MVKWrapper::elementDelete(const std::string& name) {
     return 0;
 }
 
-int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
+int MvkWrapper::edgeCreate(const std::string& type, const std::string& name,
                            const std::string& from, const std::string& to) {
     std::string request = MSG_EDGE_CREA(type, name, from, type, _uuid);
     send(request.c_str());
@@ -285,7 +296,7 @@ int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
     return 0;
 }
 
-int MVKWrapper::attributeSet(const std::string& elt,
+int MvkWrapper::attributeSet(const std::string& elt,
                              const std::string& attrType,
                              const std::string& attrValue) {
     std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _uuid);
@@ -300,7 +311,7 @@ int MVKWrapper::attributeSet(const std::string& elt,
     return 0;
 }
 
-int MVKWrapper::attributeDelete(const std::string& elt,
+int MvkWrapper::attributeDelete(const std::string& elt,
                                 const std::string& attrType) {
     std::string request = MSG_ATTR_DEL(elt, attrType, _uuid);
     send(request.c_str());
@@ -313,7 +324,7 @@ int MVKWrapper::attributeDelete(const std::string& elt,
     return 0;
 }
 
-int MVKWrapper::attributeDefine(const std::string& elt,
+int MvkWrapper::attributeDefine(const std::string& elt,
                                 const std::string& attrType,
                                 const std::string& attrName) {
     std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _uuid);
@@ -327,7 +338,7 @@ int MVKWrapper::attributeDefine(const std::string& elt,
     return 0;
 }
 
-int MVKWrapper::attributeSetCode(const std::string& elt,
+int MvkWrapper::attributeSetCode(const std::string& elt,
                                  const std::string& attrType,
                                  const std::string& attrValue) {
     std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _uuid);

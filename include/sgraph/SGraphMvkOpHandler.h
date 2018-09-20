@@ -4,7 +4,7 @@
 
 #include <collabdata/custom/SimpleGraph.h>
 
-#include "SGraphMVKMapper.h"
+#include "SGraphMvkMapper.h"
 
 
 /**
@@ -15,11 +15,11 @@
  * If an operation is not valid, operation is reverted and applied
  * to the simple graph.
  */
-class SGraphOpHandlerMVK : public collab::SimpleGraph::OpHandler {
+class SGraphMvkOpHandler : public collab::SimpleGraph::OpHandler {
     private:
         typedef collab::SimpleGraph SGraph;
 
-        const SGraphMVKMapper*  _mapperMVK;
+        const SGraphMvkMapper*  _mapperMVK;
         collab::SimpleGraph*    _graph;
         std::string             _model;
         std::string             _metamodel;
@@ -27,15 +27,15 @@ class SGraphOpHandlerMVK : public collab::SimpleGraph::OpHandler {
     public:
 
         /**
-         * SGraphOpHandlerMVK.
+         * SGraphMvkOpHandler.
          *
          * \param mapper MVK mapper used to save changes.
          * \param graph Pointer to graph, this is ONLY used to revert operation.
          */
-        SGraphOpHandlerMVK(const SGraphMVKMapper* mapper,
+        SGraphMvkOpHandler(const SGraphMvkMapper* mapper,
                            collab::SimpleGraph* graph,
-                           std::string& model,
-                           std::string&  metamodel);
+                           const std::string& model,
+                           const std::string&  metamodel);
 
     // ---------------------------------------------------------------------
     // Override
