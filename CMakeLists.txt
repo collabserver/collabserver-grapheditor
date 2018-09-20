@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
-project(collab-poc)
+project(collab-grapheditor)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     message(FATAL_ERROR "in-source build not allowed. Use another directory.")
@@ -19,23 +19,9 @@ include("CMake/Dependencies/AddCollabcommon.cmake")
 
 
 # ------------------------------------------------------------------------------
-# GraphEditor
+# GraphEditor Executable
 # ------------------------------------------------------------------------------
-option(collab_graphiceditor "Build GraphicEditor client" ON)
+message(STATUS "Build GraphEditor client")
+include("CMake/AddGrapheditor.cmake")
 
-if(collab_graphiceditor)
-    message(STATUS "Build GraphicEditor client")
-    include("CMake/AddGraphiceditor.cmake")
-endif()
-
-
-# ------------------------------------------------------------------------------
-# Mvk
-# ------------------------------------------------------------------------------
-option(collab_mvk "Build Mvk database client" ON)
-
-if(collab_mvk)
-    message(STATUS "Build Mvk db client")
-    include("CMake/AddMvk.cmake")
-endif()
 
