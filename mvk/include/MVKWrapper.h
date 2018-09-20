@@ -11,6 +11,13 @@
  *
  * Wrapper C++ to communicate with a Modelverse Database.
  *
+ * \par Modeling / MegaModeling Modes
+ * During MVK connection you may be in one of the two modes.
+ * - Modeling: You are currently working on a specific model.
+ * - MegaModeling: Generic operations such as list models, add/remove a model...
+ * Each methods may have a prerequisite in order to be applied successfully.
+ * (Ex: being in modeling mode).
+ *
  * \see https://msdl.uantwerpen.be/git/yentl/modelverse
  */
 class MVKWrapper {
@@ -124,8 +131,8 @@ class MVKWrapper {
 
         /**
          * Add a new model to Modelverse.
-         *
          * \pre Being in megamodeling mode.
+         *
          * \param name Model name (Its full path).
          * \param mmodel Metamodel of the new model.
          * \param syntax Base model to use (Or empty for empty model).
@@ -258,6 +265,7 @@ class MVKWrapper {
 
         /**
          * Define another attribute in element.
+         * \pre Being in modeling mode
          *
          * \warning
          * MetaModeling Function
@@ -271,7 +279,10 @@ class MVKWrapper {
                             const std::string& attrType,
                             const std::string& attrName);
 
-        // TODO (What is this? I should ask Robin)
+        /**
+         * TODO: This methods is not validated yet, don't use it.
+         * \pre Being in modeling mode
+         */
         int attributeSetCode(const std::string& element,
                              const std::string& attrType,
                              const std::string& attrName);

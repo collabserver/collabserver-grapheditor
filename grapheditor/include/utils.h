@@ -3,7 +3,38 @@
 #include <vector>
 #include <string>
 
-#include "collabdata/custom/SimpleGraph.h"
+#include <collabdata/custom/SimpleGraph.h>
+
+
+/**
+ * SimpleGraph Operation Handler for debug purpose.
+ * This print out each operation handled on stdout.
+ */
+class SGraphOpHandlerDebug : public collab::SimpleGraph::OpHandler {
+    private:
+        typedef collab::SimpleGraph SGraph;
+    public:
+        void handleOperation(const SGraph::VertexAddOperation& op) override;
+        void handleOperation(const SGraph::VertexRemoveOperation& op) override;
+        void handleOperation(const SGraph::EdgeAddOperation& op) override;
+        void handleOperation(const SGraph::EdgeRemoveOperation& op) override;
+        void handleOperation(const SGraph::AttributeAddOperation& op) override;
+        void handleOperation(const SGraph::AttributeRemoveOperation& op) override;
+        void handleOperation(const SGraph::AttributeSetOperation& op) override;
+};
+
+/**
+ * Observer for SimpleGraph operation and uses debug handler.
+ */
+class SGraphOpObserverDebug : public collab::OperationObserver {
+    private:
+        SGraphOpHandlerDebug _opHandler;
+    public:
+        SGraphOpObserverDebug() = default;
+        void onOperation(const collab::Operation &op) override {
+            op.accept(_opHandler);
+        }
+};
 
 
 namespace utils {
@@ -38,26 +69,5 @@ std::vector<std::string> split_no_quotes(
 
 
 } // namespace utils
-
-
-class SGraphOpHandlerDebug : public collab::SimpleGraph::OpHandler {
-    public:
-        void handleOperation(const collab::SimpleGraph::VertexAddOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::VertexRemoveOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::EdgeAddOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::EdgeRemoveOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::AttributeAddOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::AttributeRemoveOperation &op) override;
-        void handleOperation(const collab::SimpleGraph::AttributeSetOperation &op) override;
-};
-
-
-class SGraphOpObserverDebug : public collab::OperationObserver {
-    private:
-        SGraphOpHandlerDebug _opHandler;
-    public:
-        SGraphOpObserverDebug() = default;
-        void onOperation(const collab::Operation &op) override;
-};
 
 
