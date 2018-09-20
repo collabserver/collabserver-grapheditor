@@ -16,8 +16,11 @@
 class SGraphOpHandlerMVK : public collab::SimpleGraph::OpHandler {
     private:
         typedef collab::SimpleGraph SGraph;
-        SGraphMVKMapper*        _mapperMVK;
+
+        const SGraphMVKMapper*  _mapperMVK;
         collab::SimpleGraph*    _graph;
+        std::string             _model;
+        std::string             _metamodel;
 
     public:
 
@@ -27,7 +30,10 @@ class SGraphOpHandlerMVK : public collab::SimpleGraph::OpHandler {
          * \param mapper MVK mapper used to save changes.
          * \param graph Pointer to graph, this is ONLY used to revert operation.
          */
-        SGraphOpHandlerMVK(SGraphMVKMapper* mapper, collab::SimpleGraph* graph);
+        SGraphOpHandlerMVK(const SGraphMVKMapper* mapper,
+                           collab::SimpleGraph* graph,
+                           std::string& model,
+                           std::string&  metamodel);
 
     // ---------------------------------------------------------------------
     // Override

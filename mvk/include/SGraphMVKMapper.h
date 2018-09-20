@@ -18,9 +18,7 @@ class SGraphMVKMapper {
     // -------------------------------------------------------------------------
     private:
 
-        MVKWrapper* _mvk                = nullptr;
-        const std::string _model        = "models/BaseSimpleGraph";
-        const std::string _metamodel    = "formalisms/SimpleGraph";
+        MVKWrapper* _mvk = nullptr;
 
 
     // -------------------------------------------------------------------------
@@ -38,32 +36,103 @@ class SGraphMVKMapper {
 
     public:
 
-        bool vertexAdd(const std::string& name);
+        /**
+         * Add new vertex to a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param name Vertex name to set (Its ID).
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool vertexAdd(const std::string& model,
+                       const std::string& metamodel,
+                       const std::string& name) const;
 
-        bool vertexRemove(const std::string& name);
+        /**
+         * Remove vertex from a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param name Vertex name (Its ID).
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool vertexRemove(const std::string& model,
+                          const std::string& metamodel,
+                          const std::string& name) const;
 
-        bool edgeAdd(const std::string& from, const std::string& to);
+        /**
+         * Add edge to a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param from ID of the source vertex.
+         * \param to ID of the destination vertex.
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool edgeAdd(const std::string& model,
+                     const std::string& metamodel,
+                     const std::string& from,
+                     const std::string& to) const;
 
-        bool edgeRemove(const std::string& from, const std::string& to);
+        /**
+         * Remove edge from a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param from ID of the source vertex.
+         * \param to ID of the destination vertex.
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool edgeRemove(const std::string& model,
+                        const std::string& metamodel,
+                        const std::string& from,
+                        const std::string& to) const;
 
-        bool attributeAdd(const std::string& elt,
+        /**
+         * Add attribute to a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param vertexID Vertex where to add attribute.
+         * \param attrName Attribute's unique name.
+         * \param attrValue Attribute's value to set.
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool attributeAdd(const std::string& model,
+                          const std::string& metamodel,
+                          const std::string& vertexID,
                           const std::string& attrName,
-                          const std::string& attrValue);
+                          const std::string& attrValue) const;
 
-        bool attributeRemove(const std::string& elt, const std::string& attrName);
+        /**
+         * Remove attribute from a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param vertexID Vertex where to remove attribute.
+         * \param attrName Name of the attribute to remove.
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool attributeRemove(const std::string& model,
+                             const std::string& metamodel,
+                             const std::string& vertexID,
+                             const std::string& attrName) const;
 
-        bool attributeSet(const std::string& elt,
+        /**
+         * Set / modify value of an attribute from a SimpleGraph in MVK.
+         *
+         * \param model SimpleGraph path as registered in MVK.
+         * \param metamodel SimpleGraph metamodel as registered in MVK.
+         * \param vertexID Vertex where to set attribute.
+         * \param attrName Name of the attribute to modify.
+         * \param attrValue New value to set in this attribute.
+         * \return True if successfully applied, otherwise, return false.
+         */
+        bool attributeSet(const std::string& model,
+                          const std::string& metamodel,
+                          const std::string& vertexID,
                           const std::string& attrName,
-                          const std::string& attrValue);
-
-
-    // -------------------------------------------------------------------------
-    // Internal
-    // -------------------------------------------------------------------------
-
-    private:
-
-        bool isModelValid();
+                          const std::string& attrValue) const;
 };
 
 

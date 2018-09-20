@@ -2,12 +2,25 @@
 
 #include <cassert>
 
+
+// -----------------------------------------------------------------------------
+// Internal
+// -----------------------------------------------------------------------------
+
 #define ELEMENT_TYPE        "Vertex"
 #define EDGE_TYPE           "Edge"
 #define ATTRIBUTE_TYPE      "Attribute"
 #define ATTRIBUTE_VERTEX    "Vertex"
 #define ATTRIBUTE_NAME      "Name"
 #define ATTRIBUTE_VALUE     "Value"
+
+static bool isModelValid(MVKWrapper* mvk,
+                         const std::string& model,
+                         const std::string& mmodel) {
+    // DevNote: you already entered model
+    mvk->modelVerify(model, mmodel);
+    return mvk->getDatabaseAnswer() == "\"Success: OK\"";
+}
 
 
 // -----------------------------------------------------------------------------
@@ -23,70 +36,101 @@ SGraphMVKMapper::SGraphMVKMapper(MVKWrapper* mvk) : _mvk(mvk) {
 // CRUD
 // -----------------------------------------------------------------------------
 
-bool SGraphMVKMapper::vertexAdd(const std::string& name) {
+bool SGraphMVKMapper::vertexAdd(const std::string& model,
+                                const std::string& metamodel,
+                                const std::string& name) const {
+    _mvk->modelEnter(model, metamodel);
     _mvk->elementCreate(ELEMENT_TYPE, name);
-    return isModelValid();
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
 }
 
-bool SGraphMVKMapper::vertexRemove(const std::string& name) {
+bool SGraphMVKMapper::vertexRemove(const std::string& model,
+                                   const std::string& metamodel,
+                                   const std::string& name) const {
+    _mvk->modelEnter(model, metamodel);
     _mvk->elementDelete(name);
-    return isModelValid();
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
 }
 
-bool SGraphMVKMapper::edgeAdd(const std::string& from, const std::string& to) {
-    std::string name = (from + to); // This creates a unique name
-    _mvk->edgeCreate(EDGE_TYPE, name, from, to);
-    return isModelValid();
+bool SGraphMVKMapper::edgeAdd(const std::string& model,
+                              const std::string& metamodel,
+                              const std::string& from,
+                              const std::string& to) const {
+    std::string uniqueID = (from + to); // This creates a unique name
+
+    _mvk->modelEnter(model, metamodel);
+    _mvk->edgeCreate(EDGE_TYPE, uniqueID, from, to);
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
 }
 
-bool SGraphMVKMapper::edgeRemove(const std::string& from, const std::string& to) {
-    std::string name = (from + to);
-    _mvk->elementDelete(name);
-    return isModelValid();
+bool SGraphMVKMapper::edgeRemove(const std::string& model,
+                                 const std::string& metamodel,
+                                 const std::string& from,
+                                 const std::string& to) const {
+    std::string uniqueID = (from + to);
+
+    _mvk->modelEnter(model, metamodel);
+    _mvk->elementDelete(uniqueID);
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
 }
 
-bool SGraphMVKMapper::attributeAdd(const std::string& elt,
+bool SGraphMVKMapper::attributeAdd(const std::string& model,
+                                   const std::string& metamodel,
+                                   const std::string& vertexID,
                                    const std::string& attrName,
-                                   const std::string& attrValue) {
-    std::string attributeID = elt + attrName; // Creates internal MVK id.
+                                   const std::string& attrValue) const {
+    std::string attributeID = vertexID + attrName; // Creates internal MVK id.
 
+    _mvk->modelEnter(model, metamodel);
     _mvk->elementCreate(ATTRIBUTE_TYPE, attributeID);
     _mvk->attributeSet(attributeID, ATTRIBUTE_NAME, attrName);
     _mvk->attributeSet(attributeID, ATTRIBUTE_VALUE, attrValue);
-    _mvk->attributeSet(attributeID, ATTRIBUTE_VERTEX, elt);
+    _mvk->attributeSet(attributeID, ATTRIBUTE_VERTEX, vertexID);
 
-    return isModelValid();
-}
-
-bool SGraphMVKMapper::attributeRemove(const std::string& elt,
-                                      const std::string& attrName) {
-    std::string attributeID = elt + attrName;
-    _mvk->elementDelete(attributeID);
-    return isModelValid();
-}
-
-bool SGraphMVKMapper::attributeSet(const std::string& elt,
-                                   const std::string& attrName,
-                                   const std::string& attrValue) {
-    std::string attributeID = elt + attrName;
-    _mvk->attributeSet(attributeID, ATTRIBUTE_VALUE, attrValue);
-    return isModelValid();
-}
-
-
-// -----------------------------------------------------------------------------
-// Internal
-// -----------------------------------------------------------------------------
-
-bool SGraphMVKMapper::isModelValid() {
-    bool isValide = false;
+    bool success = isModelValid(_mvk, model, metamodel);
     _mvk->modelExit();
-    _mvk->modelVerify(_model, _metamodel);
-    if(_mvk->getDatabaseAnswer() == "\"Success: OK\"") {
-        isValide = true;
-    }
-    _mvk->modelEnter(_model, _metamodel);
-    return isValide;
+    return success;
+}
+
+bool SGraphMVKMapper::attributeRemove(const std::string& model,
+                                      const std::string& metamodel,
+                                      const std::string& vertexID,
+                                      const std::string& attrName) const {
+    std::string attributeID = vertexID + attrName;
+
+    _mvk->modelEnter(model, metamodel);
+    _mvk->elementDelete(attributeID);
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
+}
+
+bool SGraphMVKMapper::attributeSet(const std::string& model,
+                                   const std::string& metamodel,
+                                   const std::string& vertexID,
+                                   const std::string& attrName,
+                                   const std::string& attrValue) const {
+    std::string attributeID = vertexID + attrName;
+
+    _mvk->modelEnter(model, metamodel);
+    _mvk->attributeSet(attributeID, ATTRIBUTE_VALUE, attrValue);
+
+    bool success = isModelValid(_mvk, model, metamodel);
+    _mvk->modelExit();
+    return success;
 }
 
 
