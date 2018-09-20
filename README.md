@@ -1,12 +1,12 @@
 # CollabServer - GraphEditor
 
 [![release-version](https://img.shields.io/badge/release-no--release-red.svg)]()
-[![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-graphiceditor)
-[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-graphiceditor/blob/dev/LICENSE.txt)
+[![Build Status](https://travis-ci.org/CollabServer/collab-grapheditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-grapheditor)
+[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-grapheditor/blob/dev/LICENSE.txt)
 
 | master | dev |
 | :-----: | :----: |
-| [![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-graphiceditor) | [![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-graphiceditor) |
+| [![Build Status](https://travis-ci.org/CollabServer/collab-grapheditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-grapheditor) | [![Build Status](https://travis-ci.org/CollabServer/collab-grapheditor.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-grapheditor) |
 
 
 ## Overview
@@ -46,7 +46,7 @@ https://git-scm.com/docs/git-submodule.
 ### Work with submodules
 ```bash
 # Clone
-git clone --recursive https://github.com/CollabServer/collab-graphiceditor.git
+git clone --recursive https://github.com/CollabServer/collab-grapheditor.git
 
 # Pull new changes
 git pull --recurse-submodules=on
