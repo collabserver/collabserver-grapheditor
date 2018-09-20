@@ -1,16 +1,19 @@
-# CollabServer - Proof of Concept
+# CollabServer - GraphEditor
 
 [![release-version](https://img.shields.io/badge/release-no--release-red.svg)]()
-[![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-poc)
-[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-poc/blob/dev/LICENSE.txt)
+[![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-graphiceditor)
+[![license](https://img.shields.io/badge/license-LGPLv3.0-blue.svg)](https://github.com/CollabServer/collab-graphiceditor/blob/dev/LICENSE.txt)
 
 | master | dev |
 | :-----: | :----: |
-| [![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=master)](https://travis-ci.org/CollabServer/collab-poc) | [![Build Status](https://travis-ci.org/CollabServer/collab-poc.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-poc) |
+| [![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=master)](https://travis-ci.org/CollabServer/collab-graphiceditor) | [![Build Status](https://travis-ci.org/CollabServer/collab-graphiceditor.svg?branch=dev)](https://travis-ci.org/CollabServer/collab-graphiceditor) |
 
 
 ## Overview
-> Work in progress.
+Graph editor is a command line tool to edit graph.
+This is an example of end-user client that uses collab-data-crdts to
+handle multi-users real-time collaboration.
+Each vertex in the graph has a map of attributes: {name,value}.
 
 
 ## Requirements
@@ -23,62 +26,54 @@
 
 ## Dependencies
 > Dependencies marked with *(CMake)* are automatically downloaded by CMake
-> script and placed in *bin* folder.
+> script and placed in *dependencies* folder.
 > Others must be installed manually (Generally system-wide install).
-- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake)
-- [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake)
+- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake / gitsubmodule)
+- [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake / gitsubmodule)
+- collab-common (CMake / gitsubmodule. Required by collab-client-interface)
 - [ZeroMQ](http://zeromq.org/) (**Must be installed system-wide**)
 - Curl (**Must be installed System-wide**)
+- Moderlverse MVK (**Must be installed manually**)
 
 
 ## Submodules
-This project uses submodules to manage dependencies with the other collab
-components used internally. You may need to work on these component and
-this poc project at the same time and submodules are useful for that purpose. \\
-For further information about submodules, check the official documentation:
+This project uses submodules to manage dependencies with other CollabServer
+project. For further information about submodules,
+check the official documentation:
 https://git-scm.com/book/en/v2/Git-Tools-Submodules and
 https://git-scm.com/docs/git-submodule.
 
-### Clone with submodules
+### Work with submodules
 ```bash
-git clone --recursive https://github.com/CollabServer/collab-poc.git
-```
-### Pull new changes
-Because of submodule, you should use the recursive argument of `pull`.
-```bash
+# Clone
+git clone --recursive https://github.com/CollabServer/collab-graphiceditor.git
+
+# Pull new changes
 git pull --recurse-submodules=on
-```
-### Update submodules
-```bash
+
+# Update submodules
 git submodule update --remote
 ```
 
 
-## Graphic Editor client
-Graph editor is a command line tool to edit graph.
-This is an example of end-user client that uses collab-data-crdts to
-handle multi-users real-time collaboration.
-Each vertex in the graph has a map of attributes: {name,value}.
-
+## Build
 ### Build and run with CMake
 ```bash
 mkdir build
 cd build
 cmake ..
 make -j4
-make runGrapheditor
+make run
 
 # Or use build script
 ./build.sh
 cd build
-make runGrapheditor
+make run
 ```
 
 
-## Mvk collab client (Modelverse)
+## Modelverse Database (MVK)
 Mvk is a database for Model-Driven Engineering models (MDE).
-This is an example of client to a Mvk database in order to work with the
-grapheditor client project.
 
 ### Setup Mvk
 The Mvk is an external database that must be run separately.
@@ -89,21 +84,6 @@ https://msdl.uantwerpen.be/documentation/modelverse/installation.html#dependenci
 Once downloaded and setup, start the Mvk database.
 ```bash
 python scripts/run_local_modelverse.py
-```
-
-### Build and run with CMake
-**Mvk database must be running locally first**
-```bash
-mkdir build
-cd build
-cmake ..
-make -j4
-make runMvk
-
-# Or use build script
-./build.sh
-cd build
-make runMvk
 ```
 
 
