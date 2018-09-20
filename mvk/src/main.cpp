@@ -2,37 +2,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <collabdata/custom/SimpleGraph.h>
-
 #include "MVKGlobal.h"
-#include "Prompt.h"
-
-
-/*
- * TODO TMP to cleanup
-void testSimpleGraphOperation() {
-    MVKSimpleGraphOperationHandler opHandler;
-    DatabaseObserver *observer = new DatabaseObserver(&opHandler);
-    collab::SimpleGraph graph = collab::SimpleGraph::build(42); // Dummy ID
-    graph.addOperationObserver(*observer);
-
-    graph.addVertex("v1");
-    graph.addVertex("v2");
-    graph.addEdge("v1", "v2");
-    graph.addAttribute("v1", "Ville", "Lyon");
-    graph.addAttribute("v1", "Quartier1", "Monplaisir");
-    graph.addAttribute("v1", "Quartier2", "GrangeBlanche");
-    graph.addAttribute("v2", "Ville", "Paris");
-    graph.removeAttribute("v1", "Quartier2");
-    graph.setAttribute("v2", "Ville", "Marseille");
-
-};
-*/
 
 
 static void usage() {
     std::cout << "USAGE: mvk_poc IP_SERVER PORT_SERVER IP_MVK PORT_MVK MODEL\n";
-    std::cout << "       mvk_poc --prompt\n";
     std::cout << "       mvk_poc MODEL (Use default ip/port values)";
     std::cout << std::endl;
 }
@@ -77,12 +51,7 @@ int main(int argc, char** argv) {
     int mvk_port            = 8001;
     const char* modelName   = "default";
 
-    if(argc == 2 && strcmp(argv[1], "--prompt") == 0) {
-        Prompt p;
-        p.runPrompt();
-        return EXIT_SUCCESS;
-    }
-    else if(argc == 2) {
+    if(argc == 2) {
         modelName = argv[2];
     }
     else if(argc == 6) {

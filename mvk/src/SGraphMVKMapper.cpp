@@ -19,7 +19,7 @@ static bool isModelValid(MVKWrapper* mvk,
                          const std::string& mmodel) {
     // DevNote: you already entered model
     mvk->modelVerify(model, mmodel);
-    return mvk->getDatabaseAnswer() == "\"Success: OK\"";
+    return mvk->isSuccess();
 }
 
 

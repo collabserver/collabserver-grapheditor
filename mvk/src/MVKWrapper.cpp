@@ -103,23 +103,23 @@ int MVKWrapper::login(const std::string& username, const std::string& pswd) {
     // Connect MVK
     std::string msg = MSG_USER_CONNECT(_uuid);
     send(msg.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
 
     msg = MSG_USER_LOGIN(username, _uuid);
     send(msg.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
 
     std::regex newUser("^[A-Za-z \"]+new user");
     if(std::regex_search(_buffer, newUser)) {
         msg = MSG_USER_LOGIN(pswd, _uuid);
         send(msg.c_str());
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
 
     msg = MSG_USER_LOGIN(pswd, _uuid);
     send(msg.c_str());
-    if(!sendInternal()) { return -1; }
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
+    if(sendInternal() == -1) { return -1; }
 
     if(!_debugMode) {
         msg = MSG_CONFIG_SET_QUIET(_uuid);
@@ -152,7 +152,7 @@ void MVKWrapper::send(const char* data) {
     }
 }
 
-bool MVKWrapper::sendInternal() {
+int MVKWrapper::sendInternal() {
     // TODO I actually need to check the doc etc to understand:
     // Do we really need this dummy request?
     std::string msg = MSG_DUMMY(_uuid);
@@ -174,7 +174,7 @@ bool MVKWrapper::sendInternal() {
 int MVKWrapper::modelList(const std::string& path) {
     std::string request = MSG_MODEL_LIST(path, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
@@ -183,11 +183,11 @@ int MVKWrapper::modelAdd(const std::string& name,
                          const std::string& syntax) {
     std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
 
     return 0;
@@ -196,9 +196,9 @@ int MVKWrapper::modelAdd(const std::string& name,
 int MVKWrapper::modelDelete(const std::string& name) {
     std::string request = MSG_MODEL_DEL(name, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -206,10 +206,10 @@ int MVKWrapper::modelDelete(const std::string& name) {
 int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_VERIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -217,10 +217,10 @@ int MVKWrapper::modelVerify(const std::string& model, const std::string& mmodel)
 int MVKWrapper::modelEnter(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -228,7 +228,7 @@ int MVKWrapper::modelEnter(const std::string& model, const std::string& mmodel) 
 int MVKWrapper::modelExit() {
     std::string request = MSG_MODEL_EXIT(_uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
@@ -240,33 +240,33 @@ int MVKWrapper::modelExit() {
 int MVKWrapper::elementList() {
     std::string request = MSG_ELT_LIST(_uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementListJSON() {
     std::string request = MSG_ELT_LIST_JSON(_uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     return 0;
 }
 
 int MVKWrapper::elementCreate(const std::string& type, const std::string& name) {
     std::string request = MSG_ELT_CREA(type, name, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
 int MVKWrapper::elementDelete(const std::string& name) {
     std::string request = MSG_ELT_DEL(name, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -275,12 +275,12 @@ int MVKWrapper::edgeCreate(const std::string& type, const std::string& name,
                            const std::string& from, const std::string& to) {
     std::string request = MSG_EDGE_CREA(type, name, from, type, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -290,11 +290,11 @@ int MVKWrapper::attributeSet(const std::string& elt,
                              const std::string& attrValue) {
     std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
 
     return 0;
@@ -304,10 +304,10 @@ int MVKWrapper::attributeDelete(const std::string& elt,
                                 const std::string& attrType) {
     std::string request = MSG_ATTR_DEL(elt, attrType, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
 
     return 0;
@@ -318,11 +318,11 @@ int MVKWrapper::attributeDefine(const std::string& elt,
                                 const std::string& attrName) {
     std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
     return 0;
 }
@@ -332,26 +332,14 @@ int MVKWrapper::attributeSetCode(const std::string& elt,
                                  const std::string& attrValue) {
     std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(!sendInternal()) { return -1; }
+    if(sendInternal() == -1) { return -1; }
     if(_debugMode) {
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
-        if(!sendInternal()) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
+        if(sendInternal() == -1) { return -1; }
     }
 
     return 0;
-}
-
-
-// -----------------------------------------------------------------------------
-// Getters / Setters
-// -----------------------------------------------------------------------------
-
-const std::string MVKWrapper::getCleanDatabaseAnswer() const {
-    if(_buffer.length() > 11) {
-        return _buffer.substr(10, _buffer.length() - 11);
-    }
-    return "";
 }
 
 

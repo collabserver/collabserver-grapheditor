@@ -31,7 +31,7 @@ class MVKWrapper {
 
     private:
         CURL*           _curl = nullptr;
-        std::string     _buffer = ""; // The last answer of Modelverse
+        std::string     _buffer = ""; // Internal use: Last answer from Modelverse
 
 
     // -------------------------------------------------------------------------
@@ -307,23 +307,22 @@ class MVKWrapper {
          *
          * \return -1 if there is a detected error.
          */
-        bool sendInternal();
+        int sendInternal();
 
 
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
     public:
-        const std::string& getDatabaseAnswer() const { return _buffer; }
 
         /**
-         * Return the last database answer with clean format.
-         * Removes "\"Success :" at the beginning and "\"" at the end.
-         * (Or empty string if the answer is to short).
+         * Check whether the last command done was a success.
+         * This only check the very last response from MVK, which is the
+         * response to the very last request sent to MVK.
          *
-         * \return Last database answer with clean format.
+         * \return True if success, otherwise, return false.
          */
-        const std::string getCleanDatabaseAnswer() const;
+        bool isSuccess() const { return _buffer == "\"Success: OK\""; }
 };
 
 
