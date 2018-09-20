@@ -32,55 +32,73 @@ void testSimpleGraphOperation() {
 
 static void usage() {
     std::cout << "USAGE: mvk_poc IP_SERVER PORT_SERVER IP_MVK PORT_MVK MODEL\n";
-    std::cout << "       mvk_poc --prompt" << std::endl;
+    std::cout << "       mvk_poc --prompt\n";
+    std::cout << "       mvk_poc MODEL (Use default ip/port values)";
+    std::cout << std::endl;
+}
+
+static bool connectCollabServer(const char* ip, const int port) {
+    std::cout << "Connecting to CollabServer (" << ip << ":" << port << ")... ";
+    bool success = MVKGlobal::get().collabclient().connect(ip, port);
+    if(!success) {
+        std::cout << "FAILED\n";
+        std::cout << "Unable to establish connection with CollabServer";
+        std::cout << std::endl;
+        return false;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully connected to CollabServer";
+    std::cout << std::endl;
+    return true;
+}
+
+static bool connectMVK(const char* ip, const int port) {
+    std::cout << "Connecting to Mvk Database (" << ip << ":" << port << ")... ";
+
+    int error = MVKGlobal::get().mvkWrapper().connect(ip, port, "admin", "admin");
+    if(error != 0) {
+        std::cout << "FAILED\n";
+        std::cout << "Unable to establish connection with Mvk database";
+        std::cout << std::endl;
+        return false;
+    }
+    std::cout << "SUCCESS\n";
+    std::cout << "Successfully connected to Mvk Database";
+    std::cout << std::endl;
+    return true;
+
 }
 
 int main(int argc, char** argv) {
+    // Default values
+    const char* collab_ip   = "localhost";
+    int collab_port         = 4242;
+    const char* mvk_ip      = "localhost";
+    int mvk_port            = 8001;
+    const char* modelName   = "default";
+
     if(argc == 2 && strcmp(argv[1], "--prompt") == 0) {
         Prompt p;
         p.runPrompt();
         return EXIT_SUCCESS;
     }
-    else if(argc != 6) {
+    else if(argc == 2) {
+        modelName = argv[2];
+    }
+    else if(argc == 6) {
+        collab_ip       = argv[1];
+        collab_port     = atoi(argv[2]);
+        mvk_ip          = argv[3];
+        mvk_port        = atoi(argv[4]);
+        modelName       = argv[5];
+    }
+    else {
         usage();
         return EXIT_FAILURE;
     }
 
-    const char* collab_ip = argv[1];
-    const int collab_port = atoi(argv[2]);
-    const char* mvk_ip = argv[3];
-    const int mvk_port = atoi(argv[4]);
-    const char* modelName = argv[5];
-
-
-    // CollabServer
-    std::cout << "Connecting to CollabServer ("
-              << collab_ip << ":" << collab_port << ")... "
-              << std::endl;
-    bool success = MVKGlobal::get().collabclient().connect(collab_ip, collab_port);
-    if(!success) {
-        std::cout << "FAILED\n";
-        std::cout << "Unable to establish connection with CollabServer\n";
-        return -1;
-    }
-    std::cout << "SUCCESS\n";
-    std::cout << "Successfully connected to CollabServer\n";
-
-
-    // Mvk
-    std::cout << "Connecting to Mvk Database ("
-              << mvk_ip << ":" << mvk_port << ")... "
-              << std::endl;
-    // TODO
-    //success = MVKGlobal::get().mvkWrapper().connect();
-    success = false; //TODO TMP
-    if(!success) {
-        std::cout << "FAILED\n";
-        std::cout << "Unable to establish connection with Mvk database\n";
-        return -1;
-    }
-    std::cout << "SUCCESS\n";
-    std::cout << "Successfully connected to Mvk Database\n";
+    connectCollabServer(collab_ip, collab_port);
+    connectMVK(mvk_ip, mvk_port);
 
     return EXIT_SUCCESS;
 }
