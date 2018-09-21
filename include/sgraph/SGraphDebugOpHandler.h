@@ -7,7 +7,7 @@
  * SimpleGraph Operation Handler for debug purpose.
  * This print out each operation handled on stdout.
  */
-class SGraphOpHandlerDebug : public collab::SimpleGraph::OpHandler {
+class SGraphDebugOpHandler : public collab::SimpleGraph::OpHandler {
     public:
         typedef collab::SimpleGraph SGraph;
 

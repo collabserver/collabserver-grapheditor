@@ -10,7 +10,8 @@
  */
 class SGraphDebugObserver : public collab::OperationObserver {
     private:
-        SGraphOpHandlerDebug _opHandler;
+        SGraphDebugOpHandler _opHandler;
+
     public:
         SGraphDebugObserver() = default;
         void onOperation(const collab::Operation &op) override {

@@ -10,6 +10,7 @@
 #include "mvk/MvkWrapper.h"
 #include "sgraph/SGraphDebugObserver.h"
 #include "sgraph/SGraphDebugOpHandler.h"
+#include "sgraph/SGraphMvkObserver.h"
 #include "sgraph/SGraphMvkOpHandler.h"
 #include "sgraph/SGraphMvkMapper.h"
 #include "utils/utils.h"
@@ -44,13 +45,11 @@ class Global {
 #           endif
         }
 
-        void linkGraphMVK(const std::string& model, const std::string& mmodel) {
-            // DevNote: call this after resetGraphData
-            // Probably undefined behavior if called 2 times without a reset
+        void resetGraphData(const std::string& model, const std::string& mmodel) {
+            this->resetGraphData();
             static SGraphMvkMapper mapper(&_mvk);
             static SGraphMvkOpHandler handler(&mapper, &_graph, model, mmodel);
             // TODO
-
             //_graph.addOperationObserver(
         }
 
