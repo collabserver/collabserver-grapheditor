@@ -170,11 +170,11 @@ int MvkWrapper::sendInternal() {
     this->send(msg.c_str());
 
     std::regex unknownCommand("^\"[Uu]nknown command");
-    if (std::regex_search(_buffer, unknownCommand)) {
-        return 0;
+    if(std::regex_search(_buffer, unknownCommand)) {
+        return -1;
     }
 
-    return -1;
+    return 0;
 }
 
 

@@ -28,7 +28,6 @@ void MVKWrapper_tests() {
     mvk.modelList("models");
     std::cout << "=== End of listing test ===\n\n";
 
-
     std::cout << "======= Adding Model test =======\n";
     mvk.modelAdd(_TEST_MODEL, _TEST_MMODEL, "");
     mvk.modelList("models");
