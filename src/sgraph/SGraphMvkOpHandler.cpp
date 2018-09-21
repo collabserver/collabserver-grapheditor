@@ -34,38 +34,38 @@ SGraphMvkOpHandler::SGraphMvkOpHandler(const SGraphMvkMapper* mapper,
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::VertexAddOperation& op) {
-    bool success = _mapperMVK->vertexAdd(_model, _metamodel, op.vertexID());
+    bool success = _mapperMVK->vertexAdd(_model, _metamodel, op.getVertexID());
     if(!success) {
-        _graph->removeVertex(op.vertexID());
+        _graph->removeVertex(op.getVertexID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::VertexRemoveOperation& op) {
-    bool success = _mapperMVK->vertexRemove(_model, _metamodel, op.vertexID());
+    bool success = _mapperMVK->vertexRemove(_model, _metamodel, op.getVertexID());
     if(!success) {
-        _graph->addVertex(op.vertexID());
+        _graph->addVertex(op.getVertexID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeAddOperation& op) {
-    bool success = _mapperMVK->edgeAdd(_model, _metamodel, op.fromID(), op.toID());
+    bool success = _mapperMVK->edgeAdd(_model, _metamodel, op.getFromID(), op.getToID());
     if(!success) {
-        _graph->removeEdge(op.fromID(), op.toID());
+        _graph->removeEdge(op.getFromID(), op.getToID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeRemoveOperation& op) {
-    bool success = _mapperMVK->edgeRemove(_model, _metamodel, op.fromID(), op.toID());
+    bool success = _mapperMVK->edgeRemove(_model, _metamodel, op.getFromID(), op.getToID());
     if(!success) {
-        _graph->addEdge(op.fromID(), op.toID());
+        _graph->addEdge(op.getFromID(), op.getToID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeAddOperation& op) {
     // Just some aliases for me
-    const std::string& vertexID = op.vertexID();
-    const std::string& name = op.attributeName();
-    const std::string& value = op.attributeValue();
+    const std::string& vertexID = op.getVertexID();
+    const std::string& name     = op.getAttributeName();
+    const std::string& value    = op.getAttributeValue();
 
     bool success = _mapperMVK->attributeAdd(_model, _metamodel, vertexID, name, value);
     if(!success) {
@@ -75,8 +75,8 @@ void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeAddOperation& op
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeRemoveOperation& op) {
     // Some aliases
-    const std::string& vertexID = op.vertexID();
-    const std::string& name = op.attributeName();
+    const std::string& vertexID = op.getVertexID();
+    const std::string& name     = op.getAttributeName();
     // TODO const std::string& value = op.getValue();
 
     bool success = _mapperMVK->attributeRemove(_model, _metamodel, vertexID, name);
@@ -88,9 +88,9 @@ void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeRemoveOperation&
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeSetOperation& op) {
     // Some aliases
-    const std::string& vertexID = op.vertexID();
-    const std::string& name = op.attributeName();
-    const std::string& value = op.newValue();
+    const std::string& vertexID = op.getVertexID();
+    const std::string& name     = op.getAttributeName();
+    const std::string& value    = op.getAttributeValue();
     // TODO const std::string& oldvalue = op.getOldValue();
 
     bool success = _mapperMVK->attributeSet(_model, _metamodel, vertexID, name, value);
