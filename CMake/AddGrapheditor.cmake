@@ -26,3 +26,18 @@ add_custom_command(
 add_custom_target(copyResources ALL DEPENDS "${RESOURCES_BIN}")
 add_dependencies(run copyResources)
 
+
+# Add simple test
+file(GLOB_RECURSE srcFilesTest "${CMAKE_SOURCE_DIR}/tests/mvk/Test_MvkWrapper.cpp"
+                               "${CMAKE_SOURCE_DIR}/src/mvk/MvkWrapper.cpp"
+                               "${CMAKE_SOURCE_DIR}/src/utils/utils.cpp")
+
+add_executable(tests ${srcFilesTest})
+
+target_link_libraries(tests
+    collabclient
+    collabcommon
+    collabdata
+    curl
+    zmq
+    pthread)
