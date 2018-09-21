@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Global.h"
+#include "utils/constants.h"
 
 
 // -----------------------------------------------------------------------------
@@ -79,7 +80,12 @@ int DisconnectCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int CreateDataCommand::exec(const std::vector<std::string>& args) {
-    if(args.size() > 0) {
+    if(args.size() != 0 && args.size() != 5) {
+        std::cout << "ERROR: Invalid arguments\n";
+        std::cout << "USAGE: " << getUsage() << "\n";
+        return -1;
+    }
+    else if(args.size() > 0 && args[0] != "--mvk") {
         std::cout << "ERROR: Invalid arguments\n";
         std::cout << "USAGE: " << getUsage() << "\n";
         return -1;
@@ -94,7 +100,25 @@ int CreateDataCommand::exec(const std::vector<std::string>& args) {
         return -1;
     }
 
-    Global::get().resetGraphData();
+    if(args.size() == 5) {
+        // Just some aliases
+        const std::string& ip           = args[1];
+        const int port                  = atoi(args[2].c_str());
+        const std::string& model        = args[3];
+        const std::string& mmodel       = args[4];
+        const std::string& username     = COLLAB_MVK_DEFAULT_USER;
+        const std::string& pswd         = COLLAB_MVK_DEFAULT_USER_PSWD;
+
+        std::cout << "Connecting to MVK Database server... " << std::endl;
+        Global::get().mvk().connect(ip, port, username, pswd);
+        std::cout << "Successfully connected to MVK\n";
+
+        Global::get().resetGraphData(model, mmodel);
+    }
+    else {
+        Global::get().resetGraphData();
+    }
+
     collab::SimpleGraph& graph = Global::get().graphdata();
 
     std::cout << "Creating collab data on server... ";
@@ -199,6 +223,7 @@ int InfoCommand::exec(const std::vector<std::string>& args) {
               << client.getDataID() << "\n";
     return 0;
 }
+
 
 // -----------------------------------------------------------------------------
 // Quit

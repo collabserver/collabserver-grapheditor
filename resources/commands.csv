@@ -1,7 +1,7 @@
 REFERENCE_ID,Name,Shortname,Usage,Description
 CONNECT,connect,co,connect IP PORT,Connect editor to a CollabServer
 DISCONNECT,disconnect,disco,disconnect,Disconnect from server
-CREA_DATA,create,crea,create,Create and join new collab data. Can't be done if data already loaded
+CREA_DATA,create,crea,create [--mvk IP PORT MODEL METAMODEL],Create and join new collab data. Can't be done if data already loaded (Option: save in MVK database)
 JOIN_DATA,join,join,join DATA_ID,Join an existing collab data
 LEAVE_DATA,leave,leave,leave,Leave the current collab data you are working on (Still exists for other collaborators)
 INFO,info,i,info,Display information about current session such as connection and data status

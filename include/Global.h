@@ -47,10 +47,10 @@ class Global {
 
         void resetGraphData(const std::string& model, const std::string& mmodel) {
             this->resetGraphData();
-            static SGraphMvkMapper mapper(&_mvk);
-            static SGraphMvkOpHandler handler(&mapper, &_graph, model, mmodel);
-            // TODO
-            //_graph.addOperationObserver(
+            static SGraphMvkMapper      mapper(&_mvk);
+            static SGraphMvkOpHandler   handler(&mapper, &_graph, model, mmodel);
+            static SGraphMvkObserver    observer(&handler);
+            _graph.addOperationObserver(observer);
         }
 
     public:
