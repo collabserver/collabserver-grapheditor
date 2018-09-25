@@ -111,9 +111,20 @@ int CreateDataCommand::exec(const std::vector<std::string>& args) {
 
         std::cout << "Connecting to MVK Database server... " << std::endl;
         Global::get().mvk().connect(ip, port, username, pswd);
-        std::cout << "Successfully connected to MVK\n";
+        std::cout << "Successfully connected to Mvk\n";
 
-        Global::get().resetGraphData(model, mmodel);
+        std::cout << "Loading Graph from Mvk... ";
+        bool success = Global::get().resetGraphDataMvk(model, mmodel);
+        if(!success) {
+            std::cout << "FAILED\n";
+            std::cout << "Model may not be valid against metamodel or may not exists\n";
+            std::cout << "**WARNING**: changes are NOT saved in Mvk!";
+            std::cout << std::endl;
+        }
+        else {
+            std::cout << "SUCCESS\n";
+            std::cout << "Graph successfully loaded from Mvk" << std::endl;
+        }
     }
     else {
         Global::get().resetGraphData();

@@ -45,12 +45,20 @@ class Global {
 #           endif
         }
 
-        void resetGraphData(const std::string& model, const std::string& mmodel) {
+        bool resetGraphDataMvk(const std::string& model, const std::string& mmodel) {
             this->resetGraphData();
             static SGraphMvkMapper      mapper(&_mvk);
             static SGraphMvkOpHandler   handler(&mapper, &_graph, model, mmodel);
             static SGraphMvkObserver    observer(&handler);
-            _graph.addOperationObserver(observer);
+
+            // At beginning, model MUST BE VALID (And exists in db)
+            _mvk.modelVerify(model, mmodel);
+            if(_mvk.isSuccess()) {
+                _graph.addOperationObserver(observer);
+                mapper.loadGraph(model, mmodel, _graph);
+                return true;
+            }
+            return false;
         }
 
     public:

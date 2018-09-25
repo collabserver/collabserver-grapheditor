@@ -1,6 +1,9 @@
 #include "sgraph/SGraphMvkMapper.h"
 
 #include <cassert>
+#include <cstring> // strcmp
+
+#include "utils/cJSON.h"
 
 
 // -----------------------------------------------------------------------------
@@ -132,6 +135,67 @@ bool SGraphMvkMapper::attributeSet(const std::string& model,
     bool success = isModelValid(_mvk, model, metamodel);
     _mvk->modelExit();
     return success;
+}
+
+bool SGraphMvkMapper::loadGraph(const std::string& model,
+                                const std::string& metamodel,
+                                collab::SimpleGraph& graph) const {
+    _mvk->modelEnter(model, metamodel);
+    if(!_mvk->isSuccess()) {
+        // Means model/metamodel doesn't exists :'(
+        return false;
+    }
+
+    // Get JSON from MvkWrapper
+    _mvk->elementListJSON();
+    std::string buffer = _mvk->getResponseBuffer();
+    if(buffer.length() > 11) {
+        // Check MVK message format content for further information
+        buffer = buffer.substr(10, buffer.length() - 11);
+    }
+    for(int i = 0; i < buffer.length(); i++) {
+        if(buffer.at(i) == '\\') {
+            buffer = buffer.erase(i, 1);
+            i--;
+        }
+    }
+    cJSON *bufferJSON = cJSON_Parse(buffer.c_str());
+    if(bufferJSON == nullptr) {
+        return false;
+    }
+
+    // Parse JSON
+    cJSON *eltJSON = nullptr;
+    char *type = nullptr;
+
+    for(int i = 0; i < cJSON_GetArraySize(bufferJSON); i++) {
+        eltJSON = cJSON_GetArrayItem(bufferJSON, i);
+        type    = cJSON_GetStringValue(cJSON_GetObjectItem(eltJSON, "__type"));
+
+        if(std::strcmp(type, ELEMENT_TYPE)) {
+            cJSON* elt = cJSON_GetObjectItem(eltJSON, "__id");
+            graph.addVertex(cJSON_GetStringValue(elt));
+        }
+        else if(std::strcmp(type, EDGE_TYPE)) {
+            cJSON* src  = cJSON_GetObjectItem(eltJSON, "__source");
+            cJSON* dest = cJSON_GetObjectItem(eltJSON, "__target");
+
+            graph.addEdge(cJSON_GetStringValue(src), cJSON_GetStringValue(dest));
+        }
+        else {
+            cJSON* vertex   = cJSON_GetObjectItem(eltJSON, "Vertex");
+            cJSON* name     = cJSON_GetObjectItem(eltJSON, "Name");
+            cJSON* value    = cJSON_GetObjectItem(eltJSON, "Value");
+
+            graph.addAttribute(cJSON_GetStringValue(vertex),
+                                cJSON_GetStringValue(name),
+                                cJSON_GetStringValue(value));
+        }
+        delete type;
+    }
+
+    delete bufferJSON;
+    return true;
 }
 
 

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <collabdata/custom/SimpleGraph.h>
+
 #include "mvk/MvkWrapper.h"
 
 
@@ -9,7 +11,7 @@
  * \brief
  * SimpleGraph Mapper for MVK database.
  *
- * Gives set of operation to use SimpleGraph with MVK database.
+ * Gives set of operations to use SimpleGraph with a MVK database.
  * (CRUD Operations etc).
  */
 class SGraphMvkMapper {
@@ -133,6 +135,19 @@ class SGraphMvkMapper {
                           const std::string& vertexID,
                           const std::string& attrName,
                           const std::string& attrValue) const;
+
+        /**
+         * Load a graph with MVK content.
+         *
+         * Get MVK data, convert it into SimpleGraph operations and
+         * apply this operation on the graph.
+         * Most of the case, graph is empty and this is an 'init' method.
+         *
+         * \return True if successfully loaded, otherwise, return false.
+         */
+        bool loadGraph(const std::string& model,
+                       const std::string&  metamodel,
+                       collab::SimpleGraph& graph) const;
 };
 
 

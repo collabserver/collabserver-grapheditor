@@ -323,6 +323,15 @@ class MvkWrapper {
          * \return True if success, otherwise, return false.
          */
         bool isSuccess() const { return _buffer == "\"Success: OK\""; }
+
+        /**
+         * Get a reference to the internal response buffer.
+         * Reponse buffer is the raw buffer with the response from MVK
+         * for the last request.
+         *
+         * \return Reference to the response buffer.
+         */
+        const std::string& getResponseBuffer() const { return _buffer; }
 };
 
 
