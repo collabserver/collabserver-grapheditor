@@ -8,7 +8,6 @@ add_custom_target(run grapheditor)
 
 target_link_libraries(grapheditor
     collabclient
-    collabcommon
     collabdata
     curl
     zmq
@@ -36,7 +35,6 @@ add_executable(tests ${srcFilesTest})
 
 target_link_libraries(tests
     collabclient
-    collabcommon
     collabdata
     curl
     zmq

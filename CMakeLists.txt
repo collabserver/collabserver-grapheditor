@@ -15,7 +15,6 @@ include("CMake/AddCompilerFlags.cmake")
 
 include("CMake/Dependencies/AddCollabdata.cmake")
 include("CMake/Dependencies/AddCollabclient.cmake")
-include("CMake/Dependencies/AddCollabcommon.cmake")
 
 
 # ------------------------------------------------------------------------------

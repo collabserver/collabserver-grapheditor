@@ -11,7 +11,7 @@ ExternalProject_Add(collab-data-crdts
     BINARY_DIR          "${CMAKE_BINARY_DIR}/collab-data-crdts-build/"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
-    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE};-Dcollab_custom=on"
+    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 
 
