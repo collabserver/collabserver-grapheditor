@@ -16,6 +16,33 @@ handle multi-users real-time collaboration.
 Each vertex in the graph has a map of attributes: {name,value}.
 
 
+## Quick Start
+1. Start a CollabServer (See [CollabServer project](https://github.com/CollabServer/collab-server))
+1. Be sure you have all the system-wide dependencies and requirements.
+1. Build this grapheditor project (See build instruction)
+1. Run one grapheditor (You enter the command line mode)
+1. Use `help` in editor to show all commands
+1. Each command has a fullname (ex: `vertexAdd`) and a short version (ex: `vadd`)
+1. In the editor, do the following commands
+    - `help` or `h` to display help
+    - `co localhost 4242` to connect your local CollabServer
+    - `crea` to start a collaboration
+    - `info` to display current status (You should be connected and data loaded)
+    - `vadd v1` add a vertex 1
+    - `vadd v2` add a vertex 2
+    - `eadd v1 v2` add edge
+    - `aadd v1 name Panda`
+    - `aadd v2 name Gnu`
+    - `gshow` to display the whole graph
+1. On another console, run a second grapheditor
+    - `co localhost 4242` connect the same CollabServer
+    - `join 1` join the previously created data (It's the first data so ID is 1)
+    - `gshow` you should see the exact same graph
+1. Apply other operation on any user and see the changes on others.
+    - `arem v1 name` to remove attribute name from v1
+    - `aset v2 name Raccoon` to change attribute value in v2
+
+
 ## Features
 - Graph editing
     - Add vertex
@@ -113,7 +140,16 @@ Generate documentation with `doxygen Doxyfile`.
 Generated files are places in `doc` folder.
 
 
+## Contribution
+Feel free to ask me any question, share your ideas or open an issue.
+I created this project during my master thesis at University of Montreal.
+I generally try to follow the [Google C++ Coding Style](https://google.github.io/styleguide/cppguide.html)
+with some exceptions (For instance, I use 4 space indentation).
+
+
 ## Author
 - Constantin Masson ([constantinmasson.com](http://constantinmasson.com/))
 - Robin
 - Thierry
+
+
