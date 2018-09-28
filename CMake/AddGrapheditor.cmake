@@ -1,5 +1,3 @@
-message(STATUS "Building GraphicEditor client")
-
 include_directories("${CMAKE_SOURCE_DIR}/include/")
 file(GLOB_RECURSE srcFiles "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
@@ -26,13 +24,11 @@ add_custom_target(copyResources ALL DEPENDS "${RESOURCES_BIN}")
 add_dependencies(run copyResources)
 
 
-# Add simple test
+# Add simple test (This is kind of temporary. These are not actual unit test yet)
 file(GLOB_RECURSE srcFilesTest "${CMAKE_SOURCE_DIR}/tests/mvk/Test_MvkWrapper.cpp"
                                "${CMAKE_SOURCE_DIR}/src/mvk/MvkWrapper.cpp"
                                "${CMAKE_SOURCE_DIR}/src/utils/utils.cpp")
-
 add_executable(tests ${srcFilesTest})
-
 target_link_libraries(tests
     collabclient
     collabdata

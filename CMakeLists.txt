@@ -9,18 +9,14 @@ endif()
 # ------------------------------------------------------------------------------
 # Various / Dependencies
 # ------------------------------------------------------------------------------
-set(collab_gitmodule_dir "${CMAKE_SOURCE_DIR}/gitmodules/")
-
 include("CMake/AddCompilerFlags.cmake")
-
-include("CMake/Dependencies/AddCollabdata.cmake")
-include("CMake/Dependencies/AddCollabclient.cmake")
+include("CMake/AddDependencies.cmake")
 
 
 # ------------------------------------------------------------------------------
 # GraphEditor Executable
 # ------------------------------------------------------------------------------
-message(STATUS "Build GraphEditor client")
-include("CMake/AddGrapheditor.cmake")
+message(STATUS "Building GraphEditor client")
+include("CMake/AddGrapheditor.cmake") #TODO
 
 
