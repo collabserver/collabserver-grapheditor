@@ -69,6 +69,13 @@ Check the instruction specific to your operating system for further information.
 - [Curl](https://curl.haxx.se/)
 - Moderlverse MVK (Optional. Only if you need it. See instructions)
 
+### CMake options
+| Name | Description |
+| --- | --- |
+| COLLAB_DEPENDENCIES_DIR | (STRING) Path to a directory where to find all dependencies (By default, uses current cmake build) |
+| COLLAB_DEPENDENCIES_DOWNLOAD | (ON/OFF) Set ON to also download dependencies at cmake time. This is useful the first time you setup the project. Dependencies are placed in COLLAB_DEPENDENCIES_DIR. (By default: OFF).|
+| CMAKE_BUILD_TYPE | Debug, Release, RelWithDebInfo, MinSizeRel |
+
 ### Build and run with CMake
 ```bash
 mkdir build
