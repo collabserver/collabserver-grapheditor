@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Project collab-client-interface (gitsubmodule)
+# Project collab-client-interface
 # ------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
 
@@ -11,13 +11,12 @@ ExternalProject_Add(collab-client-interface
     GIT_TAG             "dev"
     SOURCE_DIR          "${COLLAB_CLIENT_SOURCES}"
     BINARY_DIR          "${COLLAB_CLIENT_BUILD}"
-    CONFIGURE_COMMAND   ""
     BUILD_COMMAND       ""
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
-    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE};
-                         -DCOLLAB_DEPENDENCIES_DOWNLOAD=${COLLAB_DEPENDENCIES_DOWNLOAD};
-                         -DCOLLAB_DEPENDENCIES_DIR=${COLLAB_DEPENDENCIES_DIR}"
+    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                        "-DCOLLAB_DEPENDENCIES_DOWNLOAD=${COLLAB_DEPENDENCIES_DOWNLOAD}"
+                        "-DCOLLAB_DEPENDENCIES_DIR=${COLLAB_DEPENDENCIES_DIR}"
 )
 
 
