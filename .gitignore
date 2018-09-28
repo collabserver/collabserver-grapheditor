@@ -1,18 +1,9 @@
 # Personal ignore
 build/
-dependencies/
+build-release/
+build-debug/
 doc/
-cmake-build-debug/
-log.txt
-mvk/.idea/
-mvk/CMakeLists.txt
-mvk/cmake-build-debug/
-.syntastic_cpp_config
 .ycm_extra_conf.py
-.idea/
-.vscode
-*.~lock*
-
 
 
 # Created by https://www.gitignore.io/api/c,vim,c++

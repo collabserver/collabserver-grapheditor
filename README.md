@@ -10,59 +10,71 @@
 
 
 ## Overview
-Graph editor is a command line tool to edit graph.
+GraphEditor is a command line tool for graph.
 This is an example of end-user client that uses collab-data-crdts to
 handle multi-users real-time collaboration.
 Each vertex in the graph has a map of attributes: {name,value}.
 
 
-## Requirements
+## Features
+- Graph editing
+    - Add vertex
+    - Remove vertex
+    - Add edge between two vertices
+    - Remove edge
+    - Add vertex attribute
+    - Remove vertex attribute
+    - Change vertex attribute value
+- Graph info
+    - List all vertices
+    - Show vertex info
+    - Show all graph
+- CollabServer
+    - Connect
+    - Disconnect
+    - Create new collaborative data
+    - Join existing collaborative data
+    - Leave collaborative data
+
+
+## Build instructions (CMake)
+
+### Requirements
 - C++11
 - `pragma once` support
 - Tested with gcc 4.8.4
 - Tested with clang 5.0.0
 - Tested only on Linux. Not support certified for Mac and Windows
 
+### Dependencies
+All dependencies are automatically downloaded by CMake and placed in a folder
+named `dependencies`.
+You may move this folder in another place later and request CMake not to
+download dependencies anymore (**See CMake options**).
 
-## Dependencies
-> Dependencies marked with *(CMake)* are automatically downloaded by CMake
-> script and placed in *dependencies* folder.
-> Others must be installed manually (Generally system-wide install).
-- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git) (CMake / gitsubmodule)
-- [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git) (CMake / gitsubmodule)
-- collab-common (CMake / gitsubmodule. Required by collab-client-interface)
-- [ZeroMQ](http://zeromq.org/) (**Must be installed system-wide**)
-- Curl (**Must be installed System-wide**)
-- Moderlverse MVK (**Must be installed manually**)
+If you are using a custom permanent location for your dependencies, a convenient
+solution is to set the environment variable `COLLAB_DEPENDENCIES_DIR` with this path.
+CMake will use this one as the default location (Except if a custom path is
+given as CMake parameter).
 
+- [collab-client-interface](https://github.com/CollabServer/collab-client-interface.git)
+- [collab-data-crdts](https://github.com/CollabServer/collab-data-crdts.git)
 
-## Submodules
-This project uses submodules to manage dependencies with other CollabServer
-project. For further information about submodules,
-check the official documentation:
-https://git-scm.com/book/en/v2/Git-Tools-Submodules and
-https://git-scm.com/docs/git-submodule.
+### Manual dependencies (System Wide)
+These dependencies **must be installed system-wide** and are not downloaded by CMake.
+Check the instruction specific to your operating system for further information.
+(Ex: `pacman -S zeromq` on ArchLinux)
 
-### Work with submodules
-```bash
-# Clone
-git clone --recursive https://github.com/CollabServer/collab-grapheditor.git
+- [ZeroMQ](http://zeromq.org/)
+- [Curl](https://curl.haxx.se/)
+- Moderlverse MVK (Optional. Only if you need it. See instructions)
 
-# Pull new changes
-git pull --recurse-submodules=on
-
-# Update submodules
-git submodule update --remote
-```
-
-
-## Build
 ### Build and run with CMake
 ```bash
 mkdir build
 cd build
-cmake ..
-make -j4
+cmake -DCOLLAB_DEPENDENCIES_DOWNLOAD=ON ..
+make -j2
 make run
 
 # Or use build script
@@ -85,6 +97,13 @@ Once downloaded and setup, start the Mvk database.
 ```bash
 python scripts/run_local_modelverse.py
 ```
+
+
+## Generate documentation
+- [Doxygen](https://www.stack.nl/~dimitri/doxygen/)
+
+Generate documentation with `doxygen Doxyfile`.
+Generated files are places in `doc` folder.
 
 
 ## Author
