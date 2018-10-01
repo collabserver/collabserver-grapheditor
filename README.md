@@ -9,10 +9,17 @@
 
 
 # Overview
-GraphEditor is a command line tool for graph.
-This is an example of end-user client that uses collab-data-crdts to
-handle multi-users real-time collaboration.
-Each vertex in the graph has a map of attributes: {name,value}.
+GraphEditor is a command line tool for graph that supports realtime collaboration with several users.
+Contributors may edit a graph at the same time, even with totally concurrent operations.
+Concurrency is resolved without any locking or synchronization.
+
+
+The goal of this project is to show an example of end-user client using the
+CollabServer Framework.
+It is built using the `collab-data-crdts` (SimpleGraph data structure) and,
+`collab-client-interface` (Client interface to work with a collab-server).
+All the "black magic" is done behind the scene and this project may be
+done by an application / UI developer (Without any knowledge about collaboration and, concurrency).
 
 
 # Quick Start
@@ -54,7 +61,18 @@ Each vertex in the graph has a map of attributes: {name,value}.
 
 
 # Features
-- Graph editing
+- Graph Data
+    - vertex
+        - ID name (String)
+        - Edges (Set)
+        - Attributes (Map)
+    - Edge
+        - ID source (String)
+        - ID destination (String)
+    - Attribute
+        - Name (String)
+        - Value (String)
+- Graph Editing
     - Add vertex
     - Remove vertex
     - Add edge between two vertices
@@ -62,7 +80,7 @@ Each vertex in the graph has a map of attributes: {name,value}.
     - Add vertex attribute
     - Remove vertex attribute
     - Change vertex attribute value
-- Graph info
+- Graph Info
     - List all vertices
     - Show vertex info
     - Show all graph
@@ -72,7 +90,7 @@ Each vertex in the graph has a map of attributes: {name,value}.
     - Create new collaborative data
     - Join existing collaborative data
     - Leave collaborative data
-- Mvk Database (Not fully functional. Don't use it in release)
+- Mvk Database (Optional)
     - Connect to MVK
     - Load data from MVK
 
@@ -134,7 +152,9 @@ make run
 > it as the current dependencies path.
 
 
-# Modelverse Database (Mvk)
+# Modelverse Database (Optional)
+> Warning: Not fully functional yet. Don't use it in release.
+
 Mvk is a database for Model-Driven Engineering and stores everything as an MDE model.
 
 If an Mvk database is running, you may automatically save any changes done
@@ -157,8 +177,10 @@ I created this project during my master thesis at University of Montreal.
 I generally try to follow the [Google C++ Coding Style](https://google.github.io/styleguide/cppguide.html)
 with some exceptions (For instance, I use 4 space indentation).
 
+Uses C++11
 
-# Author
+
+# Authors
 - Constantin Masson ([constantinmasson.com](http://constantinmasson.com/))
 - Robin
 - Thierry
