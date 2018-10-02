@@ -13,7 +13,6 @@ GraphEditor is a command line tool for graph that supports realtime collaboratio
 Contributors may edit a graph at the same time, even with totally concurrent operations.
 Concurrency is resolved without any locking or synchronization.
 
-
 The goal of this project is to show an example of end-user client using the
 CollabServer Framework.
 It is built using the `collab-data-crdts` (SimpleGraph data structure) and,
@@ -41,7 +40,7 @@ done by an application / UI developer (Without any knowledge about collaboration
     - Use `help` or `h` to show all commands
     - Each command has a full name (ex: `vertexAdd`) and a short version (ex: `vadd`)
 1. Create a Graph
-    - `co localhost 4242` (connect your local CollabServer)
+    - `co localhost 4242` (Connect your local CollabServer)
     - `crea` (Start a collaboration)
     - `info` (Display current status. You should be connected and data loaded)
     - `vadd v1` (Add a vertex v1)
@@ -51,8 +50,8 @@ done by an application / UI developer (Without any knowledge about collaboration
     - `aadd v2 name Gnu`
     - `gshow` (Display the whole graph)
 1. Start a second client
-    - `co localhost 4242` (connect the same CollabServer)
-    - `join 1` (join the previously created data. ID 1 is from `info` on first client)
+    - `co localhost 4242` (Connect the same CollabServer)
+    - `join 1` (Join the previously created data. ID 1 is from `info` on first client)
     - `gshow` (You should see the exact same graph)
 1. Collaborate
     - Apply any operation on any user and see the changes on others.
@@ -101,7 +100,6 @@ done by an application / UI developer (Without any knowledge about collaboration
 # Warning: Install system-wide dependencies
 # Be sure you have all requirements
 
-# Using cmake manual
 mkdir build
 cd build
 cmake -DCOLLAB_DEPENDENCIES_DOWNLOAD=ON ..
@@ -127,11 +125,12 @@ make run
 - Tested with gcc 4.8.4
 - Tested with clang 5.0.0
 - Tested only on Linux. No support certified for Mac and Windows
+- CMake (2.8.2 or higher)
 
 
 # Dependencies
 - System-Wide (**Must be installed manually**)
-    - [ZeroMQ](http://zeromq.org/)
+    - [ZeroMQ](http://zeromq.org/) (Release 3.1.1)
         - ArchLinux: `pacman -S zeromq`
         - Ubuntu: `apt-get install libzmq3 libzmq3-dev`
         - There is also a [Windows binary here](http://zeromq.org/distro:microsoft-windows) (Not tested yet)

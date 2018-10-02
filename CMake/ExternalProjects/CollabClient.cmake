@@ -1,6 +1,3 @@
-# ------------------------------------------------------------------------------
-# Project collab-client-interface
-# ------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
 
 project(collab-client-interface-download NONE)

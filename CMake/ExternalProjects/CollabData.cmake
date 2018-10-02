@@ -1,6 +1,3 @@
-# ------------------------------------------------------------------------------
-# Project collab-data-crdts
-# ------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
 
 project(collab-data-crdts-download NONE)
