@@ -19,4 +19,4 @@ VERTEX_INFO,vertexInfo,vinfo,vertexInfo VERTEX_ID,Display information about a ve
 VERTEX_LIST,vertexList,vlist,vertexList,Display a list of all vertices
 GRAPH_SHOW,graphShow,gshow,graphShow,Show the graph (Vertices, attributes, and edges)
 GRAPH_INFO,graphInfo,ginfo,graphInfo,Display general information about the current graph
-GRAPH_DUMP,graphDump,gdump,graphDump filename.dot,Dump current graph in dot format (graphviz)
+GRAPH_DUMP,graphDump,gdump,graphDump filename.gv,Dump current graph in dot format (graphviz)
