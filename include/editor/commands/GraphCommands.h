@@ -18,4 +18,9 @@ class GraphInfoCommand : public Command {
         int exec(const std::vector<std::string>& args) override;
 };
 
+class GraphDumpCommand : public Command {
+    public:
+        GraphDumpCommand(const CommandInfo& info) : Command(info) {}
+        int exec(const std::vector<std::string>& args) override;
+};
 

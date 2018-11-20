@@ -71,6 +71,7 @@ Editor::Editor() {
     // Graph
     addCmd(new GraphShowCommand(pool.get("GRAPH_SHOW")), _commands);
     addCmd(new GraphInfoCommand(pool.get("GRAPH_INFO")), _commands);
+    addCmd(new GraphDumpCommand(pool.get("GRAPH_DUMP")), _commands);
 }
 
 Editor::~Editor() {
