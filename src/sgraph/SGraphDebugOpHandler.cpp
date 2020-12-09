@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-
 // -----------------------------------------------------------------------------
 // SGraphDebugOpHandler
 // -----------------------------------------------------------------------------
@@ -28,21 +27,18 @@ void SGraphDebugOpHandler::handleOperation(const SGraph::EdgeRemoveOperation &op
 }
 
 void SGraphDebugOpHandler::handleOperation(const SGraph::AttributeAddOperation &op) {
-    std::cout << "Attribute added to vertex (" << op.getVertexID() << ": "
-              << op.getAttributeName() << " = " << op.getAttributeValue() << ")";
+    std::cout << "Attribute added to vertex (" << op.getVertexID() << ": " << op.getAttributeName() << " = "
+              << op.getAttributeValue() << ")";
     std::cout << std::endl;
 }
 
 void SGraphDebugOpHandler::handleOperation(const SGraph::AttributeRemoveOperation &op) {
-    std::cout << "Attribute removed from vertex (" << op.getVertexID() << ": "
-              << op.getAttributeName() << ")";
+    std::cout << "Attribute removed from vertex (" << op.getVertexID() << ": " << op.getAttributeName() << ")";
     std::cout << std::endl;
 }
 
 void SGraphDebugOpHandler::handleOperation(const SGraph::AttributeSetOperation &op) {
-    std::cout << "Attribute set in vertex (" << op.getVertexID() << ": "
-              << op.getAttributeName() << " = " << op.getAttributeValue() << ")";
+    std::cout << "Attribute set in vertex (" << op.getVertexID() << ": " << op.getAttributeName() << " = "
+              << op.getAttributeValue() << ")";
     std::cout << std::endl;
 }
-
-

@@ -2,11 +2,11 @@
 
 #include <cassert>
 #include <iostream>
-#include <sstream>
 #include <regex>
+#include <sstream>
 
-#include "utils/utils.h"
 #include "mvk/Messaging.h"
+#include "utils/utils.h"
 
 /*
  * DevNote: sendInternal
@@ -15,34 +15,32 @@
  * -> Check the MVK doc + get more information. (Maybe this can be removed?).
  */
 
-
 // -----------------------------------------------------------------------------
 // Static util methods
 // -----------------------------------------------------------------------------
 
 // Curl debug
-struct MVKDebugData { char trace_ascii; /* 1 or 0 */ };
+struct MVKDebugData {
+    char trace_ascii; /* 1 or 0 */
+};
 
 // Curl debug method
-static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
-                         size_t size, char nohex);
+static void MVKDebugDump(const char* text, FILE* stream, unsigned char* ptr, size_t size, char nohex);
 
 // Curl debug method
-static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
-                         size_t size, void *userp);
+static int MVKDebugTrace(CURL* handle, curl_infotype type, char* data, size_t size, void* userp);
 
 static void curlError(CURLcode code) {
-    if(code != CURLE_OK) {
+    if (code != CURLE_OK) {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(code));
     }
 }
 
-static size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*) userp)->clear();
-    ((std::string*) userp)->append((char*) contents, size* nmemb);
+static size_t curlWriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->clear();
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
-
 
 // -----------------------------------------------------------------------------
 // Init methods
@@ -76,13 +74,11 @@ MvkWrapper::~MvkWrapper() {
     curl_global_cleanup();
 }
 
-
 // -----------------------------------------------------------------------------
 // Connection
 // -----------------------------------------------------------------------------
 
-int MvkWrapper::connect(const std::string& ip, const int port,
-                        const std::string& username, const std::string& pswd) {
+int MvkWrapper::connect(const std::string& ip, const int port, const std::string& username, const std::string& pswd) {
     this->connectMVK(ip, port);
     this->login(username, pswd);
     return 0;
@@ -114,25 +110,35 @@ int MvkWrapper::login(const std::string& username, const std::string& pswd) {
     // Connect MVK
     std::string msg = MSG_USER_CONNECT(_uuid);
     send(msg.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
 
     msg = MSG_USER_LOGIN(username, _uuid);
     send(msg.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
 
     std::regex newUser("^[A-Za-z \"]+new user");
-    if(std::regex_search(_buffer, newUser)) {
+    if (std::regex_search(_buffer, newUser)) {
         msg = MSG_USER_LOGIN(pswd, _uuid);
         send(msg.c_str());
-        if(sendInternal() == -1) { return -1; }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
 
     msg = MSG_USER_LOGIN(pswd, _uuid);
     send(msg.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (sendInternal() == -1) {
+        return -1;
+    }
 
-    if(!_debugMode) {
+    if (!_debugMode) {
         msg = MSG_CONFIG_SET_QUIET(_uuid);
         send(msg.c_str());
     }
@@ -145,7 +151,6 @@ int MvkWrapper::logout() {
     return 0;
 }
 
-
 // -----------------------------------------------------------------------------
 // Network
 // -----------------------------------------------------------------------------
@@ -157,7 +162,7 @@ void MvkWrapper::send(const char* data) {
 
     CURLcode rabbit = curl_easy_perform(_curl);
     curlError(rabbit);
-    if(_debugMode) {
+    if (_debugMode) {
         std::clog << "[REQUEST]: " << data << "\n";
         std::clog << "[RESPONSE]: " << _buffer << std::endl;
     }
@@ -170,13 +175,12 @@ int MvkWrapper::sendInternal() {
     this->send(msg.c_str());
 
     std::regex unknownCommand("^\"[Uu]nknown command");
-    if(std::regex_search(_buffer, unknownCommand)) {
+    if (std::regex_search(_buffer, unknownCommand)) {
         return -1;
     }
 
     return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 // Models management
@@ -185,20 +189,28 @@ int MvkWrapper::sendInternal() {
 int MvkWrapper::modelList(const std::string& path) {
     std::string request = MSG_MODEL_LIST(path, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
     return 0;
 }
 
-int MvkWrapper::modelAdd(const std::string& name,
-                         const std::string& mmodel,
-                         const std::string& syntax) {
+int MvkWrapper::modelAdd(const std::string& name, const std::string& mmodel, const std::string& syntax) {
     std::string request = MSG_MODEL_ADD(name, mmodel, syntax, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
 
     return 0;
@@ -207,9 +219,13 @@ int MvkWrapper::modelAdd(const std::string& name,
 int MvkWrapper::modelDelete(const std::string& name) {
     std::string request = MSG_MODEL_DEL(name, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
@@ -217,10 +233,16 @@ int MvkWrapper::modelDelete(const std::string& name) {
 int MvkWrapper::modelVerify(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_VERIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
@@ -228,10 +250,16 @@ int MvkWrapper::modelVerify(const std::string& model, const std::string& mmodel)
 int MvkWrapper::modelEnter(const std::string& model, const std::string& mmodel) {
     std::string request = MSG_MODEL_MODIFY(model, mmodel, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
@@ -239,10 +267,11 @@ int MvkWrapper::modelEnter(const std::string& model, const std::string& mmodel) 
 int MvkWrapper::modelExit() {
     std::string request = MSG_MODEL_EXIT(_uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
     return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 // Model
@@ -251,122 +280,166 @@ int MvkWrapper::modelExit() {
 int MvkWrapper::elementList() {
     std::string request = MSG_ELT_LIST(_uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
     return 0;
 }
 
 int MvkWrapper::elementListJSON() {
     std::string request = MSG_ELT_LIST_JSON(_uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
     return 0;
 }
 
 int MvkWrapper::elementCreate(const std::string& type, const std::string& name) {
     std::string request = MSG_ELT_CREA(type, name, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
 int MvkWrapper::elementDelete(const std::string& name) {
     std::string request = MSG_ELT_DEL(name, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
 
-int MvkWrapper::edgeCreate(const std::string& type, const std::string& name,
-                           const std::string& from, const std::string& to) {
+int MvkWrapper::edgeCreate(const std::string& type, const std::string& name, const std::string& from,
+                           const std::string& to) {
     std::string request = MSG_EDGE_CREA(type, name, from, type, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
 
-int MvkWrapper::attributeSet(const std::string& elt,
-                             const std::string& attrType,
-                             const std::string& attrValue) {
+int MvkWrapper::attributeSet(const std::string& elt, const std::string& attrType, const std::string& attrValue) {
     std::string request = MSG_ATTR_SET(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
 
     return 0;
 }
 
-int MvkWrapper::attributeDelete(const std::string& elt,
-                                const std::string& attrType) {
+int MvkWrapper::attributeDelete(const std::string& elt, const std::string& attrType) {
     std::string request = MSG_ATTR_DEL(elt, attrType, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
 
     return 0;
 }
 
-int MvkWrapper::attributeDefine(const std::string& elt,
-                                const std::string& attrType,
-                                const std::string& attrName) {
+int MvkWrapper::attributeDefine(const std::string& elt, const std::string& attrType, const std::string& attrName) {
     std::string request = MSG_ATTR_DEFINE(elt, attrType, attrName, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
     return 0;
 }
 
-int MvkWrapper::attributeSetCode(const std::string& elt,
-                                 const std::string& attrType,
-                                 const std::string& attrValue) {
+int MvkWrapper::attributeSetCode(const std::string& elt, const std::string& attrType, const std::string& attrValue) {
     std::string request = MSG_ATTR_SET_CODE(elt, attrType, attrValue, _uuid);
     send(request.c_str());
-    if(sendInternal() == -1) { return -1; }
-    if(_debugMode) {
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
-        if(sendInternal() == -1) { return -1; }
+    if (sendInternal() == -1) {
+        return -1;
+    }
+    if (_debugMode) {
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
+        if (sendInternal() == -1) {
+            return -1;
+        }
     }
 
     return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 // Static Debug
 // -----------------------------------------------------------------------------
 
-static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
-                         size_t size, char nohex) {
+static void MVKDebugDump(const char* text, FILE* stream, unsigned char* ptr, size_t size, char nohex) {
     size_t i;
     size_t c;
 
     unsigned int width = 0x10;
 
-    if(nohex)
-        /* without the hex output, we can fit more on screen */
+    if (nohex) /* without the hex output, we can fit more on screen */
         width = 0x40;
 
     fprintf(stream, "%s, %10.10lu bytes (0x%8.8lx)\n", text, size, size);
@@ -374,10 +447,10 @@ static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
     for (i = 0; i < size; i += width) {
         fprintf(stream, "%4.4lx: ", i);
 
-        if(!nohex) {
+        if (!nohex) {
             /* hex not disabled, show it */
             for (c = 0; c < width; c++) {
-                if(i + c < size)
+                if (i + c < size)
                     fprintf(stream, "%02x ", ptr[i + c]);
                 else
                     fputs("   ", stream);
@@ -386,17 +459,13 @@ static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
 
         for (c = 0; (c < width) && (i + c < size); c++) {
             /* check for 0D0A; if found, skip past and start a new line of output */
-            if(nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D &&
-                    ptr[i + c + 1] == 0x0A) {
+            if (nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D && ptr[i + c + 1] == 0x0A) {
                 i += (c + 2 - width);
                 break;
             }
-            fprintf(stream, "%c",
-                    (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80) ? ptr[i + c]
-                                                                : '.');
+            fprintf(stream, "%c", (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80) ? ptr[i + c] : '.');
             /* check again for 0D0A, to avoid an extra \n if it's at width */
-            if(nohex && (i + c + 2 < size) && ptr[i + c + 1] == 0x0D &&
-                ptr[i + c + 2] == 0x0A) {
+            if (nohex && (i + c + 2 < size) && ptr[i + c + 1] == 0x0D && ptr[i + c + 2] == 0x0A) {
                 i += (c + 3 - width);
                 break;
             }
@@ -406,11 +475,10 @@ static void MVKDebugDump(const char *text, FILE *stream, unsigned char *ptr,
     fflush(stream);
 }
 
-static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
-                              size_t size, void *userp) {
-    struct MVKDebugData *config = (struct MVKDebugData *) userp;
-    const char *text;
-    (void) handle; /* prevent compiler warning */
+static int MVKDebugTrace(CURL* handle, curl_infotype type, char* data, size_t size, void* userp) {
+    struct MVKDebugData* config = (struct MVKDebugData*)userp;
+    const char* text;
+    (void)handle; /* prevent compiler warning */
 
     switch (type) {
         case CURLINFO_TEXT:
@@ -438,6 +506,6 @@ static int MVKDebugTrace(CURL *handle, curl_infotype type, char *data,
             return 0;
     }
 
-    MVKDebugDump(text, stderr, (unsigned char*) data, size, config->trace_ascii);
+    MVKDebugDump(text, stderr, (unsigned char*)data, size, config->trace_ascii);
     return 0;
 }

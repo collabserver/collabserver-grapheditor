@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 /**
  * \brief basic uuidGenerator for Modelverse identification.
@@ -36,8 +36,5 @@ std::string generateNewUUID();
  * @return
  * Collected words as a vector of strings.
  */
-std::vector<std::string> split_no_quotes(
-    const std::string::const_iterator first, //!< Start of range.
-    const std::string::const_iterator last);  //!< End of range.
-
-
+std::vector<std::string> split_no_quotes(const std::string::const_iterator first,  //!< Start of range.
+                                         const std::string::const_iterator last);  //!< End of range.

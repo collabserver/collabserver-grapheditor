@@ -3,11 +3,9 @@
 #include <ctime>
 #include <iostream>
 
-
 std::string generateNewUUID() {
     std::srand(std::time(nullptr));
-    const std::string CHARS =
-            "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const std::string CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::string uuid = std::string(36, ' ');
     int rnd = 0;
 
@@ -24,27 +22,24 @@ std::string generateNewUUID() {
                 rnd = (0x2000000 + (std::rand() * 0x1000000)) | 0;
             }
             rnd >>= 4;
-            uuid[i] = CHARS[(i == 19) ? ((rnd & 0xf) & 0x3) | 0x8 : rnd &
-                                                                    0xf];
+            uuid[i] = CHARS[(i == 19) ? ((rnd & 0xf) & 0x3) | 0x8 : rnd & 0xf];
         }
     }
     return uuid;
 }
 
-// See www.physicsforums.com/threads/c-function-to-split-a-string-by-whitespace-ignoring-any-whitespace-in-quotes.778920/
-std::vector<std::string> split_no_quotes(
-    const std::string::const_iterator first,
-    const std::string::const_iterator last)
-{
+// See
+// www.physicsforums.com/threads/c-function-to-split-a-string-by-whitespace-ignoring-any-whitespace-in-quotes.778920/
+std::vector<std::string> split_no_quotes(const std::string::const_iterator first,
+                                         const std::string::const_iterator last) {
     std::vector<std::string> result;
     bool in_quotes = false;
-    std::string curr_word; // Walk over the range, collecting words along the way.
-    for(std::string::const_iterator it = first; it < last; ++it) {
-        char c = *it; // Non-separator character: Add it to the current word, and toggle flag if needed.
+    std::string curr_word;  // Walk over the range, collecting words along the way.
+    for (std::string::const_iterator it = first; it < last; ++it) {
+        char c = *it;  // Non-separator character: Add it to the current word, and toggle flag if needed.
         if (in_quotes || (c != ' ')) {
-            if (c != '"')
-                curr_word.push_back(c);
-            in_quotes = (c == '"') != in_quotes; // OK. I'll admit this is a bit hackish.
+            if (c != '"') curr_word.push_back(c);
+            in_quotes = (c == '"') != in_quotes;  // OK. I'll admit this is a bit hackish.
         }
         // First unquoted space after a word: Add word to result and reset word.
         else if (!curr_word.empty()) {
@@ -55,12 +50,12 @@ std::vector<std::string> split_no_quotes(
     }
 
     // The last word has not been added to the result. Do so.
-    if(!curr_word.empty()) {
+    if (!curr_word.empty()) {
         result.push_back(curr_word);
     }
 
     // Check for and report a violation of the paired quotes assumption.
-    if(in_quotes) {
+    if (in_quotes) {
         /*
         std::cerr << "Warning: In split_no_quotes():\n"
                   << "Input string contains non-terminated quote.\n"
@@ -69,5 +64,3 @@ std::vector<std::string> split_no_quotes(
     }
     return result;
 }
-
-

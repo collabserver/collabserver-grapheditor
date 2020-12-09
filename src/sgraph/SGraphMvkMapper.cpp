@@ -1,48 +1,39 @@
 #include "sgraph/SGraphMvkMapper.h"
 
 #include <cassert>
-#include <cstring> // strcmp
+#include <cstring>  // strcmp
 
 #include "utils/cJSON.h"
-
 
 // -----------------------------------------------------------------------------
 // Internal
 // -----------------------------------------------------------------------------
 
-#define ELEMENT_TYPE        "Vertex"
-#define EDGE_TYPE           "Edge"
-#define ATTRIBUTE_TYPE      "Attribute"
-#define ATTRIBUTE_VERTEX    "Vertex"
-#define ATTRIBUTE_NAME      "Name"
-#define ATTRIBUTE_VALUE     "Value"
+#define ELEMENT_TYPE "Vertex"
+#define EDGE_TYPE "Edge"
+#define ATTRIBUTE_TYPE "Attribute"
+#define ATTRIBUTE_VERTEX "Vertex"
+#define ATTRIBUTE_NAME "Name"
+#define ATTRIBUTE_VALUE "Value"
 
-static bool isModelValid(MvkWrapper* mvk,
-                         const std::string& model,
-                         const std::string& mmodel) {
+static bool isModelValid(MvkWrapper* mvk, const std::string& model, const std::string& mmodel) {
     // DevNote: you already entered model
     assert(mvk != nullptr);
     mvk->modelVerify(model, mmodel);
     return mvk->isSuccess();
 }
 
-
 // -----------------------------------------------------------------------------
 // INIT
 // -----------------------------------------------------------------------------
 
-SGraphMvkMapper::SGraphMvkMapper(MvkWrapper* mvk) : _mvk(mvk) {
-    assert(mvk != nullptr);
-}
-
+SGraphMvkMapper::SGraphMvkMapper(MvkWrapper* mvk) : _mvk(mvk) { assert(mvk != nullptr); }
 
 // -----------------------------------------------------------------------------
 // CRUD
 // -----------------------------------------------------------------------------
 
-bool SGraphMvkMapper::vertexAdd(const std::string& model,
-                                const std::string& metamodel,
-                                const std::string& name) const {
+bool SGraphMvkMapper::vertexAdd(const std::string& model, const std::string& metamodel, const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
     _mvk->elementCreate(ELEMENT_TYPE, name);
 
@@ -51,8 +42,7 @@ bool SGraphMvkMapper::vertexAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::vertexRemove(const std::string& model,
-                                   const std::string& metamodel,
+bool SGraphMvkMapper::vertexRemove(const std::string& model, const std::string& metamodel,
                                    const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
     _mvk->elementDelete(name);
@@ -62,11 +52,9 @@ bool SGraphMvkMapper::vertexRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::edgeAdd(const std::string& model,
-                              const std::string& metamodel,
-                              const std::string& from,
+bool SGraphMvkMapper::edgeAdd(const std::string& model, const std::string& metamodel, const std::string& from,
                               const std::string& to) const {
-    std::string uniqueID = (from + to); // This creates a unique name
+    std::string uniqueID = (from + to);  // This creates a unique name
 
     _mvk->modelEnter(model, metamodel);
     _mvk->edgeCreate(EDGE_TYPE, uniqueID, from, to);
@@ -76,9 +64,7 @@ bool SGraphMvkMapper::edgeAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::edgeRemove(const std::string& model,
-                                 const std::string& metamodel,
-                                 const std::string& from,
+bool SGraphMvkMapper::edgeRemove(const std::string& model, const std::string& metamodel, const std::string& from,
                                  const std::string& to) const {
     std::string uniqueID = (from + to);
 
@@ -90,12 +76,9 @@ bool SGraphMvkMapper::edgeRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::attributeAdd(const std::string& model,
-                                   const std::string& metamodel,
-                                   const std::string& vertexID,
-                                   const std::string& attrName,
-                                   const std::string& attrValue) const {
-    std::string attributeID = vertexID + attrName; // Creates internal MVK id.
+bool SGraphMvkMapper::attributeAdd(const std::string& model, const std::string& metamodel, const std::string& vertexID,
+                                   const std::string& attrName, const std::string& attrValue) const {
+    std::string attributeID = vertexID + attrName;  // Creates internal MVK id.
 
     _mvk->modelEnter(model, metamodel);
     _mvk->elementCreate(ATTRIBUTE_TYPE, attributeID);
@@ -108,10 +91,8 @@ bool SGraphMvkMapper::attributeAdd(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::attributeRemove(const std::string& model,
-                                      const std::string& metamodel,
-                                      const std::string& vertexID,
-                                      const std::string& attrName) const {
+bool SGraphMvkMapper::attributeRemove(const std::string& model, const std::string& metamodel,
+                                      const std::string& vertexID, const std::string& attrName) const {
     std::string attributeID = vertexID + attrName;
 
     _mvk->modelEnter(model, metamodel);
@@ -122,11 +103,8 @@ bool SGraphMvkMapper::attributeRemove(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::attributeSet(const std::string& model,
-                                   const std::string& metamodel,
-                                   const std::string& vertexID,
-                                   const std::string& attrName,
-                                   const std::string& attrValue) const {
+bool SGraphMvkMapper::attributeSet(const std::string& model, const std::string& metamodel, const std::string& vertexID,
+                                   const std::string& attrName, const std::string& attrValue) const {
     std::string attributeID = vertexID + attrName;
 
     _mvk->modelEnter(model, metamodel);
@@ -137,11 +115,10 @@ bool SGraphMvkMapper::attributeSet(const std::string& model,
     return success;
 }
 
-bool SGraphMvkMapper::loadGraph(const std::string& model,
-                                const std::string& metamodel,
+bool SGraphMvkMapper::loadGraph(const std::string& model, const std::string& metamodel,
                                 collab::SimpleGraph& graph) const {
     _mvk->modelEnter(model, metamodel);
-    if(!_mvk->isSuccess()) {
+    if (!_mvk->isSuccess()) {
         // Means model/metamodel doesn't exists :'(
         return false;
     }
@@ -149,47 +126,43 @@ bool SGraphMvkMapper::loadGraph(const std::string& model,
     // Get JSON from MvkWrapper
     _mvk->elementListJSON();
     std::string buffer = _mvk->getResponseBuffer();
-    if(buffer.length() > 11) {
+    if (buffer.length() > 11) {
         // Check MVK message format content for further information
         buffer = buffer.substr(10, buffer.length() - 11);
     }
-    for(int i = 0; i < buffer.length(); i++) {
-        if(buffer.at(i) == '\\') {
+    for (int i = 0; i < buffer.length(); i++) {
+        if (buffer.at(i) == '\\') {
             buffer = buffer.erase(i, 1);
             i--;
         }
     }
-    cJSON *bufferJSON = cJSON_Parse(buffer.c_str());
-    if(bufferJSON == nullptr) {
+    cJSON* bufferJSON = cJSON_Parse(buffer.c_str());
+    if (bufferJSON == nullptr) {
         return false;
     }
 
     // Parse JSON
-    cJSON *eltJSON = nullptr;
-    char *type = nullptr;
+    cJSON* eltJSON = nullptr;
+    char* type = nullptr;
 
-    for(int i = 0; i < cJSON_GetArraySize(bufferJSON); i++) {
+    for (int i = 0; i < cJSON_GetArraySize(bufferJSON); i++) {
         eltJSON = cJSON_GetArrayItem(bufferJSON, i);
-        type    = cJSON_GetStringValue(cJSON_GetObjectItem(eltJSON, "__type"));
+        type = cJSON_GetStringValue(cJSON_GetObjectItem(eltJSON, "__type"));
 
-        if(std::strcmp(type, ELEMENT_TYPE)) {
+        if (std::strcmp(type, ELEMENT_TYPE)) {
             cJSON* elt = cJSON_GetObjectItem(eltJSON, "__id");
             graph.addVertex(cJSON_GetStringValue(elt));
-        }
-        else if(std::strcmp(type, EDGE_TYPE)) {
-            cJSON* src  = cJSON_GetObjectItem(eltJSON, "__source");
+        } else if (std::strcmp(type, EDGE_TYPE)) {
+            cJSON* src = cJSON_GetObjectItem(eltJSON, "__source");
             cJSON* dest = cJSON_GetObjectItem(eltJSON, "__target");
 
             graph.addEdge(cJSON_GetStringValue(src), cJSON_GetStringValue(dest));
-        }
-        else {
-            cJSON* vertex   = cJSON_GetObjectItem(eltJSON, "Vertex");
-            cJSON* name     = cJSON_GetObjectItem(eltJSON, "Name");
-            cJSON* value    = cJSON_GetObjectItem(eltJSON, "Value");
+        } else {
+            cJSON* vertex = cJSON_GetObjectItem(eltJSON, "Vertex");
+            cJSON* name = cJSON_GetObjectItem(eltJSON, "Name");
+            cJSON* value = cJSON_GetObjectItem(eltJSON, "Value");
 
-            graph.addAttribute(cJSON_GetStringValue(vertex),
-                                cJSON_GetStringValue(name),
-                                cJSON_GetStringValue(value));
+            graph.addAttribute(cJSON_GetStringValue(vertex), cJSON_GetStringValue(name), cJSON_GetStringValue(value));
         }
         delete type;
     }
@@ -197,5 +170,3 @@ bool SGraphMvkMapper::loadGraph(const std::string& model,
     delete bufferJSON;
     return true;
 }
-
-

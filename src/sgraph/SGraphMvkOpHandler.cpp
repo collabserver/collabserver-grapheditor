@@ -18,15 +18,12 @@
 
 typedef collab::SimpleGraph SGraph;
 
-
-SGraphMvkOpHandler::SGraphMvkOpHandler(const SGraphMvkMapper* mapper,
-                                       collab::SimpleGraph* graph,
-                                       const std::string& model,
-                                       const std::string& metamodel) {
-    _mapperMVK  = mapper;
-    _graph      = graph;
-    _model      = model;
-    _metamodel  = metamodel;
+SGraphMvkOpHandler::SGraphMvkOpHandler(const SGraphMvkMapper* mapper, collab::SimpleGraph* graph,
+                                       const std::string& model, const std::string& metamodel) {
+    _mapperMVK = mapper;
+    _graph = graph;
+    _model = model;
+    _metamodel = metamodel;
     assert(_mapperMVK != nullptr);
     assert(_graph != nullptr);
     assert(_model.size() > 1);
@@ -35,28 +32,28 @@ SGraphMvkOpHandler::SGraphMvkOpHandler(const SGraphMvkMapper* mapper,
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::VertexAddOperation& op) {
     bool success = _mapperMVK->vertexAdd(_model, _metamodel, op.getVertexID());
-    if(!success) {
+    if (!success) {
         _graph->removeVertex(op.getVertexID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::VertexRemoveOperation& op) {
     bool success = _mapperMVK->vertexRemove(_model, _metamodel, op.getVertexID());
-    if(!success) {
+    if (!success) {
         _graph->addVertex(op.getVertexID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeAddOperation& op) {
     bool success = _mapperMVK->edgeAdd(_model, _metamodel, op.getFromID(), op.getToID());
-    if(!success) {
+    if (!success) {
         _graph->removeEdge(op.getFromID(), op.getToID());
     }
 }
 
 void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeRemoveOperation& op) {
     bool success = _mapperMVK->edgeRemove(_model, _metamodel, op.getFromID(), op.getToID());
-    if(!success) {
+    if (!success) {
         _graph->addEdge(op.getFromID(), op.getToID());
     }
 }
@@ -64,11 +61,11 @@ void SGraphMvkOpHandler::handleOperation(const SGraph::EdgeRemoveOperation& op) 
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeAddOperation& op) {
     // Just some aliases for me
     const std::string& vertexID = op.getVertexID();
-    const std::string& name     = op.getAttributeName();
-    const std::string& value    = op.getAttributeValue();
+    const std::string& name = op.getAttributeName();
+    const std::string& value = op.getAttributeValue();
 
     bool success = _mapperMVK->attributeAdd(_model, _metamodel, vertexID, name, value);
-    if(!success) {
+    if (!success) {
         _graph->removeAttribute(vertexID, name);
     }
 }
@@ -76,11 +73,11 @@ void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeAddOperation& op
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeRemoveOperation& op) {
     // Some aliases
     const std::string& vertexID = op.getVertexID();
-    const std::string& name     = op.getAttributeName();
+    const std::string& name = op.getAttributeName();
     // TODO const std::string& value = op.getValue();
 
     bool success = _mapperMVK->attributeRemove(_model, _metamodel, vertexID, name);
-    if(!success) {
+    if (!success) {
         // TODO Get old value (Need to update this in AttributeRomveOperation)
         //_graph->setAttribute(vertexID, name, value);
     }
@@ -89,15 +86,13 @@ void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeRemoveOperation&
 void SGraphMvkOpHandler::handleOperation(const SGraph::AttributeSetOperation& op) {
     // Some aliases
     const std::string& vertexID = op.getVertexID();
-    const std::string& name     = op.getAttributeName();
-    const std::string& value    = op.getAttributeValue();
+    const std::string& name = op.getAttributeName();
+    const std::string& value = op.getAttributeValue();
     // TODO const std::string& oldvalue = op.getOldValue();
 
     bool success = _mapperMVK->attributeSet(_model, _metamodel, vertexID, name, value);
-    if(!success) {
+    if (!success) {
         // TODO Update collab-common to have old value
         //_graph->setAttribute(vertexID, name, oldvalue);
     }
 }
-
-

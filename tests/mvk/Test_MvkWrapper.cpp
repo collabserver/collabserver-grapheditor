@@ -1,6 +1,6 @@
-#include "mvk/MvkWrapper.h"
-
 #include <iostream>
+
+#include "mvk/MvkWrapper.h"
 
 #define _TEST_IP "localhost"
 #define _TEST_PORT 8001
@@ -13,7 +13,6 @@
 #define _TYPE_CLASS "Class"
 #define _TYPE_ASSOCIATION "Association"
 #define _TYPE_NAME "name"
-
 
 void MVKWrapper_tests() {
     MvkWrapper mvk(true);
@@ -107,5 +106,3 @@ int main(int argc, char** argv) {
     MVKWrapper_tests();
     return 0;
 }
-
-

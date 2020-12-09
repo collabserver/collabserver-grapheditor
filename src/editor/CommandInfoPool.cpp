@@ -1,10 +1,9 @@
 #include "editor/CommandInfoPool.h"
 
 #include <cassert>
-#include <string> // std::getline
 #include <fstream>
 #include <sstream>
-
+#include <string>  // std::getline
 
 int CommandInfoPool::loadFromFile(const char* path) {
     std::fstream cmdFile;
@@ -14,7 +13,7 @@ int CommandInfoPool::loadFromFile(const char* path) {
 
         _pool.clear();
 
-        for(int k = 0; k < _headerSize; ++k) {
+        for (int k = 0; k < _headerSize; ++k) {
             cmdFile.ignore(65535, '\n');
         }
 
@@ -24,10 +23,10 @@ int CommandInfoPool::loadFromFile(const char* path) {
         std::string usage;
         std::string description;
 
-        while(std::getline(cmdFile, referenceID, _delim)) {
-            std::getline(cmdFile, name,        _delim);
-            std::getline(cmdFile, shortname,   _delim);
-            std::getline(cmdFile, usage,       _delim);
+        while (std::getline(cmdFile, referenceID, _delim)) {
+            std::getline(cmdFile, name, _delim);
+            std::getline(cmdFile, shortname, _delim);
+            std::getline(cmdFile, usage, _delim);
             std::getline(cmdFile, description, '\n');
 
             assert(!name.empty() && !shortname.empty());
@@ -39,8 +38,7 @@ int CommandInfoPool::loadFromFile(const char* path) {
 
         cmdFile.close();
         return 1;
-    }
-    catch(...) {
+    } catch (...) {
         return -1;
     }
 }
@@ -49,5 +47,3 @@ const CommandInfo& CommandInfoPool::get(const ReferenceID id) const {
     assert(_pool.count(id) == 1);
     return _pool.at(id);
 }
-
-
