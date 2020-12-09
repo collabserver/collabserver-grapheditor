@@ -2,8 +2,8 @@
 # https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-todo-plus
 
 Cleanup:
-    ☐ Add clang-format
-    ☐ Apply clang-format on the whole project
+    ✔ Add clang-format @done(20-12-09 01:40)
+    ✔ Apply clang-format on the whole project @done(20-12-09 01:40)
     ☐ Update with the new CollabServer Framework version
     ☐ Update CMake with cleaned up version
     ☐ Place CollabServer Framework dependencies in extern or as git submodules
