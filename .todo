@@ -2,12 +2,15 @@
 # https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-todo-plus
 
 Cleanup:
-    ✔ Add clang-format @done(20-12-09 01:40)
-    ✔ Apply clang-format on the whole project @done(20-12-09 01:40)
     ☐ Update with the new CollabServer Framework version
     ☐ Update CMake with cleaned up version
-    ☐ Place CollabServer Framework dependencies in extern or as git submodules
+    ☐ Place CollabServer Framework dependencies in `gitbmodules` folder
+    ☐ Place curl dependency in `extern` folder
     ☐ Update Travis CI
     ☐ Re-integrate SimpleGraph implementation (migrated from collabserver-datatypes)
 Readme:
     ☐ Update README with valid markdown
+
+Archive:
+  ✔ Add clang-format @done(20-12-09 01:40) @project(Cleanup)
+  ✔ Apply clang-format on the whole project @done(20-12-09 01:40) @project(Cleanup)
