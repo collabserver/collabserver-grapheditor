@@ -1,0 +1,13 @@
+# Uses vscode TODO+ for nice highlight
+# https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-todo-plus
+
+Cleanup:
+    ☐ Add clang-format
+    ☐ Apply clang-format on the whole project
+    ☐ Update with the new CollabServer Framework version
+    ☐ Update CMake with cleaned up version
+    ☐ Place CollabServer Framework dependencies in extern or as git submodules
+    ☐ Update Travis CI
+    ☐ Re-integrate SimpleGraph implementation (migrated from collabserver-datatypes)
+Readme:
+    ☐ Update README with valid markdown
