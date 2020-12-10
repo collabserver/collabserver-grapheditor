@@ -29,9 +29,9 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes")
 # GraphEditor Executable
 message(STATUS "Building GraphEditor executable")
 
-include_directories("${PROJECT_SOURCE_DIR}/include/")
-file(GLOB_RECURSE srcFiles "${PROJECT_SOURCE_DIR}/src/*.cpp")
-add_executable(${PROJECT_NAME}-exe ${srcFiles})
+include_directories("${PROJECT_SOURCE_DIR}/src/")
+file(GLOB_RECURSE srcFilesExecutable "${PROJECT_SOURCE_DIR}/src/*.cpp")
+add_executable(${PROJECT_NAME}-exe ${srcFilesExecutable})
 add_custom_target(run ${PROJECT_NAME}-exe)
 target_link_libraries(${PROJECT_NAME}-exe collabclient curl)
 
