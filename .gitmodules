@@ -1,0 +1,6 @@
+[submodule "gitmodules/collabserver-client"]
+	path = gitmodules/collabserver-client
+	url = https://github.com/CollabServer/collabserver-client.git
+[submodule "gitmodules/collabserver-datatypes"]
+	path = gitmodules/collabserver-datatypes
+	url = https://github.com/CollabServer/collabserver-datatypes.git
