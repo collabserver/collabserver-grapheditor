@@ -1,9 +1,9 @@
-#include "sgraph/SGraphMvkMapper.h"
+#include "mvk/SimpleGraphMvkMapper.h"
+
+#include <cJSON.h>
 
 #include <cassert>
-#include <cstring>  // strcmp
-
-#include "utils/cJSON.h"
+#include <cstring>
 
 // -----------------------------------------------------------------------------
 // Internal
@@ -27,13 +27,14 @@ static bool isModelValid(MvkWrapper* mvk, const std::string& model, const std::s
 // INIT
 // -----------------------------------------------------------------------------
 
-SGraphMvkMapper::SGraphMvkMapper(MvkWrapper* mvk) : _mvk(mvk) { assert(mvk != nullptr); }
+SimpleGraphMvkMapper::SimpleGraphMvkMapper(MvkWrapper* mvk) : _mvk(mvk) { assert(mvk != nullptr); }
 
 // -----------------------------------------------------------------------------
 // CRUD
 // -----------------------------------------------------------------------------
 
-bool SGraphMvkMapper::vertexAdd(const std::string& model, const std::string& metamodel, const std::string& name) const {
+bool SimpleGraphMvkMapper::vertexAdd(const std::string& model, const std::string& metamodel,
+                                     const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
     _mvk->elementCreate(ELEMENT_TYPE, name);
 
@@ -42,8 +43,8 @@ bool SGraphMvkMapper::vertexAdd(const std::string& model, const std::string& met
     return success;
 }
 
-bool SGraphMvkMapper::vertexRemove(const std::string& model, const std::string& metamodel,
-                                   const std::string& name) const {
+bool SimpleGraphMvkMapper::vertexRemove(const std::string& model, const std::string& metamodel,
+                                        const std::string& name) const {
     _mvk->modelEnter(model, metamodel);
     _mvk->elementDelete(name);
 
@@ -52,8 +53,8 @@ bool SGraphMvkMapper::vertexRemove(const std::string& model, const std::string& 
     return success;
 }
 
-bool SGraphMvkMapper::edgeAdd(const std::string& model, const std::string& metamodel, const std::string& from,
-                              const std::string& to) const {
+bool SimpleGraphMvkMapper::edgeAdd(const std::string& model, const std::string& metamodel, const std::string& from,
+                                   const std::string& to) const {
     std::string uniqueID = (from + to);  // This creates a unique name
 
     _mvk->modelEnter(model, metamodel);
@@ -64,8 +65,8 @@ bool SGraphMvkMapper::edgeAdd(const std::string& model, const std::string& metam
     return success;
 }
 
-bool SGraphMvkMapper::edgeRemove(const std::string& model, const std::string& metamodel, const std::string& from,
-                                 const std::string& to) const {
+bool SimpleGraphMvkMapper::edgeRemove(const std::string& model, const std::string& metamodel, const std::string& from,
+                                      const std::string& to) const {
     std::string uniqueID = (from + to);
 
     _mvk->modelEnter(model, metamodel);
@@ -76,8 +77,9 @@ bool SGraphMvkMapper::edgeRemove(const std::string& model, const std::string& me
     return success;
 }
 
-bool SGraphMvkMapper::attributeAdd(const std::string& model, const std::string& metamodel, const std::string& vertexID,
-                                   const std::string& attrName, const std::string& attrValue) const {
+bool SimpleGraphMvkMapper::attributeAdd(const std::string& model, const std::string& metamodel,
+                                        const std::string& vertexID, const std::string& attrName,
+                                        const std::string& attrValue) const {
     std::string attributeID = vertexID + attrName;  // Creates internal MVK id.
 
     _mvk->modelEnter(model, metamodel);
@@ -91,8 +93,8 @@ bool SGraphMvkMapper::attributeAdd(const std::string& model, const std::string& 
     return success;
 }
 
-bool SGraphMvkMapper::attributeRemove(const std::string& model, const std::string& metamodel,
-                                      const std::string& vertexID, const std::string& attrName) const {
+bool SimpleGraphMvkMapper::attributeRemove(const std::string& model, const std::string& metamodel,
+                                           const std::string& vertexID, const std::string& attrName) const {
     std::string attributeID = vertexID + attrName;
 
     _mvk->modelEnter(model, metamodel);
@@ -103,8 +105,9 @@ bool SGraphMvkMapper::attributeRemove(const std::string& model, const std::strin
     return success;
 }
 
-bool SGraphMvkMapper::attributeSet(const std::string& model, const std::string& metamodel, const std::string& vertexID,
-                                   const std::string& attrName, const std::string& attrValue) const {
+bool SimpleGraphMvkMapper::attributeSet(const std::string& model, const std::string& metamodel,
+                                        const std::string& vertexID, const std::string& attrName,
+                                        const std::string& attrValue) const {
     std::string attributeID = vertexID + attrName;
 
     _mvk->modelEnter(model, metamodel);
@@ -115,8 +118,7 @@ bool SGraphMvkMapper::attributeSet(const std::string& model, const std::string& 
     return success;
 }
 
-bool SGraphMvkMapper::loadGraph(const std::string& model, const std::string& metamodel,
-                                collab::SimpleGraph& graph) const {
+bool SimpleGraphMvkMapper::loadGraph(const std::string& model, const std::string& metamodel, SimpleGraph& graph) const {
     _mvk->modelEnter(model, metamodel);
     if (!_mvk->isSuccess()) {
         // Means model/metamodel doesn't exists :'(

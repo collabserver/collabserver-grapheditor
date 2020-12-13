@@ -27,13 +27,13 @@ int GraphShowCommand::exec(const std::vector<std::string>& args) {
         return -1;
     }
 
-    collab::SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
+    SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
     while (it.moveNext()) {
-        collab::SimpleGraph::VertexDescriptor vertex = it.current();
+        SimpleGraph::VertexDescriptor vertex = it.current();
         std::cout << vertex.id() << "\n";
 
         // Show attributes
-        collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
+        SimpleGraph::AttributeIterator attributes = vertex.attributes();
         while (attributes.moveNext()) {
             const auto attribute = attributes.current();
             std::cout << "  " << attribute.name() << " : " << attribute.value() << "\n";
@@ -42,9 +42,9 @@ int GraphShowCommand::exec(const std::vector<std::string>& args) {
         std::cout << "  --- \n";
 
         // Show edges
-        collab::SimpleGraph::EdgeIterator edges = vertex.edges();
+        SimpleGraph::EdgeIterator edges = vertex.edges();
         while (edges.moveNext()) {
-            const collab::SimpleGraph::UUID& edge = edges.current();
+            const SimpleGraph::UUID& edge = edges.current();
             std::cout << "  (" << vertex.id() << " -> " << edge << ")\n";
         }
     }
@@ -74,7 +74,7 @@ int GraphInfoCommand::exec(const std::vector<std::string>& args) {
         return -1;
     }
 
-    collab::SimpleGraph& graph = Global::get().graphdata();
+    SimpleGraph& graph = Global::get().graphdata();
 
     std::cout << "Nb vertices: " << graph.nbVertices() << "\n";
     std::cout << "Nb edges: " << graph.nbEdges() << "\n";
@@ -114,14 +114,14 @@ int GraphDumpCommand::exec(const std::vector<std::string>& args) {
     output << "digraph {"
            << "\n";
 
-    collab::SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
+    SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
     while (it.moveNext()) {
-        collab::SimpleGraph::VertexDescriptor vertex = it.current();
+        SimpleGraph::VertexDescriptor vertex = it.current();
         output << "  " << vertex.id();
 
         // Show attributes
         output << " [";
-        collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
+        SimpleGraph::AttributeIterator attributes = vertex.attributes();
         while (attributes.moveNext()) {
             const auto attribute = attributes.current();
             output << " " << attribute.name() << "=\"" << attribute.value() << "\"";
@@ -131,9 +131,9 @@ int GraphDumpCommand::exec(const std::vector<std::string>& args) {
         output << "\n";
 
         // Show edges
-        collab::SimpleGraph::EdgeIterator edges = vertex.edges();
+        SimpleGraph::EdgeIterator edges = vertex.edges();
         while (edges.moveNext()) {
-            const collab::SimpleGraph::UUID& edge = edges.current();
+            const SimpleGraph::UUID& edge = edges.current();
             output << "  " << vertex.id() << " -> " << edge << "\n";
         }
     }

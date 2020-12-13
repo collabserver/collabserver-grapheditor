@@ -119,7 +119,7 @@ int CreateDataCommand::exec(const std::vector<std::string>& args) {
         Global::get().resetGraphData();
     }
 
-    collab::SimpleGraph& graph = Global::get().graphdata();
+    SimpleGraph& graph = Global::get().graphdata();
 
     std::cout << "Creating collab data on server... ";
     bool success = Global::get().collabclient().createData(&graph);
@@ -159,7 +159,7 @@ int JoinDataCommand::exec(const std::vector<std::string>& args) {
     }
 
     Global::get().resetGraphData();
-    collab::SimpleGraph& graph = Global::get().graphdata();
+    SimpleGraph& graph = Global::get().graphdata();
 
     std::cout << "Joining data (" << dataID << ")... ";
     bool success = Global::get().collabclient().joinData(&graph, dataID);
@@ -207,7 +207,7 @@ int LeaveDataCommand::exec(const std::vector<std::string>& args) {
 // -----------------------------------------------------------------------------
 
 int InfoCommand::exec(const std::vector<std::string>& args) {
-    collab::Client& client = Global::get().collabclient();
+    collabserver::Client& client = Global::get().collabclient();
     std::cout << "Status: " << (client.isConnected() ? "connected" : "disconnected") << "\n"
               << "Data:   " << (client.isDataLoaded() ? "loaded" : "no data loaded") << "\n"
               << "DataID: " << client.getDataID() << "\n";

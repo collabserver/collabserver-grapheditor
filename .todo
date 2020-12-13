@@ -5,6 +5,7 @@ Cleanup:
     ☐ Update with the new CollabServer Framework version
     ☐ Update CMake with cleaned up version
     ☐ Place curl dependency in `extern` folder
+    ☐ Place msgpack dependency in `extern` folder (used by SimpleGraph)
     ☐ Re-integrate SimpleGraph implementation (migrated from collabserver-datatypes)
 Readme:
     ☐ Update README with valid markdown

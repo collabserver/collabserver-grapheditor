@@ -1,8 +1,8 @@
 #include <cassert>
 #include <msgpack.hpp>
 
-#include "collabdata/custom/SimpleGraph.h"
-#include "collabdata/custom/Timestamp.h"
+#include "simplegraph/SimpleGraph.h"
+#include "simplegraph/Timestamp.h"
 
 // Unpack a Timestamp data (Using msgpack)
 #define MACRO_UNPACK_TIMESTAMP(data, size, off)                          \
@@ -12,8 +12,6 @@
     auto time = _r2.get().as<Timestamp::Clock::rep>();                   \
     Timestamp::Clock::duration ellie = Timestamp::Clock::duration(time); \
     _timestamp = Timestamp(Timestamp::TimePoint(ellie), userID)
-
-namespace collab {
 
 // TODO DEV NOTE
 // Serialization / unserialization may require more success checking.
@@ -49,7 +47,7 @@ bool SimpleGraph::VertexAddOperation::unserialize(const std::stringstream& buffe
     return off == str.size();
 }
 
-void SimpleGraph::VertexAddOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::VertexAddOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -84,7 +82,7 @@ bool SimpleGraph::VertexRemoveOperation::unserialize(const std::stringstream& bu
     return off == str.size();
 }
 
-void SimpleGraph::VertexRemoveOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::VertexRemoveOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -122,7 +120,7 @@ bool SimpleGraph::EdgeAddOperation::unserialize(const std::stringstream& buffer)
     return off == str.size();
 }
 
-void SimpleGraph::EdgeAddOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::EdgeAddOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -159,7 +157,7 @@ bool SimpleGraph::EdgeRemoveOperation::unserialize(const std::stringstream& buff
     return off == str.size();
 }
 
-void SimpleGraph::EdgeRemoveOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::EdgeRemoveOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -201,7 +199,7 @@ bool SimpleGraph::AttributeAddOperation::unserialize(const std::stringstream& bu
     return off == str.size();
 }
 
-void SimpleGraph::AttributeAddOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::AttributeAddOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -240,7 +238,7 @@ bool SimpleGraph::AttributeRemoveOperation::unserialize(const std::stringstream&
     return off == str.size();
 }
 
-void SimpleGraph::AttributeRemoveOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::AttributeRemoveOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
 
@@ -281,8 +279,6 @@ bool SimpleGraph::AttributeSetOperation::unserialize(const std::stringstream& bu
     return off == str.size();
 }
 
-void SimpleGraph::AttributeSetOperation::accept(OperationHandler& handler) const {
+void SimpleGraph::AttributeSetOperation::accept(collabserver::CollabDataOperationHandler& handler) const {
     static_cast<SimpleGraph::OpHandler&>(handler).handleOperation(*this);
 }
-
-}  // namespace collab

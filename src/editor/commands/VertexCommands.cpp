@@ -82,7 +82,7 @@ int VertexInfoCommand::exec(const std::vector<std::string>& args) {
         const auto vertex = Global::get().graphdata().at(args[0]);
 
         // Show attributes
-        collab::SimpleGraph::AttributeIterator attributes = vertex.attributes();
+        SimpleGraph::AttributeIterator attributes = vertex.attributes();
         while (attributes.moveNext()) {
             const auto attribute = attributes.current();
             std::cout << "  " << attribute.name() << " : " << attribute.value() << "\n";
@@ -91,9 +91,9 @@ int VertexInfoCommand::exec(const std::vector<std::string>& args) {
         std::cout << "  --- \n";
 
         // Show edges
-        collab::SimpleGraph::EdgeIterator edges = vertex.edges();
+        SimpleGraph::EdgeIterator edges = vertex.edges();
         while (edges.moveNext()) {
-            const collab::SimpleGraph::UUID& edge = edges.current();
+            const SimpleGraph::UUID& edge = edges.current();
             std::cout << "  (" << vertex.id() << " -> " << edge << ")\n";
         }
     } catch (const std::out_of_range& e) {
@@ -126,9 +126,9 @@ int VertexListCommand::exec(const std::vector<std::string>& args) {
         return -1;
     }
 
-    collab::SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
+    SimpleGraph::VertexIterator it = Global::get().graphdata().vertices();
     while (it.moveNext()) {
-        collab::SimpleGraph::VertexDescriptor vertex = it.current();
+        SimpleGraph::VertexDescriptor vertex = it.current();
         std::cout << vertex.id() << " ";
     }
     std::cout << "\n";

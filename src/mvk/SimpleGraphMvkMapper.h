@@ -1,10 +1,9 @@
 #pragma once
 
-#include <collabdata/custom/SimpleGraph.h>
-
 #include <string>
 
 #include "mvk/MvkWrapper.h"
+#include "simplegraph/SimpleGraph.h"
 
 /**
  * \brief
@@ -13,7 +12,7 @@
  * Gives set of operations to use SimpleGraph with a MVK database.
  * (CRUD Operations etc).
  */
-class SGraphMvkMapper {
+class SimpleGraphMvkMapper {
     // -------------------------------------------------------------------------
     // Data
     // -------------------------------------------------------------------------
@@ -25,7 +24,7 @@ class SGraphMvkMapper {
     // -------------------------------------------------------------------------
 
    public:
-    SGraphMvkMapper(MvkWrapper* mvk);
+    SimpleGraphMvkMapper(MvkWrapper* mvk);
 
     // -------------------------------------------------------------------------
     // CRUD
@@ -123,5 +122,5 @@ class SGraphMvkMapper {
      *
      * \return True if successfully loaded, otherwise, return false.
      */
-    bool loadGraph(const std::string& model, const std::string& metamodel, collab::SimpleGraph& graph) const;
+    bool loadGraph(const std::string& model, const std::string& metamodel, SimpleGraph& graph) const;
 };
