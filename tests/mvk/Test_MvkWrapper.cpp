@@ -1,3 +1,7 @@
+#if 0
+// This file has been disabled for now
+// It is not an actual unit test (but may be usefull to understand how the Mvk works)
+
 #include <iostream>
 
 #include "mvk/MvkWrapper.h"
@@ -106,3 +110,5 @@ int main(int argc, char** argv) {
     MVKWrapper_tests();
     return 0;
 }
+
+#endif

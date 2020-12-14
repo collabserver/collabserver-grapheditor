@@ -41,7 +41,7 @@ message(STATUS "Building GraphEditor executable")
 include_directories("${PROJECT_SOURCE_DIR}/src/")
 file(GLOB_RECURSE srcFilesExecutable "${PROJECT_SOURCE_DIR}/src/*.cpp")
 add_executable(${PROJECT_NAME}-exe ${srcFilesExecutable})
-target_link_libraries(${PROJECT_NAME}-exe collabserver-client-lib curl cjson)
+target_link_libraries(${PROJECT_NAME}-exe collabserver-client-lib cjson curl)
 add_custom_target(run ${PROJECT_NAME}-exe)
 
 
@@ -57,11 +57,34 @@ add_custom_target(copyResources ALL DEPENDS "${RESOURCES_BIN}")
 add_dependencies(run copyResources)
 
 
-# TODO Reintegrate the tests
-# Add simple test (This is kind of temporary. These are not actual unit test yet)
-#file(GLOB_RECURSE srcFilesTest "${CMAKE_SOURCE_DIR}/tests/mvk/Test_MvkWrapper.cpp"
-#                               "${CMAKE_SOURCE_DIR}/src/mvk/MvkWrapper.cpp"
-#                               "${CMAKE_SOURCE_DIR}/src/utils/utils.cpp")
-#add_executable(tests ${srcFilesTest})
-#target_link_libraries(tests collabclient curl)
+# Tests
+option(COLLABSERVER_GRAPHEDITOR_TESTS "Build Tests" OFF)
+if(COLLABSERVER_GRAPHEDITOR_TESTS)
+    message(STATUS "Build tests for ${PROJECT_NAME}")
+    enable_testing()
 
+    include_directories("${PROJECT_SOURCE_DIR}/include/")
+    file(GLOB_RECURSE srcFilesTests "${PROJECT_SOURCE_DIR}/tests/*.cpp")
+    file(GLOB_RECURSE srcFilesSimpleGraph "${PROJECT_SOURCE_DIR}/src/simplegraph/*.cpp")
+    add_executable(${PROJECT_NAME}-tests ${srcFilesTests} ${srcFilesSimpleGraph})
+
+    # Googletest dependency
+    include_directories("${PROJECT_SOURCE_DIR}/extern/googletest/googletest/include/")
+    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest-1.10.0")
+    target_link_libraries(${PROJECT_NAME}-tests gtest)
+
+    # Lib dependency
+    target_link_libraries(${PROJECT_NAME}-tests collabserver-client-lib cjson curl)
+
+    # Tests target
+    add_test(NAME googletests COMMAND ${PROJECT_NAME}-tests)
+    add_custom_target(runTests ${PROJECT_NAME}-tests)
+
+    # TODO Temporary disabled
+    # Add simple test for Mvk (These are more like examples, rather than actual Unit Tests)
+    #file(GLOB_RECURSE srcFilesTestsMvk "${PROJECT_SOURCE_DIR}/tests/mvk/Test_MvkWrapper.cpp"
+    #                                   "${PROJECT_SOURCE_DIR}/src/mvk/MvkWrapper.cpp"
+    #                                   "${PROJECT_SOURCE_DIR}/src/utils/utils.cpp")
+    #add_executable(${PROJECT_NAME}-testsMvk ${srcFilesTestMvk})
+    #target_link_libraries(${PROJECT_NAME}-testsMvk collabserver-client-lib cjson curl)
+endif()
