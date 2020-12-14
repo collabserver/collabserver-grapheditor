@@ -2,15 +2,15 @@
 # https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-todo-plus
 
 Cleanup:
-    ✔ Update with the new CollabServer Framework version @done(20-12-14 19:37)
-    ✔ Update CMake with cleaned up version @done(20-12-14 19:37)
     ☐ Place curl dependency in `extern` folder
-    ☐ Place msgpack dependency in `extern` folder (used by SimpleGraph)
-    ✔ Re-integrate SimpleGraph implementation (migrated from collabserver-datatypes) @done(20-12-14 22:29)
+    ✔ Place msgpack dependency in `extern` folder (used by SimpleGraph) @done(20-12-14 22:36)
 Readme:
     ☐ Update README with valid markdown
 
 Archive:
+  ✔ Update with the new CollabServer Framework version @done(20-12-14 19:37) @project(Cleanup)
+  ✔ Update CMake with cleaned up version @done(20-12-14 19:37) @project(Cleanup)
+  ✔ Re-integrate SimpleGraph implementation (migrated from collabserver-datatypes) @done(20-12-14 22:29) @project(Cleanup)
   ✔ Place CollabServer Framework dependencies in `gitbmodules` folder @done(20-12-10 01:11) @project(Cleanup)
   ✔ Update Travis CI @done(20-12-10 01:11) @project(Cleanup)
   ✔ Add clang-format @done(20-12-09 01:40) @project(Cleanup)

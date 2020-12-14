@@ -33,6 +33,8 @@ include_directories("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-client/includ
 add_subdirectory("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes")
 include_directories("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes/include")
 
+include_directories("${PROJECT_SOURCE_DIR}/extern/msgpack-c-3.3.0/include") # Header only
+
 
 # GraphEditor Executable
 message(STATUS "Building GraphEditor executable")
