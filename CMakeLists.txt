@@ -23,22 +23,24 @@ message(STATUS "CMAKE_BUILD_TYPE for ${PROJECT_NAME}: ${CMAKE_BUILD_TYPE}")
 
 # Dependencies
 message(STATUS "Adding dependencies for ${PROJECT_NAME}")
+
+add_subdirectory("${PROJECT_SOURCE_DIR}/extern/cJSON-1.7.14")
+include_directories("${PROJECT_SOURCE_DIR}/extern/cJSON-1.7.14")
+
 add_subdirectory("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-client")
-add_subdirectory("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes")
 include_directories("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-client/include")
+
+add_subdirectory("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes")
 include_directories("${PROJECT_SOURCE_DIR}/gitmodules/collabserver-datatypes/include")
-include_directories("${PROJECT_SOURCE_DIR}/extern/cjson/")
-file(GLOB_RECURSE srcFilesCJSON "${PROJECT_SOURCE_DIR}/extern/cjson/*.cpp")
 
 
 # GraphEditor Executable
 message(STATUS "Building GraphEditor executable")
-
 include_directories("${PROJECT_SOURCE_DIR}/src/")
 file(GLOB_RECURSE srcFilesExecutable "${PROJECT_SOURCE_DIR}/src/*.cpp")
-add_executable(${PROJECT_NAME}-exe ${srcFilesExecutable} ${srcFilesCJSON})
+add_executable(${PROJECT_NAME}-exe ${srcFilesExecutable})
+target_link_libraries(${PROJECT_NAME}-exe collabserver-client-lib curl cjson)
 add_custom_target(run ${PROJECT_NAME}-exe)
-target_link_libraries(${PROJECT_NAME}-exe collabserver-client-lib curl)
 
 
 # Copy resources folder
